@@ -40,6 +40,10 @@ export default buildConfig({
   // Base de données MongoDB (gratuite via MongoDB Atlas)
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || "",
+    // Laisse plus de temps à la connexion lors d'un démarrage à froid (serverless).
+    connectOptions: {
+      serverSelectionTimeoutMS: 30000,
+    },
   }),
 
   // Redimensionnement / optimisation des images
