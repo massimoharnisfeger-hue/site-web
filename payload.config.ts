@@ -2,7 +2,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import { mongooseAdapter } from "@payloadcms/db-mongodb";
-import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { buildConfig } from "payload";
 import sharp from "sharp";
@@ -27,7 +26,7 @@ export default buildConfig({
   collections: [Users, Media],
   globals: [Home],
 
-  editor: lexicalEditor(),
+  // Pas d'éditeur de texte riche : on n'utilise que des champs simples.
 
   // Clé secrète (signe les sessions). Définie dans les variables d'environnement.
   secret: process.env.PAYLOAD_SECRET || "",
