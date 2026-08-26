@@ -7,7 +7,7 @@ import Preloader from "@/components/fx/Preloader";
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-inter-next",
   display: "swap",
 });
 

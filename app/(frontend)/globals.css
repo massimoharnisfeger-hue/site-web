@@ -2,14 +2,67 @@
    Inter is loaded through next/font.
    NB : @import doit précéder toute autre règle (exigé par Turbopack / Next 16). */
 @import url("https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=general-sans@400,500,600&display=swap");
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Design tokens — Tailwind v4 les expose à la fois comme utilitaires
+   (bg-court, font-display, animate-float…) et comme variables CSS sur :root. */
+@theme {
+  --color-ink: #0b1b3a; /* navy profond — texte & contraste */
+  --color-court: #1b4de4; /* bleu électrique du terrain — primaire */
+  --color-sky: #4fa8ff; /* bleu clair */
+  --color-teal: #00c2a8; /* turquoise sportif — secondaire */
+  --color-lime: #cdff3a; /* vert citron de la balle — accent énergie */
+  --color-cloud: #eef3fa; /* fond clair */
+  --color-haze: #dce6f4; /* gris-bleu clair */
 
-:root {
   --font-display: "Clash Display", sans-serif;
   --font-sans: "General Sans", "Inter", sans-serif;
+
+  --tracking-tightest: -0.05em;
+
+  --animate-gradient-pan: gradient-pan 12s ease infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 2s infinite;
+  --animate-bounce-ball: bounce-ball 2.4s ease-in-out infinite;
+
+  @keyframes gradient-pan {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
+  }
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  @keyframes bounce-ball {
+    0%,
+    100% {
+      transform: translateY(0) scale(1);
+    }
+    50% {
+      transform: translateY(-10px) scale(1.05);
+    }
+  }
+}
+
+/* Inter arrive de next/font, qui pose --font-inter-next sur <html>.
+   `inline` évite que Tailwind ré-émette la variable et écrase celle de Next. */
+@theme inline {
+  --font-inter: var(--font-inter-next), "Inter", sans-serif;
 }
 
 * {

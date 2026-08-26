@@ -302,7 +302,7 @@ export default function Booking({
                       onChange={(e) => setName(e.target.value)}
                       autoComplete="name"
                       placeholder="Camille Rivière"
-                      className="mt-2 w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/35 focus:border-court focus:outline-none"
+                      className="mt-2 w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/35 focus:border-court focus:outline-hidden"
                     />
                   </div>
                   <div>
@@ -315,7 +315,7 @@ export default function Booking({
                       type="email"
                       autoComplete="email"
                       placeholder="camille@email.com"
-                      className="mt-2 w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/35 focus:border-court focus:outline-none"
+                      className="mt-2 w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/35 focus:border-court focus:outline-hidden"
                     />
                   </div>
                   <div className="rounded-xl border border-ink/10 bg-cloud px-4 py-3 font-sans text-xs text-ink/50">

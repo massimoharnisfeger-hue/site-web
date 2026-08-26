@@ -19,6 +19,7 @@
     "@payloadcms/richtext-lexical": "3.85.1",
     "@payloadcms/storage-vercel-blob": "3.85.1",
     "@payloadcms/ui": "3.85.1",
+    "@tailwindcss/postcss": "^4.3.3",
     "animejs": "^4.5.0",
     "framer-motion": "^11.18.2",
     "graphql": "^16.8.1",
@@ -36,9 +37,8 @@
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
     "@types/three": "^0.171.0",
-    "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.17",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5.7.3"
   },
   "engines": {
