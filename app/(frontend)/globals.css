@@ -3,6 +3,7 @@
    NB : @import doit précéder toute autre règle (exigé par Turbopack / Next 16). */
 @import url("https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=general-sans@400,500,600&display=swap");
 @import "tailwindcss";
+@import "tw-animate-css";
 
 /* Design tokens — Tailwind v4 les expose à la fois comme utilitaires
    (bg-court, font-display, animate-float…) et comme variables CSS sur :root. */
@@ -63,6 +64,97 @@
    `inline` évite que Tailwind ré-émette la variable et écrase celle de Next. */
 @theme inline {
   --font-inter: var(--font-inter-next), "Inter", sans-serif;
+}
+
+/* ── shadcn/ui ───────────────────────────────────────────────────────────
+   Tokens sémantiques attendus par les registries (KokonutUI, bklit-ui…).
+   Calés sur la palette Padel House plutôt que sur le slate par défaut,
+   pour que les composants importés paraissent natifs du site. */
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --radius: 0.75rem;
+
+  --background: #eef3fa; /* cloud */
+  --foreground: #0b1b3a; /* ink */
+  --card: #ffffff;
+  --card-foreground: #0b1b3a;
+  --popover: #ffffff;
+  --popover-foreground: #0b1b3a;
+  --primary: #1b4de4; /* court */
+  --primary-foreground: #ffffff;
+  --secondary: #dce6f4; /* haze */
+  --secondary-foreground: #0b1b3a;
+  --muted: #dce6f4;
+  --muted-foreground: #4a5878;
+  --accent: #00c2a8; /* teal */
+  --accent-foreground: #ffffff;
+  --destructive: #e5484d;
+  --destructive-foreground: #ffffff;
+  --border: #d3dcea;
+  --input: #c9d5e6;
+  --ring: #1b4de4; /* court */
+
+  --chart-1: #1b4de4; /* court */
+  --chart-2: #00c2a8; /* teal */
+  --chart-3: #4fa8ff; /* sky */
+  --chart-4: #cdff3a; /* lime */
+  --chart-5: #0b1b3a; /* ink */
+}
+
+.dark {
+  --background: #0b1b3a;
+  --foreground: #eef3fa;
+  --card: #12244a;
+  --card-foreground: #eef3fa;
+  --popover: #12244a;
+  --popover-foreground: #eef3fa;
+  --primary: #4fa8ff; /* sky — plus lisible sur navy */
+  --primary-foreground: #0b1b3a;
+  --secondary: #1b2f56;
+  --secondary-foreground: #eef3fa;
+  --muted: #1b2f56;
+  --muted-foreground: #9fb2cf;
+  --accent: #00c2a8;
+  --accent-foreground: #0b1b3a;
+  --destructive: #ff6369;
+  --destructive-foreground: #0b1b3a;
+  --border: #24365c;
+  --input: #2c406a;
+  --ring: #4fa8ff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
 * {
