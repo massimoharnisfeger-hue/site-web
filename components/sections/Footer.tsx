@@ -181,9 +181,19 @@ export default function Footer({
             <span className="inline-block h-2.5 w-2.5 rounded-full bg-lime" />
             {brand}
           </div>
-          <p className="font-sans text-xs text-white/50">
-            © {new Date().getFullYear()} {brand}. {content.legal}
-          </p>
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
+            <nav className="flex gap-5 font-sans text-xs">
+              <a href="/mentions-legales" className="text-white/75 underline underline-offset-4 hover:text-lime">
+                Mentions légales
+              </a>
+              <a href="/confidentialite" className="text-white/75 underline underline-offset-4 hover:text-lime">
+                Confidentialité
+              </a>
+            </nav>
+            <p className="font-sans text-xs text-white/75">
+              © {new Date().getFullYear()} {brand}. {content.legal}
+            </p>
+          </div>
         </div>
       </div>
     </footer>

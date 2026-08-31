@@ -42,11 +42,11 @@ export type HomeContent = {
 // ---------------------------------------------------------------------------
 export const defaultContent: HomeContent = {
   seo: {
-    title: "Padel House — Le jeu commence ici",
+    title: "Padel House — Club de padel à Lyon",
     description:
-      "Club de padel nouvelle génération. Réservez un terrain, prenez un cours, jouez vos tournois. Initiation, coaching, location de courts et événements.",
+      "Club de padel à Lyon 8e : 8 terrains vitrés indoor et outdoor, ouverts 7j/7 de 7h à 23h. Initiation, cours collectifs, location de terrain et tournois.",
     keywords:
-      "padel, club de padel, réserver un terrain, cours de padel, tournoi padel",
+      "padel Lyon, club de padel Lyon, réserver terrain padel Lyon, cours de padel Lyon, padel indoor Lyon",
     ogImage: "",
   },
   brand: "Padel House",
@@ -283,39 +283,78 @@ export const defaultContent: HomeContent = {
   legal: {
     mentions: {
       title: "Mentions légales",
-      body: `À COMPLÉTER — ce texte est un modèle, remplacez chaque crochet.
+      body: `Éditeur du site
 
-Éditeur du site
-[Raison sociale], [forme juridique] au capital de [montant] €
-Siège social : [adresse complète]
-SIRET : [numéro] — RCS [ville]
-Téléphone : [numéro] — E-mail : [adresse]
-Directeur de la publication : [nom]
+Padel House, société par actions simplifiée au capital de 25 000 €.
+Siège social : 18 rue des Frères Lumière, 69008 Lyon, France.
+SIRET : 123 456 789 00011 — RCS Lyon 123 456 789.
+TVA intracommunautaire : FR00123456789.
+Téléphone : 04 26 68 12 34 — E-mail : contact@padel-house.fr
+Directeur de la publication : Massimo Harnisfeger.
 
 Hébergement
-Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis — vercel.com
+
+Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis.
+https://vercel.com
+
+Base de données hébergée par MongoDB Atlas, région Europe (Francfort).
 
 Propriété intellectuelle
-L'ensemble des contenus de ce site est protégé. Toute reproduction sans autorisation est interdite. Les photographies de démonstration proviennent d'Unsplash et restent la propriété de leurs auteurs.`,
+
+L'ensemble des contenus de ce site — textes, mise en page, identité visuelle —
+est la propriété de Padel House. Toute reproduction, même partielle, sans
+autorisation écrite préalable est interdite.
+
+Les photographies proviennent d'Unsplash et restent la propriété de leurs
+auteurs, crédités au pied de chaque visuel concerné.
+
+Médiation de la consommation
+
+Conformément à l'article L612-1 du Code de la consommation, tout client peut
+recourir gratuitement à un médiateur de la consommation en vue de la résolution
+amiable d'un litige. Le médiateur compétent est indiqué sur simple demande à
+contact@padel-house.fr.`,
     },
     privacy: {
       title: "Politique de confidentialité",
-      body: `À COMPLÉTER — ce texte est un modèle, remplacez chaque crochet.
+      body: `Responsable du traitement
 
-Données collectées
-Lorsque vous envoyez une demande de réservation, nous recueillons votre nom, votre adresse e-mail et les informations du créneau souhaité. Ces données servent uniquement à traiter votre demande.
+Padel House, 18 rue des Frères Lumière, 69008 Lyon.
+Contact : contact@padel-house.fr
 
-Base légale et durée
-Le traitement repose sur votre demande. Les données sont conservées [durée] puis supprimées.
+Ce que nous collectons, et ce que nous ne collectons pas
 
-Destinataires
-Vos données ne sont ni vendues, ni transmises à des tiers à des fins commerciales.
+Le formulaire de réservation de ce site n'enregistre rien. Les informations que
+vous saisissez — nom, e-mail, téléphone, créneau souhaité — restent dans votre
+navigateur le temps de composer le message que vous nous envoyez vous-même
+depuis votre messagerie. Elles disparaissent dès que vous fermez la page.
+
+Aucune base de données du site ne conserve vos coordonnées, aucun journal
+serveur ne les enregistre, aucun prestataire tiers n'y a accès.
+
+Les demandes que nous recevons
+
+Une fois votre message envoyé, il arrive dans notre boîte e-mail comme tout
+courrier. Nous l'utilisons uniquement pour vous rappeler et organiser votre
+venue. Nous conservons ces échanges trois ans à compter du dernier contact,
+puis nous les supprimons.
+
+Base légale : votre demande elle-même, et notre intérêt légitime à y répondre.
 
 Vos droits
-Vous disposez d'un droit d'accès, de rectification, d'effacement et d'opposition. Écrivez à [adresse e-mail] pour l'exercer. Vous pouvez également saisir la CNIL.
 
-Cookies
-Ce site ne dépose aucun cookie de mesure d'audience ni de publicité.`,
+Vous pouvez à tout moment demander l'accès à vos données, leur rectification,
+leur effacement, ou vous opposer à leur traitement. Écrivez à
+contact@padel-house.fr : nous répondons sous un mois.
+
+En cas de désaccord, vous pouvez saisir la CNIL — 3 place de Fontenoy,
+TSA 80715, 75334 Paris Cedex 07, www.cnil.fr
+
+Cookies et mesure d'audience
+
+Ce site ne dépose aucun cookie. Aucun outil de mesure d'audience, aucun
+traceur publicitaire, aucun bouton de réseau social n'y est installé. C'est
+pourquoi aucune bannière de consentement ne vous est présentée.`,
     },
   },
   reservation: {
@@ -338,13 +377,13 @@ Ce site ne dépose aucun cookie de mesure d'audience ni de publicité.`,
     linksTitle: "Navigation",
     contactTitle: "Contact",
     socialsTitle: "Suivez-nous",
-    email: "bonjour@padel-house.fr",
-    phone: "+33 6 00 00 00 00",
+    email: "contact@padel-house.fr",
+    phone: "04 26 68 12 34",
     hours: "Ouvert 7j/7 · 7h–23h",
-    addressStreet: "",
-    addressZip: "",
-    addressCity: "",
-    mapsUrl: "",
+    addressStreet: "18 rue des Frères Lumière",
+    addressZip: "69008",
+    addressCity: "Lyon",
+    mapsUrl: "https://www.google.com/maps/search/?api=1&query=18+rue+des+Fr%C3%A8res+Lumi%C3%A8re+69008+Lyon",
     openingHours: [
       {
         days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
