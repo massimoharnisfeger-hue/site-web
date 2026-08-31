@@ -57,6 +57,27 @@ Cette clé sécurise les connexions au back-office. Génère une longue chaîne 
 
 4. Clique **Deploy**. Attends 1–2 minutes. 🎉 Ton site est en ligne !
 
+### Étape 3 bis — Photos automatiques via Unsplash (facultatif)
+
+Chaque étape de la section **Parcours** accepte un **mot-clé Unsplash** dans
+`/admin`. Si l'étape n'a pas de photo téléversée, la première photo verticale
+correspondant au mot-clé est affichée automatiquement, avec le crédit du
+photographe (exigé par les conditions d'Unsplash).
+
+1. Crée une application sur **https://unsplash.com/oauth/applications** et copie
+   l'**Access Key**.
+2. Dans Vercel → ton projet → **Settings → Environment Variables**, ajoute
+   `UNSPLASH_ACCESS_KEY` (coche *Production* **et** *Preview*).
+3. Dans `/admin` → onglet **Parcours**, saisis un mot-clé par étape
+   (ex. « padel match »).
+
+Ordre de priorité de la photo : image téléversée → mot-clé Unsplash → photo de
+démonstration. Sans clé, sans réseau ou en cas de quota dépassé, la photo de
+démonstration s'affiche : le site n'est jamais sans image.
+
+Le résultat est mis en cache 24 h pour ne pas épuiser le quota Unsplash
+(50 requêtes/heure en démo, 5000/heure une fois l'application validée).
+
 ### Étape 4 — Activer le stockage des images (Vercel Blob)
 
 Pour pouvoir **téléverser des photos** depuis le back-office :

@@ -14,6 +14,10 @@ export type CoverflowItem = {
   titleLine2?: string;
   desc?: string;
   img: string;
+  imgAlt?: string;
+  /** Photographe à créditer, exigé par les conditions d'Unsplash. */
+  credit?: string;
+  creditLink?: string;
   ctaText?: string;
   ctaUrl?: string;
 };
@@ -70,10 +74,13 @@ export default function CoverflowCarousel({
   items,
   sectionLabel,
   autoplayDelay = 5500,
+  unsplashLink,
 }: {
   items: CoverflowItem[];
   sectionLabel?: string;
   autoplayDelay?: number;
+  /** Lien d'attribution, fourni par le serveur pour ne pas dupliquer ses UTM. */
+  unsplashLink?: string;
 }) {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -215,7 +222,7 @@ export default function CoverflowCarousel({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={item.img}
-                  alt={item.titleLine1}
+                  alt={item.imgAlt || item.titleLine1}
                   loading="lazy"
                   className="absolute inset-0 h-full w-full object-cover"
                 />
@@ -260,6 +267,31 @@ export default function CoverflowCarousel({
                     {item.desc && (
                       <p className="mb-3 max-w-[280px] font-sans text-sm leading-snug text-white/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                         {item.desc}
+                      </p>
+                    )}
+
+                    {item.credit && (
+                      <p className="mb-2 font-sans text-[10px] leading-tight text-white/55">
+                        Photo :{" "}
+                        <a
+                          href={item.creditLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          tabIndex={isCenter ? 0 : -1}
+                          className="underline underline-offset-2 hover:text-lime"
+                        >
+                          {item.credit}
+                        </a>{" "}
+                        sur{" "}
+                        <a
+                          href={unsplashLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          tabIndex={isCenter ? 0 : -1}
+                          className="underline underline-offset-2 hover:text-lime"
+                        >
+                          Unsplash
+                        </a>
                       </p>
                     )}
 

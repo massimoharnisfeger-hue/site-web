@@ -158,6 +158,15 @@ export const Home: GlobalConfig = {
                     { name: "subtitle", type: "text", label: "Sous-titre (2ᵉ ligne)" },
                     { name: "text", type: "textarea", label: "Texte" },
                     { name: "image", type: "upload", relationTo: "media", label: "Photo de fond" },
+                    {
+                      name: "unsplashQuery",
+                      type: "text",
+                      label: "Mot-clé Unsplash",
+                      admin: {
+                        description:
+                          "Utilisé seulement si aucune photo n'est téléversée ci-dessus. Ex. « padel match ». Laisser vide pour garder la photo de démonstration.",
+                      },
+                    },
                   ],
                 },
               ],

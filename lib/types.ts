@@ -16,6 +16,10 @@ export type StoryStep = {
   subtitle: string;
   text: string;
   image: string;
+  imageAlt: string;
+  /** Photographe à créditer, vide si la photo ne vient pas d'Unsplash. */
+  credit: string;
+  creditLink: string;
 };
 
 export type Stat = { value: number; suffix: string; label: string };

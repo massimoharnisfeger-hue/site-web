@@ -1,10 +1,13 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
 
+import { searchPhotos } from "@/lib/unsplash";
+
 import type {
   HeroContent,
   OffresContent,
   ParcoursContent,
+  StoryStep,
   ChiffresContent,
   GalerieContent,
   AvisContent,
@@ -130,6 +133,9 @@ export const defaultContent: HomeContent = {
     items: [
       {
         step: "01",
+        imageAlt: "",
+        credit: "",
+        creditLink: "",
         subtitle: "Le premier échange",
         title: "Découvrir",
         text: "Poussez la porte du club. Raquette en main, ressentez l'adrénaline du premier échange contre la vitre. Le padel s'apprend en quelques minutes.",
@@ -138,6 +144,9 @@ export const defaultContent: HomeContent = {
       },
       {
         step: "02",
+        imageAlt: "",
+        credit: "",
+        creditLink: "",
         subtitle: "Avec nos coachs",
         title: "S'entraîner",
         text: "Affûtez votre jeu avec nos coachs : sortie de vitre, bandeja, lob et amorti. Chaque séance, vous sentez vos automatismes progresser.",
@@ -146,6 +155,9 @@ export const defaultContent: HomeContent = {
       },
       {
         step: "03",
+        imageAlt: "",
+        credit: "",
+        creditLink: "",
         subtitle: "Terrain réservé",
         title: "Jouer",
         text: "Réservez votre terrain, réunissez vos partenaires et vibrez à chaque point. Indoor ou outdoor, le jeu ne s'arrête jamais au club.",
@@ -154,6 +166,9 @@ export const defaultContent: HomeContent = {
       },
       {
         step: "04",
+        imageAlt: "",
+        credit: "",
+        creditLink: "",
         subtitle: "Tournois & soirées",
         title: "Vibrer",
         text: "Tournois, ligues, soirées : montez en niveau et faites partie de la communauté. Le padel, c'est aussi tout ce qui se passe après le match.",
@@ -260,6 +275,38 @@ function arr<T>(value: unknown, fallback: T[]): unknown[] | T[] {
 // ---------------------------------------------------------------------------
 // Lecture du contenu depuis Payload, avec repli sur le contenu par défaut.
 // ---------------------------------------------------------------------------
+/**
+ * Photo de chaque étape du parcours, par ordre de priorité :
+ *   1. l'image téléversée dans le back-office ;
+ *   2. la première photo Unsplash correspondant au mot-clé saisi ;
+ *   3. la photo de démonstration.
+ * L'appel à Unsplash n'a lieu que pour les étapes sans image téléversée et avec
+ * un mot-clé, et son échec est sans conséquence : on retombe sur le défaut.
+ */
+async function resolveParcoursItems(g: any, d: HomeContent): Promise<StoryStep[]> {
+  const raw = arr(g?.parcours?.items, d.parcours.items) as any[];
+
+  const uploaded = raw.map((it) => imageUrl(it.image, ""));
+  const queries = raw.map((it, i) => (uploaded[i] ? "" : str(it.unsplashQuery, "")));
+  const found = await searchPhotos(queries);
+
+  return raw.map((it, i) => {
+    const fallback = d.parcours.items[i];
+    const photo = found[i];
+
+    return {
+      step: str(it.step, fallback?.step ?? ""),
+      title: str(it.title, fallback?.title ?? ""),
+      subtitle: str(it.subtitle, fallback?.subtitle ?? ""),
+      text: str(it.text, fallback?.text ?? ""),
+      image: uploaded[i] || photo?.url || (fallback?.image ?? ""),
+      imageAlt: uploaded[i] ? "" : photo?.alt ?? "",
+      credit: photo ? photo.creditName : "",
+      creditLink: photo ? photo.creditLink : "",
+    };
+  });
+}
+
 export async function getHome(): Promise<HomeContent> {
   let g: Record<string, any> | null = null;
   try {
@@ -272,6 +319,7 @@ export async function getHome(): Promise<HomeContent> {
   if (!g) return defaultContent;
 
   const d = defaultContent;
+  const parcoursItems = await resolveParcoursItems(g, d);
 
   return {
     seo: {
@@ -315,13 +363,7 @@ export async function getHome(): Promise<HomeContent> {
       eyebrow: str(g.parcours?.eyebrow, d.parcours.eyebrow),
       ctaLabel: str(g.parcours?.ctaLabel, d.parcours.ctaLabel),
       ctaTarget: str(g.parcours?.ctaTarget, d.parcours.ctaTarget),
-      items: (arr(g.parcours?.items, d.parcours.items) as any[]).map((it, i) => ({
-        step: str(it.step, d.parcours.items[i]?.step ?? ""),
-        title: str(it.title, d.parcours.items[i]?.title ?? ""),
-        subtitle: str(it.subtitle, d.parcours.items[i]?.subtitle ?? ""),
-        text: str(it.text, d.parcours.items[i]?.text ?? ""),
-        image: imageUrl(it.image, d.parcours.items[i]?.image ?? ""),
-      })),
+      items: parcoursItems,
     },
     chiffres: {
       title: str(g.chiffres?.title, d.chiffres.title),
