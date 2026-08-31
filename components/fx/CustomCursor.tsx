@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Premium custom cursor: a soft glowing dot with a trailing "water" ring,
@@ -12,12 +12,33 @@ export default function CustomCursor() {
   const ringRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // Le curseur natif est masqué par `cursor: none` dès qu'un pointeur fin est
+  // détecté, quelle que soit la largeur. Or le curseur de remplacement était
+  // rendu en `hidden md:block` : sous 768 px — fenêtre réduite, zoom à 200 %,
+  // écran d'appoint — le visiteur n'avait plus aucun pointeur visible. À
+  // l'inverse, sur tablette tactile large, le point et l'anneau étaient rendus
+  // sans jamais être pilotés. Un seul et même état commande donc désormais la
+  // classe CSS et l'affichage des trois éléments.
+  const [actif, setActif] = useState(false);
+
+  // Premier effet : décider si le curseur personnalisé a lieu d'être.
   useEffect(() => {
-    const canHover = window.matchMedia("(hover: hover) and (pointer: fine)")
-      .matches;
+    const requete = window.matchMedia(
+      "(hover: hover) and (pointer: fine) and (min-width: 768px)"
+    );
+    const onChange = () => setActif(requete.matches);
+    onChange();
+    requete.addEventListener("change", onChange);
+    return () => requete.removeEventListener("change", onChange);
+  }, []);
+
+  // Second effet : le piloter. Il ne s'exécute qu'une fois les trois éléments
+  // effectivement rendus — les lire au tour précédent donnait des refs nulles.
+  useEffect(() => {
+    if (!actif) return;
+
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)")
       .matches;
-    if (!canHover) return;
 
     document.body.classList.add("has-custom-cursor");
 
@@ -105,26 +126,28 @@ export default function CustomCursor() {
       window.removeEventListener("pointerover", onOver);
       document.body.classList.remove("has-custom-cursor");
     };
-  }, []);
+  }, [actif]);
+
+  if (!actif) return null;
 
   return (
     <>
       <canvas
         ref={canvasRef}
         aria-hidden
-        className="pointer-events-none fixed inset-0 z-[9995] hidden md:block"
+        className="pointer-events-none fixed inset-0 z-[9995]"
       />
       <div
         ref={dotRef}
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[9997] hidden h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-court shadow-[0_0_12px_4px_rgba(27,77,228,0.5)] md:block"
+        className="pointer-events-none fixed left-0 top-0 z-[9997] h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-court shadow-[0_0_12px_4px_rgba(27,77,228,0.5)]"
         style={{ marginLeft: -4, marginTop: -4 }}
       />
       <div
         ref={ringRef}
         data-state="default"
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[9996] hidden h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-court/50 transition-[width,height,opacity] duration-300 data-[state=hover]:h-16 data-[state=hover]:w-16 data-[state=hover]:border-teal/80 md:block"
+        className="pointer-events-none fixed left-0 top-0 z-[9996] h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-court/50 transition-[width,height,opacity] duration-300 data-[state=hover]:h-16 data-[state=hover]:w-16 data-[state=hover]:border-teal/80"
         style={{ marginLeft: -20, marginTop: -20 }}
       />
     </>

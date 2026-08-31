@@ -9,6 +9,7 @@ import {
 } from "framer-motion";
 import type { Activity, OffresContent } from "@/lib/types";
 import Reveal from "@/components/fx/Reveal";
+import Photo from "@/components/ui/Photo";
 
 // Themed accent gradients cycled by index (kept in code, not in the CMS).
 const accents = [
@@ -18,11 +19,6 @@ const accents = [
   "from-court/30 to-lime/10",
   "from-teal/30 to-lime/10",
 ];
-
-// Hide a broken image so its themed gradient parent shows instead.
-const onImgError = (e: MouseEvent<HTMLImageElement>) => {
-  (e.currentTarget as HTMLImageElement).style.display = "none";
-};
 
 function TiltCard({ activity, index }: { activity: Activity; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -90,13 +86,14 @@ function TiltCard({ activity, index }: { activity: Activity; index: number }) {
             accents[index % accents.length]
           }`}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Photo
             src={activity.image}
-            alt={activity.name}
-            loading="lazy"
-            onError={onImgError}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            alt=""
+            // La carte fait 82vw sur mobile, la moitié de la grille à partir de
+            // 640 px, le tiers à partir de 1024, et se fige à 390 px au-delà de
+            // la largeur maximale du conteneur.
+            sizes="(min-width: 1280px) 390px, (min-width: 1024px) 31vw, (min-width: 640px) calc(50vw - 40px), 82vw"
+            className="absolute inset-0 h-full w-full object-cover object-[center_35%] transition-transform duration-700 group-hover:scale-110"
             style={{ transform: "translateZ(0)" }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
@@ -126,12 +123,19 @@ function TiltCard({ activity, index }: { activity: Activity; index: number }) {
             <p className="mt-1 font-sans text-sm text-white/75">
               {activity.tagline}
             </p>
-            <p className="mt-3 max-h-0 overflow-hidden font-sans text-sm leading-relaxed text-white/85 opacity-0 transition-all duration-500 group-hover:max-h-32 group-hover:opacity-100">
+            {/* Le survol n'existe pas sur un écran tactile : la description
+                était donc simplement invisible sur téléphone. Elle y est
+                maintenant affichée d'emblée, tronquée à deux lignes, et reste
+                une révélation au survol sur les pointeurs fins. */}
+            <p className="mt-3 line-clamp-2 font-sans text-sm leading-relaxed text-white/85 transition-all duration-500 md:line-clamp-none md:max-h-0 md:overflow-hidden md:opacity-0 md:group-hover:max-h-32 md:group-hover:opacity-100">
               {activity.description}
             </p>
-            <div className="mt-4 flex items-center justify-between">
-              <span className="font-display text-lg font-medium text-lime">
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <span className="shrink-0 font-display text-lg font-medium text-lime">
                 {activity.price}
+              </span>
+              <span className="flex items-center gap-2 font-sans text-xs font-semibold uppercase tracking-[0.14em] text-white/85">
+                {activity.ctaLabel}
               </span>
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-lime text-ink transition-transform duration-300 group-hover:rotate-45">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">

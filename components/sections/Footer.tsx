@@ -19,9 +19,17 @@ export default function Footer({
   content,
   brand,
   links,
+  year,
 }: {
   content: FooterContent;
   brand: string;
+  /**
+   * Calculée sur le serveur et transmise. `new Date().getFullYear()` était
+   * évalué au rendu : le 31 décembre, un visiteur en avance sur UTC obtenait
+   * une année différente de celle du HTML serveur, donc une erreur
+   * d'hydratation et un re-rendu du sous-arbre.
+   */
+  year: number;
   links: NavItem[];
 }) {
   const [hovered, setHovered] = useState<string | null>(null);
@@ -80,16 +88,24 @@ export default function Footer({
                 <line x1="30" y1="12" x2="30" y2="63" stroke="#CDFF3A" strokeWidth="0.3" />
                 <line x1="70" y1="12" x2="70" y2="63" stroke="#CDFF3A" strokeWidth="0.3" />
               </svg>
-              {content.courts.map((s) => (
+              {content.courts.map((s, i) => (
                 <button
-                  key={s.name}
+                  key={i}
                   onMouseEnter={() => setHovered(s.name)}
                   onMouseLeave={() => setHovered(null)}
-                  className="group absolute -translate-x-1/2 -translate-y-1/2"
+                  // Le nom du terrain n'apparaissait qu'au survol : sur écran
+                  // tactile, ces cinq boutons ne faisaient donc strictement
+                  // rien. Une pression bascule maintenant l'étiquette.
+                  onClick={() => setHovered((h) => (h === s.name ? null : s.name))}
+                  aria-pressed={hovered === s.name}
+                  // La pastille visible garde ses 12 px, la zone tactile en fait
+                  // 32 : en dessous de 24, la cible est sous le minimum de la
+                  // WCAG 2.2 (2.5.8).
+                  className="group absolute flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center"
                   style={{ left: `${s.x}%`, top: `${s.y}%` }}
                   aria-label={s.name}
                 >
-                  <span className="block h-3 w-3 rounded-full bg-lime shadow-[0_0_12px_rgba(205,255,58,0.9)]">
+                  <span className="relative block h-3 w-3 rounded-full bg-lime shadow-[0_0_12px_rgba(205,255,58,0.9)]">
                     <span className="absolute inset-0 animate-ping rounded-full bg-lime/60" />
                   </span>
                   <span
@@ -113,7 +129,10 @@ export default function Footer({
               <ul className="space-y-3 font-sans text-sm text-white/80">
                 {links.map((l) => (
                   <li key={l.target}>
-                    <a href={l.target} className="hover:text-lime">
+                    <a
+                      href={l.target}
+                      className="inline-flex min-h-[24px] items-center py-1 hover:text-lime"
+                    >
                       {l.label}
                     </a>
                   </li>
@@ -183,15 +202,21 @@ export default function Footer({
           </div>
           <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
             <nav className="flex gap-5 font-sans text-xs">
-              <a href="/mentions-legales" className="text-white/75 underline underline-offset-4 hover:text-lime">
+              <a
+                href="/mentions-legales"
+                className="inline-flex min-h-[24px] items-center py-1 text-white/75 underline underline-offset-4 hover:text-lime"
+              >
                 Mentions légales
               </a>
-              <a href="/confidentialite" className="text-white/75 underline underline-offset-4 hover:text-lime">
+              <a
+                href="/confidentialite"
+                className="inline-flex min-h-[24px] items-center py-1 text-white/75 underline underline-offset-4 hover:text-lime"
+              >
                 Confidentialité
               </a>
             </nav>
             <p className="font-sans text-xs text-white/75">
-              © {new Date().getFullYear()} {brand}. {content.legal}
+              © {year} {brand}. {content.legal}
             </p>
           </div>
         </div>

@@ -3,16 +3,18 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Lenis from "lenis";
-import type { NavItem } from "@/lib/types";
+import type { AnnouncementContent, NavItem } from "@/lib/types";
 
 export default function Nav({
   brand,
   ctaLabel,
   links,
+  announcement,
 }: {
   brand: string;
   ctaLabel: string;
   links: NavItem[];
+  announcement?: AnnouncementContent;
 }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -37,11 +39,31 @@ export default function Nav({
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 1.4, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed inset-x-0 top-0 z-[9000] transition-all duration-500 ${
-        scrolled ? "py-3" : "py-6"
-      }`}
+      className="fixed inset-x-0 top-0 z-[9000]"
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 md:px-8">
+      {/* Bandeau d'annonce : le groupe existait dans le back-office depuis le
+          début, avec la promesse « Barre affichée tout en haut du site », mais
+          n'était rendu nulle part. L'éditeur cochait la case sans rien voir
+          changer. */}
+      {announcement?.enabled && announcement.text && (
+        <div className="bg-ink px-5 py-2 text-center font-sans text-sm text-white">
+          <span>{announcement.text}</span>
+          {announcement.linkLabel && announcement.linkTarget && (
+            <a
+              href={announcement.linkTarget}
+              className="ml-2 inline-block min-h-[24px] font-medium text-lime underline underline-offset-4"
+            >
+              {announcement.linkLabel}
+            </a>
+          )}
+        </div>
+      )}
+
+      <div
+        className={`mx-auto flex max-w-7xl items-center justify-between px-5 transition-all duration-500 md:px-8 ${
+          scrolled ? "py-3" : "py-6"
+        }`}
+      >
         <button
           onClick={() => go("body")}
           data-cursor="hover"
@@ -103,8 +125,13 @@ export default function Nav({
       </div>
 
       {/* Mobile menu */}
+      {/* La fermeture est animée en hauteur, pas en `display` : sans `inert`, les
+          cinq commandes du menu replié restaient focalisables et annoncées, et
+          une tabulation déclenchait un défilement inexpliqué. */}
       <motion.nav
         initial={false}
+        inert={!open}
+        aria-hidden={!open}
         animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         className="mx-5 mt-3 overflow-hidden rounded-3xl glass-strong md:hidden"

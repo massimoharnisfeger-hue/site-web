@@ -8,6 +8,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type TouchEvent as ReactTouchEvent,
 } from "react";
+import Photo from "@/components/ui/Photo";
 export type CoverflowItem = {
   tag?: string;
   titleLine1: string;
@@ -83,8 +84,11 @@ export default function CoverflowCarousel({
   unsplashLink?: string;
 }) {
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [compact, setCompact] = useState(false);
+  // Deux causes de pause distinctes : `onMouseLeave` relançait le défilement
+  // alors que le focus clavier était encore dans le carrousel, et la carte
+  // focalisée partait alors dans un sous-arbre `aria-hidden`.
+  const [hoverPaused, setHoverPaused] = useState(false);
+  const [focusPaused, setFocusPaused] = useState(false);
   const touchStartX = useRef(0);
   const reduced = usePrefersReducedMotion();
   const total = items.length;
@@ -92,30 +96,15 @@ export default function CoverflowCarousel({
   const next = useCallback(() => setActive((i) => (i + 1) % total), [total]);
   const prev = useCallback(() => setActive((i) => (i - 1 + total) % total), [total]);
 
-  // Le décalage des cartes latérales est en pixels : sans adaptation elles
-  // débordent sur mobile. En dessous de 768px on resserre et on masque le
-  // second rang.
-  useEffect(() => {
-    const onResize = () => setCompact(window.innerWidth < 768);
-    onResize();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
   // Défilement automatique. Suspendu au survol et au focus clavier (WCAG 2.2.2),
   // et jamais démarré si le visiteur demande un mouvement réduit.
   useEffect(() => {
-    if (reduced || paused || total <= 1) return;
+    if (reduced || hoverPaused || focusPaused || total <= 1) return;
     const id = setInterval(next, autoplayDelay);
     return () => clearInterval(id);
-  }, [reduced, paused, total, next, autoplayDelay]);
+  }, [reduced, hoverPaused, focusPaused, total, next, autoplayDelay]);
 
   if (total === 0) return null;
-
-  const cardW = compact ? 250 : 330;
-  const cardH = compact ? 400 : 500;
-  const nearX = compact ? 168 : 285;
-  const farX = compact ? 300 : 510;
 
   // Les flèches du clavier sont écoutées sur la section, pas sur window :
   // un écouteur global confisquerait les flèches sur toute la page.
@@ -146,21 +135,24 @@ export default function CoverflowCarousel({
       aria-roledescription="carrousel"
       aria-label={sectionLabel}
       onKeyDown={onKeyDown}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
+      onMouseEnter={() => setHoverPaused(true)}
+      onMouseLeave={() => setHoverPaused(false)}
+      onFocus={() => setFocusPaused(true)}
+      onBlur={() => setFocusPaused(false)}
       onTouchStart={(e) => (touchStartX.current = e.touches[0].clientX)}
       onTouchEnd={onTouchEnd}
-      className="relative flex min-h-[760px] w-full select-none items-center justify-center overflow-hidden bg-ink py-16 text-white outline-none"
+      className="coverflow relative flex min-h-[760px] w-full select-none items-center justify-center overflow-hidden bg-ink py-16 text-white outline-none"
     >
       {/* Ambiance : la photo active, floutée, en fond */}
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={items[active]?.img}
+        {/* Ce fond est flouté à 32 px et assombri à 25 % : une miniature de
+            64 px y est indiscernable d'une image pleine résolution, que le
+            navigateur préchargeait jusqu'ici en priorité haute. */}
+        <Photo
+          src={items[active]?.img ?? ""}
           alt=""
-          aria-hidden
+          sizes="100vw"
+          quiet
           className="h-full w-full scale-110 object-cover"
           style={{ filter: "brightness(0.25) blur(32px)", transition: "opacity 1000ms ease" }}
         />
@@ -186,15 +178,25 @@ export default function CoverflowCarousel({
 
         <div
           className="relative mb-10 flex w-full items-center justify-center"
-          style={{ height: cardH + 20, perspective: reduced ? undefined : "1400px" }}
+          style={{
+            height: "calc(var(--cf-h) + 20px)",
+            perspective: reduced ? undefined : "1400px",
+          }}
         >
           {items.map((item, idx) => {
             const d = ringOffset(idx, active, total);
             const far = Math.abs(d) >= 2;
-            const hidden = far && compact;
             const isCenter = d === 0;
 
-            const x = d === 0 ? 0 : Math.sign(d) * (Math.abs(d) === 1 ? nearX : farX);
+            // Le décalage latéral est exprimé en variables CSS : les dimensions
+            // étaient auparavant décidées par un `useEffect` mesurant
+            // `window.innerWidth`, si bien que le serveur rendait toujours la
+            // version bureau et que les cartes se réorganisaient sous les yeux
+            // du visiteur à l'hydratation, sur téléphone.
+            const x =
+              d === 0
+                ? "0px"
+                : `calc(${Math.sign(d)} * var(${Math.abs(d) === 1 ? "--cf-near" : "--cf-far"}))`;
             const scale = isCenter ? 1 : Math.abs(d) === 1 ? 0.84 : 0.68;
             const rotate = reduced ? 0 : -Math.sign(d) * (Math.abs(d) === 1 ? 24 : 38);
 
@@ -205,25 +207,30 @@ export default function CoverflowCarousel({
                 onClick={() => !isCenter && setActive(idx)}
                 className="absolute overflow-hidden rounded-[18px] border border-white/12 bg-[#08142B]"
                 style={{
-                  width: cardW,
-                  height: cardH,
-                  transform: `translateX(${x}px) scale(${scale}) rotateY(${rotate}deg)`,
-                  opacity: hidden ? 0 : isCenter ? 1 : Math.abs(d) === 1 ? 0.65 : 0.35,
+                  width: "var(--cf-w)",
+                  height: "var(--cf-h)",
+                  transform: `translateX(${x}) scale(${scale}) rotateY(${rotate}deg)`,
+                  opacity: isCenter
+                    ? 1
+                    : Math.abs(d) === 1
+                      ? 0.65
+                      : "var(--cf-far-opacity)",
                   zIndex: 30 - Math.abs(d) * 10,
                   filter: isCenter ? "brightness(1)" : `brightness(${Math.abs(d) === 1 ? 0.75 : 0.55})`,
                   transition,
-                  cursor: isCenter || hidden ? "default" : "pointer",
-                  pointerEvents: hidden ? "none" : "auto",
+                  cursor: isCenter ? "default" : "pointer",
+                  pointerEvents: far
+                    ? ("var(--cf-far-events)" as React.CSSProperties["pointerEvents"])
+                    : "auto",
                   boxShadow: isCenter
                     ? "0 25px 60px rgba(0,0,0,0.75), 0 0 35px rgba(205,255,58,0.22)"
                     : "0 15px 35px rgba(0,0,0,0.45)",
                 }}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Photo
                   src={item.img}
-                  alt={item.imgAlt || item.titleLine1}
-                  loading="lazy"
+                  alt={item.imgAlt}
+                  sizes="(min-width: 768px) 330px, 250px"
                   className="absolute inset-0 h-full w-full object-cover"
                 />
                 <div
@@ -338,13 +345,20 @@ export default function CoverflowCarousel({
               onClick={() => setActive(idx)}
               aria-label={`Aller à l'étape ${idx + 1} : ${item.titleLine1}`}
               aria-current={idx === active}
-              className="h-2 rounded-full transition-all duration-300"
-              style={{
-                width: idx === active ? 28 : 8,
-                backgroundColor: idx === active ? "#CDFF3A" : "rgba(255,255,255,0.25)",
-                boxShadow: idx === active ? "0 0 10px rgba(205,255,58,0.7)" : "none",
-              }}
-            />
+              // La pastille visible fait 8 px, mais la zone tactile en fait 24 :
+              // en dessous, la cible passe sous le minimum de la WCAG 2.2 (2.5.8).
+              className="group flex h-6 w-6 items-center justify-center"
+            >
+              <span
+                aria-hidden
+                className="block h-2 rounded-full transition-all duration-300"
+                style={{
+                  width: idx === active ? 28 : 8,
+                  backgroundColor: idx === active ? "#CDFF3A" : "rgba(255,255,255,0.25)",
+                  boxShadow: idx === active ? "0 0 10px rgba(205,255,58,0.7)" : "none",
+                }}
+              />
+            </button>
           ))}
         </div>
       </div>

@@ -1,4 +1,4 @@
-// Shared content types — data now comes from content/home/index.json (TinaCMS).
+// Types partagés — le contenu vient du global `home` de Payload (voir lib/content.ts).
 
 export type Activity = {
   name: string;

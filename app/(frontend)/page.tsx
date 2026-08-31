@@ -63,6 +63,7 @@ export default async function Home() {
         brand={home.brand}
         ctaLabel={home.hero.ctaPrimary}
         links={home.nav.items}
+        announcement={home.announcement}
       />
       <main>
         <Hero content={home.hero} />
@@ -79,7 +80,12 @@ export default async function Home() {
           clubPhone={home.footer.phone}
         />
       </main>
-      <Footer content={home.footer} brand={home.brand} links={home.nav.items} />
+      <Footer
+        content={home.footer}
+        brand={home.brand}
+        links={home.nav.items}
+        year={new Date().getFullYear()}
+      />
     </>
   );
 }

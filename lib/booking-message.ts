@@ -74,9 +74,22 @@ export function buildBookingMessage(
     // On tronque le corps, jamais l'objet ni le destinataire : une demande
     // amputée reste exploitable, un lien coupé au milieu ne l'est pas.
     const budget = MAX_URL - base.length;
+
+    // Adresse de club anormalement longue : il ne reste aucune place pour le
+    // corps. Renvoyer `base` seul produirait une URL plus longue que le plafond
+    // et un message vide ; l'interface sait déjà se passer de lien.
+    if (budget <= 0) return { objet, corps, mailtoUrl: "" };
+
+    // La découpe se fait sur des points de code, jamais sur des unités UTF-16 :
+    // couper entre les deux moitiés d'une paire de substitution (un emoji collé
+    // dans le champ « Nom », par exemple) faisait lever `URIError` à
+    // `encodeURIComponent`, et l'exception remontait jusqu'à la racine React.
+    const points = [...corps];
     let coupe = corps;
-    while (coupe.length > 0 && encodeURIComponent(coupe).length > budget) {
-      coupe = coupe.slice(0, -20);
+    for (let fin = points.length; fin > 0; fin -= 20) {
+      coupe = points.slice(0, fin).join("");
+      if (encodeURIComponent(coupe).length <= budget) break;
+      coupe = "";
     }
     mailtoUrl = base + encodeURIComponent(coupe);
   }

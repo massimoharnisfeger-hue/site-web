@@ -23,11 +23,21 @@ export default function WebGLBackdrop() {
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true,
-      powerPreference: "high-performance",
-    });
+    // Certains Android d'entrée de gamme, le mode économie d'énergie et les
+    // navigateurs sans WebGL font échouer la création du contexte. Sans ce
+    // garde-fou, l'exception remonte depuis l'effet et React démonte la racine
+    // cliente : page blanche. Ici, le dégradé CSS du hero prend simplement le
+    // relais.
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance",
+      });
+    } catch {
+      return;
+    }
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -125,28 +135,86 @@ export default function WebGLBackdrop() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
 
+    // Sur iOS, l'apparition/disparition de la barre d'URL déclenche un `resize`
+    // à chaque micro-défilement. Réallouer le framebuffer à chaque fois saccade
+    // le défilement : on ne réagit donc qu'aux changements de largeur.
+    let lastW = window.innerWidth;
     const onResize = () => {
+      if (window.innerWidth === lastW) return;
+      lastW = window.innerWidth;
       renderer.setSize(window.innerWidth, window.innerHeight);
       uniforms.uRes.value.set(window.innerWidth, window.innerHeight);
     };
     window.addEventListener("resize", onResize);
 
-    const clock = new THREE.Clock();
+    // Le temps est accumulé à la main plutôt que lu sur `Clock.getElapsedTime()` :
+    // `Clock.start()` remet le compteur à zéro, et le nuancier repartirait donc
+    // du début à chaque retour du hero dans le champ. Ici il reprend où il en
+    // était, sans que les pauses ne se voient.
+    const clock = new THREE.Clock(false);
+    let elapsed = 0;
     let frame = 0;
+    let running = false;
+
     const animate = () => {
-      uniforms.uTime.value = reduced ? 6.0 : clock.getElapsedTime();
+      elapsed += clock.getDelta();
+      uniforms.uTime.value = elapsed;
       renderer.render(scene, camera);
       frame = requestAnimationFrame(animate);
     };
-    animate();
+
+    const start = () => {
+      if (running || reduced) return;
+      running = true;
+      clock.start();
+      frame = requestAnimationFrame(animate);
+    };
+    const stop = () => {
+      if (!running) return;
+      running = false;
+      cancelAnimationFrame(frame);
+      clock.stop();
+    };
+
+    // Mouvement réduit : une seule image, figée. Rendre 60 fois par seconde une
+    // image identique coûtait autant que l'animation elle-même.
+    if (reduced) {
+      uniforms.uTime.value = 6.0;
+      renderer.render(scene, camera);
+    }
+
+    // Le hero ne fait qu'un écran de haut : sans cela, le nuancier continuait de
+    // se calculer plein écran pendant que le visiteur lisait la FAQ. C'est la
+    // cause principale des saccades relevées en bas de page sur mobile.
+    let visible = true;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        if (visible && !document.hidden) start();
+        else stop();
+      },
+      { threshold: 0 }
+    );
+    observer.observe(mount);
+
+    const onVisibility = () => {
+      if (document.hidden) stop();
+      else if (visible) start();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    start();
 
     return () => {
-      cancelAnimationFrame(frame);
+      stop();
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       material.dispose();
       quad.geometry.dispose();
       renderer.dispose();
+      renderer.forceContextLoss();
       if (renderer.domElement.parentNode === mount) {
         mount.removeChild(renderer.domElement);
       }

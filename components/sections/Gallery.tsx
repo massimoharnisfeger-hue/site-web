@@ -1,28 +1,29 @@
 "use client";
 
-import { useRef, useState, MouseEvent } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import type { GalerieContent } from "@/lib/types";
+import type { GalerieContent, GalleryItem } from "@/lib/types";
+import Photo from "@/components/ui/Photo";
 
 // Masonry row-spans cycled by index (layout detail kept in code).
-const spanPattern = ["row-span-2", "", "row-span-2", "", "", "row-span-2", "", ""];
+// Sous 640 px les tuiles hautes sont neutralisées : une photo de terrain en
+// 900×600 tenue dans un cadre 167×416 perdait 73 % de sa largeur au recadrage.
+const spanPattern = ["sm:row-span-2", "", "sm:row-span-2", "", "", "sm:row-span-2", "", ""];
 
-const onImgError = (e: MouseEvent<HTMLImageElement>) => {
-  (e.currentTarget as HTMLImageElement).style.display = "none";
-};
+// Largeur d'affichage réelle d'une vignette, pour le choix de la source.
+const TILE_SIZES =
+  "(min-width: 1280px) 292px, (min-width: 768px) 25vw, calc(50vw - 28px)";
 
 function ParallaxTile({
-  src,
-  alt,
+  item,
   span,
   index,
   onOpen,
 }: {
-  src: string;
-  alt: string;
+  item: GalleryItem;
   span: string;
   index: number;
-  onOpen: (src: string) => void;
+  onOpen: (item: GalleryItem) => void;
 }) {
   const ref = useRef<HTMLButtonElement>(null);
   const { scrollYProgress } = useScroll({
@@ -30,12 +31,19 @@ function ParallaxTile({
     offset: ["start end", "end start"],
   });
   const dir = index % 2 === 0 ? 1 : -1;
-  const y = useTransform(scrollYProgress, [0, 1], [`${18 * dir}%`, `${-18 * dir}%`]);
+  // Décalage exprimé en pixels, et non en pourcentage de l'enveloppe : en
+  // pourcentage, l'amplitude (±43 px sur une tuile de 200) dépassait la marge
+  // de recouvrement et découvrait une bande de dégradé en haut ou en bas.
+  const y = useTransform(scrollYProgress, [0, 1], [22 * dir, -22 * dir]);
 
   return (
     <motion.button
       ref={ref}
-      onClick={() => onOpen(src)}
+      onClick={() => onOpen(item)}
+      // La photo est décorative à l'intérieur du bouton : c'est le bouton qui
+      // porte le nom, sinon une image masquée par `onError` laisserait une
+      // commande sans intitulé.
+      aria-label={`Agrandir : ${item.alt}`}
       data-cursor="hover"
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
@@ -43,19 +51,20 @@ function ParallaxTile({
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br from-court/30 to-teal/20 ${span}`}
     >
-      <motion.div style={{ y }} className="h-[120%] w-full">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={src}
-          alt={alt}
-          loading="lazy"
-          onError={onImgError}
+      <motion.div
+        style={{ y }}
+        className="absolute -inset-y-8 inset-x-0"
+      >
+        <Photo
+          src={item.src}
+          alt=""
+          sizes={TILE_SIZES}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
       </motion.div>
       <div className="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
       <span className="absolute bottom-4 left-4 flex h-10 w-10 items-center justify-center rounded-full glass-strong opacity-0 transition-all duration-500 group-hover:opacity-100">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
           <path
             d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16zM11 8v6M8 11h6"
             stroke="#0B1B3A"
@@ -69,7 +78,43 @@ function ParallaxTile({
 }
 
 export default function Gallery({ content }: { content: GalerieContent }) {
-  const [active, setActive] = useState<string | null>(null);
+  const [active, setActive] = useState<GalleryItem | null>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
+
+  const open = useCallback((item: GalleryItem) => {
+    openerRef.current = document.activeElement as HTMLElement | null;
+    setActive(item);
+  }, []);
+
+  const close = useCallback(() => {
+    setActive(null);
+    openerRef.current?.focus();
+  }, []);
+
+  // La visionneuse est une vraie boîte de dialogue : Échap la ferme, le focus y
+  // entre puis revient à la vignette d'origine, et le défilement de la page en
+  // arrière-plan est arrêté — Lenis continuait sinon à faire défiler dessous.
+  useEffect(() => {
+    if (!active) return;
+
+    const lenis = (window as unknown as { __lenis?: { stop: () => void; start: () => void } })
+      .__lenis;
+    lenis?.stop();
+    document.body.style.overflow = "hidden";
+    closeRef.current?.focus();
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    document.addEventListener("keydown", onKey);
+
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+      lenis?.start();
+    };
+  }, [active, close]);
 
   return (
     <section id="galerie" className="relative bg-cloud py-28 md:py-36">
@@ -96,11 +141,10 @@ export default function Gallery({ content }: { content: GalerieContent }) {
           {content.items.map((img, i) => (
             <ParallaxTile
               key={i}
-              src={img.src}
-              alt={img.alt}
+              item={img}
               span={spanPattern[i % spanPattern.length]}
               index={i}
-              onOpen={setActive}
+              onOpen={open}
             />
           ))}
         </div>
@@ -109,28 +153,36 @@ export default function Gallery({ content }: { content: GalerieContent }) {
       <AnimatePresence>
         {active && (
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label={active.alt || content.title}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setActive(null)}
+            onClick={close}
             className="fixed inset-0 z-[9998] flex items-center justify-center bg-ink/70 p-6 backdrop-blur-xl"
           >
             <motion.img
-              key={active}
-              src={active}
-              alt=""
+              key={active.src}
+              src={active.src}
+              alt={active.alt}
               initial={{ scale: 0.85, opacity: 0, y: 30 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="max-h-[85vh] max-w-5xl rounded-2xl object-contain shadow-2xl"
+              // `max-w-5xl` seul ne suffisait pas : en élément flex, la largeur
+              // minimale automatique valait la largeur intrinsèque de la photo,
+              // qui débordait donc de 255 px de chaque côté sur un écran de
+              // 390 px. `min-w-0` + `max-w-full` la laissent rétrécir.
+              className="max-h-[85vh] w-auto min-w-0 max-w-full rounded-2xl object-contain shadow-2xl md:max-w-5xl"
             />
             <button
-              onClick={() => setActive(null)}
+              ref={closeRef}
+              onClick={close}
               aria-label="Fermer"
               className="absolute right-6 top-6 flex h-12 w-12 items-center justify-center rounded-full glass-strong text-ink"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <path
                   d="M6 6l12 12M18 6L6 18"
                   stroke="currentColor"

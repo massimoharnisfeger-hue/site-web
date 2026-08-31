@@ -67,7 +67,7 @@ export default function Testimonials({ content }: { content: AvisContent }) {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           {content.items.map((t, i) => (
             <motion.figure
-              key={t.name}
+              key={i}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-10%" }}

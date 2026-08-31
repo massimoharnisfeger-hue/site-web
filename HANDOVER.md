@@ -84,16 +84,12 @@ npm run dev              # http://localhost:3000
 npm run lint             # obligatoire avant tout commit
 npm run build            # obligatoire avant tout commit
 npm run generate:types   # après toute modification de globals/ ou collections/
+npm run verify           # message de réservation — attendu : 7/7
 ```
 
-**Ne jamais lancer `npm run generate:importmap`** : le fichier produit casse le
-build. La raison est écrite dans `app/(payload)/admin/importMap.js`.
-
-Vérifier la composition du message de réservation :
-
-```bash
-node_modules/.bin/tsx scripts/verifier-message.ts   # attendu : 7/7
-```
+**Ne jamais lancer `payload generate:importmap`** : le fichier produit casse le
+build. La raison est écrite dans `app/(payload)/admin/importMap.js`. Le script
+npm correspondant a été retiré pour qu'on ne le lance pas par accident.
 
 ---
 
@@ -138,7 +134,16 @@ obligatoires avant commit.
 - **Préchargeur.** Ramené de 6,5 s à 3,0 s. Le limiter à la première visite de la
   session le ferait tomber sous la seconde.
 - **Mise en cache.** La page est en rendu dynamique intégral : chaque visiteur
-  interroge MongoDB. Confortable pour éditer, coûteux pour la vitesse.
+  interroge MongoDB. `getHome()` est mémoïsée le temps d'une requête, mais deux
+  visiteurs successifs déclenchent toujours deux lectures.
+- **Montées de version majeures non faites**, volontairement : Next 16,
+  Tailwind 4, Framer Motion 13, ESLint 10, TypeScript 7, GraphQL 17. Chacune
+  demande une migration à part entière. Deux avis de sécurité restants
+  (`next`, et `postcss` embarqué dans Next) se ferment avec Next 16.
+- **`next/image` n'est pas utilisé** : les URL d'images viennent du back-office
+  et peuvent pointer sur un hôte non déclaré, ce qui ferait échouer le rendu.
+  `components/ui/Photo.tsx` fournit à la place `srcSet`, `sizes`, décodage
+  asynchrone et repli propre.
 - **Avis.** Les quatre témoignages sont des exemples. Les champs date et
   provenance existent et sont volontairement vides : y écrire « Google » sur un
   faux avis serait exactement le problème que l'audit reproche.

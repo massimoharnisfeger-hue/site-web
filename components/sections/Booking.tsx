@@ -1,9 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Activity, ReservationContent } from "@/lib/types";
 import { buildBookingMessage } from "@/lib/booking-message";
+
+// Le tunnel a quatre écrans écrits en dur. Se borner sur `content.steps` rendait
+// l'écran final inatteignable dès que l'éditeur supprimait une étape du
+// back-office, et produisait une carte vide sans navigation s'il en ajoutait
+// une. Le nombre d'écrans réels est la seule borne juste ; les libellés
+// restent, eux, entièrement éditables.
+const DERNIER_ECRAN = 3;
 
 const timeSlots = [
   "09:00",
@@ -155,6 +162,12 @@ export default function Booking({
   const telValide = phone.replace(/[^0-9]/g, "").length >= 8;
   const nomValide = name.trim().length > 1;
 
+  const erreurs = [
+    name.length > 0 && !nomValide && "Indiquez votre nom complet.",
+    email.length > 0 && !emailValide && "Cette adresse e-mail semble incomplète.",
+    phone.length > 0 && !telValide && "Ce numéro semble trop court.",
+  ].filter((e): e is string => typeof e === "string");
+
   const canNext =
     step === 0 ||
     (step === 1 && !!date && !!slot) ||
@@ -196,13 +209,22 @@ export default function Booking({
     return h * 60 + m <= auj.getHours() * 60 + auj.getMinutes();
   };
 
+  const titreFinalRef = useRef<HTMLHeadingElement>(null);
+
+  // Le bouton « Préparer ma demande » est démonté au passage à l'écran final :
+  // sans cela le focus retombait sur `document.body`, rien n'était annoncé, et
+  // la tabulation suivante repartait du haut du document.
+  useEffect(() => {
+    if (step === DERNIER_ECRAN) titreFinalRef.current?.focus();
+  }, [step]);
+
   // Un créneau devenu invalide après changement de date ne doit pas rester choisi.
   useEffect(() => {
     if (slot && creneauPasse(slot)) setSlot(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date]);
 
-  const next = () => setStep((s) => Math.min(content.steps.length - 1, s + 1));
+  const next = () => setStep((s) => Math.min(DERNIER_ECRAN, s + 1));
 
   return (
     <section
@@ -230,7 +252,7 @@ export default function Booking({
         {/* Step indicator */}
         <div className="mb-10 flex items-center justify-center gap-2 md:gap-4">
           {content.steps.map((label, i) => (
-            <div key={label} className="flex items-center gap-2 md:gap-4">
+            <div key={i} className="flex items-center gap-2 md:gap-4">
               <div className="flex flex-col items-center gap-2">
                 <div
                   className={`flex h-9 w-9 items-center justify-center rounded-full font-sans text-sm font-semibold transition-all duration-500 ${
@@ -365,6 +387,7 @@ export default function Booking({
                       aria-invalid={name.length > 0 && !nomValide}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      maxLength={120}
                       autoComplete="name"
                       placeholder="Camille Rivière"
                       className="mt-2 min-h-[48px] w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/65 focus:border-court focus:outline-none"
@@ -379,6 +402,7 @@ export default function Booking({
                       aria-invalid={email.length > 0 && !emailValide}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
+                      maxLength={160}
                       type="email"
                       autoComplete="email"
                       placeholder="camille@email.com"
@@ -393,6 +417,7 @@ export default function Booking({
                       id="tel-demande"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
+                      maxLength={30}
                       type="tel"
                       autoComplete="tel"
                       placeholder="06 12 34 56 78"
@@ -401,11 +426,18 @@ export default function Booking({
                     />
                   </div>
 
-                  <p aria-live="polite" className="min-h-[1.25rem] font-sans text-sm text-[#c0303a]">
-                    {name.length > 0 && !nomValide && "Indiquez votre nom complet."}
-                    {email.length > 0 && !emailValide && "Cette adresse e-mail semble incomplète."}
-                    {phone.length > 0 && !telValide && "Ce numéro semble trop court."}
-                  </p>
+                  {/* Rendus côte à côte, les trois messages se collaient : le
+                      lecteur d'écran annonçait « …nom complet.Cette adresse… ».
+                      Une liste les sépare à l'œil comme à l'oreille. */}
+                  <div aria-live="polite" className="min-h-[1.25rem]">
+                    {erreurs.length > 0 && (
+                      <ul className="space-y-1 font-sans text-sm text-[#c0303a]">
+                        {erreurs.map((e) => (
+                          <li key={e}>{e}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
 
                   <p className="rounded-xl border border-ink/10 bg-cloud px-4 py-3 font-sans text-xs text-ink/65">
                     {content.privacyNote}
@@ -428,7 +460,11 @@ export default function Booking({
                       </svg>
                     </motion.div>
 
-                    <h3 className="mt-5 font-display text-2xl font-semibold text-ink">
+                    <h3
+                      ref={titreFinalRef}
+                      tabIndex={-1}
+                      className="mt-5 font-display text-2xl font-semibold text-ink outline-none"
+                    >
                       {content.finalTitle}
                     </h3>
                     <p className="mt-3 max-w-md font-sans text-ink/65">
@@ -516,7 +552,7 @@ export default function Booking({
             </motion.div>
           </AnimatePresence>
 
-          {step < 3 && (
+          {step < DERNIER_ECRAN && (
             <div className="mt-8 flex items-center justify-between">
               <button
                 type="button"

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { getPayload } from "payload";
 import config from "@payload-config";
 
@@ -410,18 +411,53 @@ pourquoi aucune bannière de consentement ne vous est présentée.`,
 // ---------------------------------------------------------------------------
 // Helpers de fusion : valeur Payload si présente, sinon valeur par défaut.
 // ---------------------------------------------------------------------------
-type MediaLike = { url?: string | null } | string | number | null | undefined;
+type MediaSizes = { card?: { url?: string | null }; thumbnail?: { url?: string | null } };
+type MediaLike =
+  | { url?: string | null; alt?: string | null; sizes?: MediaSizes | null }
+  | string
+  | number
+  | null
+  | undefined;
 
-/** Renvoie l'URL d'une image uploadée, ou la valeur de secours. */
+/**
+ * Renvoie l'URL d'une image téléversée, ou la valeur de secours.
+ *
+ * `collections/Media.ts` fait générer par sharp une variante « card » de
+ * 1200 px à chaque envoi. On la sert de préférence à l'original : une photo
+ * prise au téléphone fait couramment 4000 px et 5 Mo, et c'est ce fichier-là qui
+ * partait jusqu'ici dans une vignette de 167 px.
+ */
 function imageUrl(value: MediaLike, fallback: string): string {
   if (!value) return fallback;
-  if (typeof value === "object" && "url" in value && value.url) return value.url;
-  return fallback;
+  if (typeof value !== "object") return fallback;
+  return value.sizes?.card?.url || value.url || fallback;
+}
+
+/** Texte alternatif saisi avec l'image dans la bibliothèque de médias. */
+function imageAlt(value: MediaLike, fallback: string): string {
+  if (!value || typeof value !== "object") return fallback;
+  return value.alt || fallback;
 }
 
 /** Renvoie `value` si non vide, sinon `fallback`. */
 function str(value: unknown, fallback: string): string {
   if (value === null || value === undefined || value === "") return fallback;
+  return String(value);
+}
+
+/**
+ * Comme `str`, mais un champ **vidé volontairement** reste vide.
+ *
+ * Réservé aux informations factuelles : coordonnées, adresse, mentions légales.
+ * Pour ces champs-là, `str` avait un effet pervers — le club sans ligne fixe qui
+ * effaçait le téléphone voyait réapparaître le numéro de démonstration, et
+ * l'éditeur qui vidait les mentions légales pour les réécrire republiait le
+ * SIRET fictif. Le principe II (« le site ne doit jamais être vide ») protège du
+ * silence de la base, pas d'un effacement délibéré : `undefined` et `null`
+ * retombent donc sur le repli, `""` non.
+ */
+function strOrEmpty(value: unknown, fallback: string): string {
+  if (value === null || value === undefined) return fallback;
   return String(value);
 }
 
@@ -469,14 +505,28 @@ async function resolveParcoursItems(g: any, d: HomeContent): Promise<StoryStep[]
       subtitle: str(it.subtitle, fallback?.subtitle ?? ""),
       text: str(it.text, fallback?.text ?? ""),
       image: uploaded[i] || photo?.url || (fallback?.image ?? ""),
-      imageAlt: uploaded[i] ? "" : photo?.alt ?? "",
+      // Le texte alternatif saisi avec la photo dans la bibliothèque de médias
+      // était jusqu'ici jeté dès qu'une image était téléversée : le carrousel
+      // retombait alors sur le titre de l'étape, déjà lu juste en dessous.
+      imageAlt: uploaded[i]
+        ? imageAlt(raw[i].image, "")
+        : photo?.alt ?? (fallback?.imageAlt ?? ""),
       credit: photo ? photo.creditName : "",
       creditLink: photo ? photo.creditLink : "",
     };
   });
 }
 
-export async function getHome(): Promise<HomeContent> {
+/**
+ * Lecture du contenu, mémoïsée le temps d'une requête.
+ *
+ * `generateMetadata` et le composant de page appelaient chacun `getHome()` :
+ * chaque affichage déclenchait donc deux lectures MongoDB et deux séries de
+ * recherches Unsplash, y compris pour les pages légales qui n'affichent aucune
+ * photo. `cache` de React les ramène à une seule, sans rien changer aux
+ * appelants.
+ */
+export const getHome = cache(async (): Promise<HomeContent> => {
   let g: Record<string, any> | null = null;
   try {
     const payload = await getPayload({ config });
@@ -551,7 +601,12 @@ export async function getHome(): Promise<HomeContent> {
       intro: str(g.galerie?.intro, d.galerie.intro),
       items: (arr(g.galerie?.items, d.galerie.items) as any[]).map((it, i) => ({
         src: imageUrl(it.src, d.galerie.items[i]?.src ?? ""),
-        alt: str(it.alt, d.galerie.items[i]?.alt ?? ""),
+        // Le texte alternatif saisi sur l'image elle-même sert de repli au
+        // champ de la galerie : l'éditeur n'a plus à le retaper.
+        alt: str(
+          it.alt,
+          imageAlt(it.src, d.galerie.items[i]?.alt ?? "")
+        ),
       })),
     },
     avis: {
@@ -584,11 +639,11 @@ export async function getHome(): Promise<HomeContent> {
     legal: {
       mentions: {
         title: str(g.legal?.mentions?.title, d.legal.mentions.title),
-        body: str(g.legal?.mentions?.body, d.legal.mentions.body),
+        body: strOrEmpty(g.legal?.mentions?.body, d.legal.mentions.body),
       },
       privacy: {
         title: str(g.legal?.privacy?.title, d.legal.privacy.title),
-        body: str(g.legal?.privacy?.body, d.legal.privacy.body),
+        body: strOrEmpty(g.legal?.privacy?.body, d.legal.privacy.body),
       },
     },
     reservation: {
@@ -611,13 +666,13 @@ export async function getHome(): Promise<HomeContent> {
       linksTitle: str(g.footer?.linksTitle, d.footer.linksTitle),
       contactTitle: str(g.footer?.contactTitle, d.footer.contactTitle),
       socialsTitle: str(g.footer?.socialsTitle, d.footer.socialsTitle),
-      email: str(g.footer?.email, d.footer.email),
-      phone: str(g.footer?.phone, d.footer.phone),
+      email: strOrEmpty(g.footer?.email, d.footer.email),
+      phone: strOrEmpty(g.footer?.phone, d.footer.phone),
       hours: str(g.footer?.hours, d.footer.hours),
-      addressStreet: str(g.footer?.addressStreet, d.footer.addressStreet),
-      addressZip: str(g.footer?.addressZip, d.footer.addressZip),
-      addressCity: str(g.footer?.addressCity, d.footer.addressCity),
-      mapsUrl: str(g.footer?.mapsUrl, d.footer.mapsUrl),
+      addressStreet: strOrEmpty(g.footer?.addressStreet, d.footer.addressStreet),
+      addressZip: strOrEmpty(g.footer?.addressZip, d.footer.addressZip),
+      addressCity: strOrEmpty(g.footer?.addressCity, d.footer.addressCity),
+      mapsUrl: strOrEmpty(g.footer?.mapsUrl, d.footer.mapsUrl),
       openingHours: (arr(g.footer?.openingHours, d.footer.openingHours) as any[]).map((it, i) => ({
         days: Array.isArray(it.days) && it.days.length
           ? (it.days as string[])
@@ -637,4 +692,4 @@ export async function getHome(): Promise<HomeContent> {
       })),
     },
   };
-}
+});
