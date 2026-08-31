@@ -321,6 +321,15 @@ Ce site ne dépose aucun cookie de mesure d'audience ni de publicité.`,
   reservation: {
     eyebrow: "Réservation",
     title: "Réservez votre terrain",
+    ctaLabel: "Préparer ma demande",
+    responseDelay: "sous 24 h ouvrées",
+    finalTitle: "Votre demande est prête",
+    finalBody:
+      "Envoyez le message ci-dessous au club. Nous vous rappelons {delai} pour bloquer le créneau. Aucun terrain n'est retenu avant ce rappel.",
+    paymentNote: "Aucun paiement en ligne : le règlement se fait sur place.",
+    privacyNote:
+      "Vos coordonnées ne sont pas enregistrées : elles servent uniquement à composer le message que vous enverrez vous-même.",
+    steps: ["Formule", "Créneau", "Coordonnées", "Votre message"],
   },
   footer: {
     ctaTitle: "Prêt à entrer sur le court ?",
@@ -546,6 +555,15 @@ export async function getHome(): Promise<HomeContent> {
     reservation: {
       eyebrow: str(g.reservation?.eyebrow, d.reservation.eyebrow),
       title: str(g.reservation?.title, d.reservation.title),
+      ctaLabel: str(g.reservation?.ctaLabel, d.reservation.ctaLabel),
+      responseDelay: str(g.reservation?.responseDelay, d.reservation.responseDelay),
+      finalTitle: str(g.reservation?.finalTitle, d.reservation.finalTitle),
+      finalBody: str(g.reservation?.finalBody, d.reservation.finalBody),
+      paymentNote: str(g.reservation?.paymentNote, d.reservation.paymentNote),
+      privacyNote: str(g.reservation?.privacyNote, d.reservation.privacyNote),
+      steps: (arr(g.reservation?.steps, d.reservation.steps) as any[]).map((it, i) =>
+        typeof it === "string" ? it : str(it?.label, d.reservation.steps[i] ?? "")
+      ),
     },
     footer: {
       ctaTitle: str(g.footer?.ctaTitle, d.footer.ctaTitle),

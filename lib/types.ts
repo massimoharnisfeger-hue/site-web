@@ -91,7 +91,17 @@ export type AvisContent = {
   title: string;
   items: Testimonial[];
 };
-export type ReservationContent = { eyebrow: string; title: string };
+export type ReservationContent = {
+  eyebrow: string;
+  title: string;
+  ctaLabel: string;
+  responseDelay: string;
+  finalTitle: string;
+  finalBody: string;
+  paymentNote: string;
+  privacyNote: string;
+  steps: string[];
+};
 export type NavContent = { items: NavItem[] };
 
 export type FooterContent = {

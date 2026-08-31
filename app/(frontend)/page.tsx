@@ -72,7 +72,12 @@ export default async function Home() {
         <Gallery content={home.galerie} />
         <Testimonials content={home.avis} />
         <Faq content={home.faq} />
-        <Booking content={home.reservation} activities={home.offres.items} />
+        <Booking
+          content={home.reservation}
+          activities={home.offres.items}
+          clubEmail={home.footer.email}
+          clubPhone={home.footer.phone}
+        />
       </main>
       <Footer content={home.footer} brand={home.brand} links={home.nav.items} />
     </>

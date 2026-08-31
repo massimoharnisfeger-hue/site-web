@@ -375,6 +375,30 @@ export const Home: GlobalConfig = {
               fields: [
                 { name: "eyebrow", type: "text", label: "Sur-titre" },
                 { name: "title", type: "text", label: "Titre" },
+                { name: "ctaLabel", type: "text", label: "Bouton de la dernière étape" },
+                {
+                  name: "responseDelay",
+                  type: "text",
+                  label: "Délai de réponse annoncé",
+                  admin: { description: "Ex. « sous 24 h ouvrées ». Repris tel quel dans le message final." },
+                },
+                { name: "finalTitle", type: "text", label: "Écran final — titre" },
+                {
+                  name: "finalBody",
+                  type: "textarea",
+                  label: "Écran final — ce qui va se passer",
+                  admin: { description: "{delai} est remplacé par le délai ci-dessus." },
+                },
+                { name: "paymentNote", type: "text", label: "Mention sur le règlement" },
+                { name: "privacyNote", type: "textarea", label: "Mention sur les coordonnées" },
+                {
+                  name: "steps",
+                  type: "array",
+                  label: "Libellés des étapes",
+                  labels: { singular: "Étape", plural: "Étapes" },
+                  admin: { description: "Quatre étapes, dans l'ordre. Évitez « Confirmation » : rien n'est confirmé à ce stade." },
+                  fields: [{ name: "label", type: "text", label: "Libellé" }],
+                },
               ],
             },
             {

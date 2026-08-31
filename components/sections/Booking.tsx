@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Activity, ReservationContent } from "@/lib/types";
+import { buildBookingMessage } from "@/lib/booking-message";
 
-const steps = ["Formule", "Créneau", "Coordonnées", "Confirmation"];
 const timeSlots = [
   "09:00",
   "10:30",
@@ -58,7 +58,7 @@ function MiniCalendar({
           onClick={() =>
             setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))
           }
-          className="flex h-8 w-8 items-center justify-center rounded-full text-ink hover:bg-ink/5"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-ink hover:bg-ink/5"
         >
           ‹
         </button>
@@ -71,7 +71,7 @@ function MiniCalendar({
           onClick={() =>
             setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))
           }
-          className="flex h-8 w-8 items-center justify-center rounded-full text-ink hover:bg-ink/5"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-ink hover:bg-ink/5"
         >
           ›
         </button>
@@ -93,7 +93,7 @@ function MiniCalendar({
               type="button"
               disabled={past}
               onClick={() => onSelect(d)}
-              className={`aspect-square rounded-lg font-sans text-sm transition-all duration-200 ${
+              className={`min-h-[44px] w-full rounded-lg font-sans text-sm transition-all duration-200 ${
                 past
                   ? "cursor-not-allowed text-ink/25"
                   : isSel
@@ -113,9 +113,13 @@ function MiniCalendar({
 export default function Booking({
   content,
   activities,
+  clubEmail,
+  clubPhone,
 }: {
   content: ReservationContent;
   activities: Activity[];
+  clubEmail: string;
+  clubPhone: string;
 }) {
   const [step, setStep] = useState(0);
   const [activityIdx, setActivityIdx] = useState(
@@ -139,26 +143,66 @@ export default function Booking({
   const [players, setPlayers] = useState(4);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [processing, setProcessing] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [copie, setCopie] = useState(false);
 
   const activity = activities[activityIdx];
+
+  // Validation permissive (décision D5) : un faux négatif coûte une demande
+  // perdue, un faux positif un rappel qui échoue alors que le club a deux
+  // moyens de contact.
+  const emailValide = /.+@.+\..+/.test(email.trim());
+  const telValide = phone.replace(/[^0-9]/g, "").length >= 8;
+  const nomValide = name.trim().length > 1;
 
   const canNext =
     step === 0 ||
     (step === 1 && !!date && !!slot) ||
-    (step === 2 && /.+@.+\..+/.test(email) && name.trim().length > 1);
+    (step === 2 && emailValide && telValide && nomValide);
 
-  const next = () => {
-    if (step === 2) {
-      setProcessing(true);
-      setTimeout(() => {
-        setProcessing(false);
-        setStep(3);
-      }, 1600);
-      return;
+  const message = buildBookingMessage(
+    {
+      formule: activity?.name ?? "",
+      date: date ? date.toLocaleDateString("fr-FR") : "",
+      creneau: slot ?? "",
+      joueurs: players,
+      nom: name.trim(),
+      email: email.trim(),
+      telephone: phone.trim(),
+    },
+    clubEmail
+  );
+
+  const copier = async () => {
+    try {
+      await navigator.clipboard.writeText(message.corps);
+      setCopie(true);
+      window.setTimeout(() => setCopie(false), 2500);
+    } catch {
+      // Presse-papiers indisponible : le texte reste sélectionnable à l'écran.
     }
-    setStep((s) => Math.min(steps.length - 1, s + 1));
   };
+
+  /**
+   * Un créneau du jour même déjà écoulé ne peut pas être demandé (FR-008).
+   * La comparaison se fait sur l'heure locale du visiteur, ce qui est le
+   * comportement attendu pour un club de quartier.
+   */
+  const creneauPasse = (heure: string) => {
+    if (!date) return false;
+    const auj = new Date();
+    if (date.toDateString() !== auj.toDateString()) return false;
+    const [h, m] = heure.split(":").map(Number);
+    return h * 60 + m <= auj.getHours() * 60 + auj.getMinutes();
+  };
+
+  // Un créneau devenu invalide après changement de date ne doit pas rester choisi.
+  useEffect(() => {
+    if (slot && creneauPasse(slot)) setSlot(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [date]);
+
+  const next = () => setStep((s) => Math.min(content.steps.length - 1, s + 1));
 
   return (
     <section
@@ -185,7 +229,7 @@ export default function Booking({
 
         {/* Step indicator */}
         <div className="mb-10 flex items-center justify-center gap-2 md:gap-4">
-          {steps.map((label, i) => (
+          {content.steps.map((label, i) => (
             <div key={label} className="flex items-center gap-2 md:gap-4">
               <div className="flex flex-col items-center gap-2">
                 <div
@@ -201,7 +245,7 @@ export default function Booking({
                   {label}
                 </span>
               </div>
-              {i < steps.length - 1 && (
+              {i < content.steps.length - 1 && (
                 <div className="h-px w-6 bg-ink/15 md:w-16">
                   <div
                     className="h-full bg-court transition-all duration-500"
@@ -258,20 +302,26 @@ export default function Booking({
                         Créneau
                       </label>
                       <div className="mt-3 grid grid-cols-4 gap-2">
-                        {timeSlots.map((s) => (
-                          <button
-                            key={s}
-                            type="button"
-                            onClick={() => setSlot(s)}
-                            className={`rounded-xl border py-2 font-sans text-sm transition-all duration-200 ${
-                              slot === s
-                                ? "border-court bg-court text-white"
-                                : "border-ink/10 text-ink/80 hover:border-court/40"
-                            }`}
-                          >
-                            {s}
-                          </button>
-                        ))}
+                        {timeSlots.map((s) => {
+                          const passe = creneauPasse(s);
+                          return (
+                            <button
+                              key={s}
+                              type="button"
+                              disabled={passe}
+                              onClick={() => setSlot(s)}
+                              className={`min-h-[44px] rounded-xl border font-sans text-sm transition-all duration-200 ${
+                                passe
+                                  ? "cursor-not-allowed border-ink/5 text-ink/25"
+                                  : slot === s
+                                    ? "border-court bg-court text-white"
+                                    : "border-ink/10 text-ink/80 hover:border-court/40"
+                              }`}
+                            >
+                              {s}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                     <div>
@@ -307,66 +357,159 @@ export default function Booking({
               {step === 2 && (
                 <div className="grid grid-cols-1 gap-4">
                   <div>
-                    <label className="font-sans text-sm text-ink/65">
+                    <label className="font-sans text-sm text-ink/65" htmlFor="nom-demande">
                       Nom complet
                     </label>
                     <input
+                      id="nom-demande"
+                      aria-invalid={name.length > 0 && !nomValide}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       autoComplete="name"
                       placeholder="Camille Rivière"
-                      className="mt-2 w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/35 focus:border-court focus:outline-none"
+                      className="mt-2 min-h-[48px] w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/40 focus:border-court focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="font-sans text-sm text-ink/65">
+                    <label className="font-sans text-sm text-ink/65" htmlFor="email-demande">
                       E-mail
                     </label>
                     <input
+                      id="email-demande"
+                      aria-invalid={email.length > 0 && !emailValide}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       type="email"
                       autoComplete="email"
                       placeholder="camille@email.com"
-                      className="mt-2 w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/35 focus:border-court focus:outline-none"
+                      className="mt-2 min-h-[48px] w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/40 focus:border-court focus:outline-none"
                     />
                   </div>
-                  <div className="rounded-xl border border-ink/10 bg-cloud px-4 py-3 font-sans text-xs text-ink/50">
-                    Paiement sécurisé simulé pour la démo — branchez Stripe
-                    Checkout ici pour encaisser réellement.
+                  <div>
+                    <label className="font-sans text-sm text-ink/65" htmlFor="tel-demande">
+                      Téléphone
+                    </label>
+                    <input
+                      id="tel-demande"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      type="tel"
+                      autoComplete="tel"
+                      placeholder="06 12 34 56 78"
+                      aria-invalid={phone.length > 0 && !telValide}
+                      className="mt-2 min-h-[48px] w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/40 focus:border-court focus:outline-none focus:ring-2 focus:ring-court/40"
+                    />
                   </div>
+
+                  <p aria-live="polite" className="min-h-[1.25rem] font-sans text-sm text-[#c0303a]">
+                    {name.length > 0 && !nomValide && "Indiquez votre nom complet."}
+                    {email.length > 0 && !emailValide && "Cette adresse e-mail semble incomplète."}
+                    {phone.length > 0 && !telValide && "Ce numéro semble trop court."}
+                  </p>
+
+                  <p className="rounded-xl border border-ink/10 bg-cloud px-4 py-3 font-sans text-xs text-ink/65">
+                    {content.privacyNote}
+                  </p>
                 </div>
               )}
 
               {step === 3 && (
-                <div className="flex flex-col items-center py-6 text-center">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 200, damping: 12 }}
-                    className="flex h-20 w-20 items-center justify-center rounded-full bg-court text-white"
-                  >
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M5 13l4 4L19 7"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </motion.div>
-                  <h3 className="mt-6 font-display text-2xl font-semibold text-ink">
-                    Terrain réservé&nbsp;!
-                  </h3>
-                  <p className="mt-3 max-w-md font-sans text-ink/65">
-                    {name}, votre {activity.name.toLowerCase()} pour {players}{" "}
-                    joueur{players > 1 ? "s" : ""}
-                    {date
-                      ? ` le ${date.toLocaleDateString("fr-FR")}`
-                      : ""}
-                    {slot ? ` à ${slot}` : ""} est confirmé. Un récapitulatif part
-                    vers {email}. À très vite sur le court&nbsp;🎾
+                <div className="py-2">
+                  <div className="flex flex-col items-center text-center">
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      className="flex h-16 w-16 items-center justify-center rounded-full bg-court text-white"
+                      aria-hidden
+                    >
+                      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l9 6 9-6M3 7h18v10H3z" />
+                      </svg>
+                    </motion.div>
+
+                    <h3 className="mt-5 font-display text-2xl font-semibold text-ink">
+                      {content.finalTitle}
+                    </h3>
+                    <p className="mt-3 max-w-md font-sans text-ink/65">
+                      {content.finalBody.replace("{delai}", content.responseDelay)}
+                    </p>
+                  </div>
+
+                  {/* Rappel de ce que le visiteur a saisi (FR-004) */}
+                  <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-3 rounded-2xl border border-ink/10 bg-cloud px-5 py-4 font-sans text-sm">
+                    <dt className="text-ink/65">Formule</dt>
+                    <dd className="text-right font-medium text-ink">{activity.name}</dd>
+                    <dt className="text-ink/65">Date</dt>
+                    <dd className="text-right font-medium text-ink">
+                      {date ? date.toLocaleDateString("fr-FR") : "—"}
+                    </dd>
+                    <dt className="text-ink/65">Créneau</dt>
+                    <dd className="text-right font-medium text-ink">{slot ?? "—"}</dd>
+                    <dt className="text-ink/65">Joueurs</dt>
+                    <dd className="text-right font-medium text-ink">{players}</dd>
+                  </dl>
+
+                  {/* Le texte est le chemin nominal, pas un repli (décision D1) */}
+                  <div className="mt-6">
+                    <div className="mb-2 flex items-center justify-between gap-4">
+                      <span className="font-sans text-sm font-medium text-ink">
+                        Le message à envoyer
+                      </span>
+                      <button
+                        type="button"
+                        onClick={copier}
+                        data-cursor="hover"
+                        className="min-h-[44px] rounded-full border border-ink/15 px-4 font-sans text-xs font-medium text-ink transition-colors hover:border-court hover:text-court focus-visible:ring-2 focus-visible:ring-court focus-visible:outline-none"
+                      >
+                        {copie ? "Copié" : "Copier le texte"}
+                      </button>
+                    </div>
+                    <pre className="max-h-56 overflow-auto whitespace-pre-wrap rounded-2xl border border-ink/10 bg-cloud px-5 py-4 font-sans text-sm leading-relaxed text-ink/80 selection:bg-court/20">
+{message.corps}
+                    </pre>
+                    <p aria-live="polite" className="sr-only">
+                      {copie ? "Message copié dans le presse-papiers." : ""}
+                    </p>
+                  </div>
+
+                  <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                    {message.mailtoUrl && (
+                      <a
+                        href={message.mailtoUrl}
+                        data-cursor="hover"
+                        className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-full bg-court px-6 font-sans text-sm font-medium text-white transition-transform duration-300 hover:scale-[1.02] focus-visible:ring-2 focus-visible:ring-court focus-visible:ring-offset-2 focus-visible:outline-none"
+                      >
+                        Ouvrir ma messagerie
+                      </a>
+                    )}
+                    {clubPhone && (
+                      <a
+                        href={`tel:${clubPhone.replace(/\s/g, "")}`}
+                        data-cursor="hover"
+                        className="inline-flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-full border border-court px-6 font-sans text-sm font-medium text-court transition-colors hover:bg-court/5 focus-visible:ring-2 focus-visible:ring-court focus-visible:ring-offset-2 focus-visible:outline-none"
+                      >
+                        Appeler le club
+                      </a>
+                    )}
+                  </div>
+
+                  {/* Sans messagerie configurée, tout reste accessible ici (FR-009b) */}
+                  <p className="mt-5 font-sans text-xs leading-relaxed text-ink/65">
+                    Si votre messagerie ne s&apos;ouvre pas, copiez le texte ci-dessus
+                    et envoyez-le à{" "}
+                    <a href={`mailto:${clubEmail}`} className="font-medium text-court underline underline-offset-2">
+                      {clubEmail}
+                    </a>
+                    {clubPhone && (
+                      <>
+                        {" "}ou appelez le{" "}
+                        <a href={`tel:${clubPhone.replace(/\s/g, "")}`} className="font-medium text-court underline underline-offset-2">
+                          {clubPhone}
+                        </a>
+                      </>
+                    )}
+                    . {content.paymentNote}
                   </p>
                 </div>
               )}
@@ -379,26 +522,17 @@ export default function Booking({
                 type="button"
                 onClick={() => setStep((s) => Math.max(0, s - 1))}
                 disabled={step === 0}
-                className="font-sans text-sm text-ink/50 transition-colors hover:text-ink disabled:opacity-0"
+                className="min-h-[44px] px-2 font-sans text-sm text-ink/65 transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-court focus-visible:outline-none disabled:opacity-0"
               >
                 ← Retour
               </button>
               <button
                 type="button"
                 onClick={next}
-                disabled={!canNext || processing}
-                className="inline-flex items-center gap-2 rounded-full bg-court px-7 py-3 font-sans text-sm font-medium text-white transition-all duration-300 hover:scale-[1.03] disabled:cursor-not-allowed disabled:opacity-40"
+                disabled={!canNext}
+                className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-court px-7 font-sans text-sm font-medium text-white transition-all duration-300 hover:scale-[1.03] focus-visible:ring-2 focus-visible:ring-court focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-40"
               >
-                {processing ? (
-                  <>
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                    Paiement…
-                  </>
-                ) : step === 2 ? (
-                  "Confirmer & payer"
-                ) : (
-                  "Continuer"
-                )}
+                {step === 2 ? content.ctaLabel : "Continuer"}
               </button>
             </div>
           )}
