@@ -26,10 +26,14 @@ const WIDTHS = [200, 400, 600, 900, 1200, 1600];
 function buildSrcSet(src: string): string | undefined {
   let url: URL;
   try {
-    url = new URL(src, "https://placeholder.invalid");
+    // Sans base : une URL relative (média Payload servi en local) échoue ici et
+    // ressort sans `srcSet`. Lui donner une base bidon aurait produit un
+    // `srcSet` pointant sur cet hôte imaginaire.
+    url = new URL(src);
   } catch {
     return undefined;
   }
+  if (url.protocol !== "https:" && url.protocol !== "http:") return undefined;
   if (!url.searchParams.has("w")) return undefined;
 
   const max = Number(url.searchParams.get("w")) || WIDTHS[WIDTHS.length - 1];
@@ -65,11 +69,15 @@ export default function Photo({
   /** Image d'ambiance : une miniature suffit, elle est floutée ou assombrie. */
   quiet?: boolean;
 }) {
-  const [broken, setBroken] = useState(false);
+  // On mémorise *quelle* source a échoué, et non un simple booléen : le fond
+  // d'ambiance du carrousel réutilise la même instance à chaque étape, et un
+  // seul échec l'aurait fait disparaître définitivement, y compris pour les
+  // photos suivantes qui, elles, se chargent très bien.
+  const [srcCassee, setSrcCassee] = useState<string | null>(null);
 
   // Une URL vide déclencherait une requête vers la page elle-même sur certains
   // navigateurs, et afficherait une icône cassée sur les autres.
-  if (!src || broken) return null;
+  if (!src || srcCassee === src) return null;
 
   const resolved = quiet ? src.replace(/([?&])w=\d+/, "$1w=64") : src;
 
@@ -85,7 +93,7 @@ export default function Photo({
       fetchPriority={priority ? "high" : undefined}
       onError={(e: SyntheticEvent<HTMLImageElement, Event>) => {
         e.currentTarget.style.display = "none";
-        setBroken(true);
+        setSrcCassee(src);
       }}
       className={className}
       style={style}

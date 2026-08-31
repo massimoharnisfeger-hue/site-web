@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
  * Premium loading screen, light & sporty: an animated counter rising 0→100
  * with a progress line and a bouncing padel ball, then a curtain reveal.
  */
-export default function Preloader() {
+export default function Preloader({ brand }: { brand: string }) {
   const [progress, setProgress] = useState(0);
   const [done, setDone] = useState(false);
 
@@ -16,30 +16,65 @@ export default function Preloader() {
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    if (reduced) {
+    // Déjà vu pendant cette session de navigation : le rideau n'apprend plus
+    // rien au visiteur et ne fait que retarder l'affichage. Le stockage de
+    // session peut lever en navigation privée, d'où le try.
+    let dejaVu = false;
+    try {
+      dejaVu = sessionStorage.getItem("ph-preloader") === "1";
+    } catch {
+      dejaVu = false;
+    }
+
+    if (reduced || dejaVu) {
       setProgress(100);
-      const t = setTimeout(() => setDone(true), 200);
+      const t = setTimeout(() => setDone(true), reduced ? 200 : 0);
       return () => clearTimeout(t);
     }
 
-    // Durée fixe et courte. L'ancienne version avançait par incréments
-    // aléatoires et retenait le contenu 6,5 s : c'est du temps volé au
-    // visiteur, et le principal poste d'abandon sur mobile.
-    const DURATION = 1100;
+    try {
+      sessionStorage.setItem("ph-preloader", "1");
+    } catch {
+      // Sans stockage, le rideau se réaffichera : sans gravité.
+    }
+
+    // 1100 ms était une durée *fixe* : le rideau retenait le contenu même
+    // lorsque la page était prête en 300 ms, ce qui plaçait un plancher
+    // artificiel sur le LCP mesuré par Google. C'est désormais un plafond. Le
+    // rideau se lève dès que le document est prêt, sans descendre sous MINIMUM,
+    // le temps que l'animation soit lisible plutôt que clignotante.
+    const PLAFOND = 1100;
+    const MINIMUM = 450;
     const HOLD = 200;
+
     let raf = 0;
     let hold = 0;
+    let fini = false;
     const start = performance.now();
 
+    const terminer = () => {
+      if (fini) return;
+      fini = true;
+      hold = window.setTimeout(() => setDone(true), HOLD);
+    };
+
     const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / DURATION);
+      const ecoule = now - start;
+      // « interactive » et non « complete » : `complete` attend toutes les
+      // sous-ressources, y compris la feuille de police servie par un tiers.
+      // Si ce tiers rame ou est bloqué, le rideau restait jusqu'au plafond
+      // alors que la page était utilisable depuis longtemps.
+      const pret = document.readyState !== "loading";
+      const t = Math.min(1, ecoule / PLAFOND);
       // Décélération cubique : la barre part vite puis s'apaise.
       setProgress(Math.round((1 - Math.pow(1 - t, 3)) * 100));
-      if (t < 1) {
-        raf = requestAnimationFrame(tick);
+
+      if (t >= 1 || (pret && ecoule >= MINIMUM)) {
+        setProgress(100);
+        terminer();
         return;
       }
-      hold = window.setTimeout(() => setDone(true), HOLD);
+      raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
 
@@ -68,7 +103,7 @@ export default function Preloader() {
               transition={{ delay: 0.15, duration: 0.7 }}
               className="font-sans text-xs uppercase tracking-[0.5em] text-court"
             >
-              Padel House
+              {brand}
             </motion.span>
 
             {/* Bouncing padel ball */}

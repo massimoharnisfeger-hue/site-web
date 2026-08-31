@@ -40,6 +40,7 @@ export default function Footer({
       <div className="pointer-events-none absolute inset-0 -z-0">
         <div className="absolute inset-0 animate-gradient-pan bg-[length:200%_200%] bg-gradient-to-tr from-ink via-court to-teal opacity-40" />
         <svg
+          aria-hidden
           viewBox="0 0 1440 320"
           className="absolute bottom-0 w-full opacity-25"
           preserveAspectRatio="none"
@@ -81,7 +82,7 @@ export default function Footer({
             <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 bg-white/5">
               <div className="absolute inset-0 bg-gradient-to-br from-court/40 to-ink" />
               {/* stylized court lines */}
-              <svg viewBox="0 0 100 75" className="absolute inset-0 h-full w-full opacity-40">
+              <svg viewBox="0 0 100 75" className="absolute inset-0 h-full w-full opacity-40" aria-hidden>
                 <rect x="14" y="12" width="72" height="51" rx="2" fill="none" stroke="#CDFF3A" strokeWidth="0.5" />
                 <line x1="50" y1="12" x2="50" y2="63" stroke="#CDFF3A" strokeWidth="0.5" />
                 <line x1="14" y1="37.5" x2="86" y2="37.5" stroke="#CDFF3A" strokeWidth="0.3" />
@@ -185,7 +186,7 @@ export default function Footer({
                     data-cursor="hover"
                     className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-all duration-300 hover:scale-110 hover:bg-lime hover:text-ink"
                   >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                       <path d={socialPaths[s.name] || socialPaths.Instagram} />
                     </svg>
                   </a>

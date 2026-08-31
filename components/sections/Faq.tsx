@@ -36,7 +36,7 @@ function Row({
               open ? "rotate-45 border-court bg-court text-white" : "text-ink/65"
             }`}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} aria-hidden>
               <path strokeLinecap="round" d="M12 5v14M5 12h14" />
             </svg>
           </span>

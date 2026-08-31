@@ -144,6 +144,10 @@ export default function WebGLBackdrop() {
       lastW = window.innerWidth;
       renderer.setSize(window.innerWidth, window.innerHeight);
       uniforms.uRes.value.set(window.innerWidth, window.innerHeight);
+      // `setSize` réalloue le tampon, donc l'efface. Sans boucle d'animation
+      // pour le repeindre — c'est le cas en mouvement réduit — le fond serait
+      // resté vide après une rotation de l'écran.
+      if (reduced) renderer.render(scene, camera);
     };
     window.addEventListener("resize", onResize);
 

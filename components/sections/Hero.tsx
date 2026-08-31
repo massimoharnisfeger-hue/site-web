@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import SplitText from "@/components/fx/SplitText";
 import MagneticButton from "@/components/ui/MagneticButton";
 import Lenis from "lenis";
@@ -39,12 +39,29 @@ export default function Hero({ content }: { content: HeroContent }) {
     else el?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Mesuré après montage : le rendu serveur ne connaît pas la largeur. Le
+  // nuancier procédural s'affiche donc en premier, et la vidéo ne le remplace
+  // que sur grand écran — jamais l'inverse, qui ferait charger le lecteur
+  // avant de le jeter.
+  const [grandEcran, setGrandEcran] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const onChange = () => setGrandEcran(mq.matches);
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
   return (
     <section
       ref={ref}
       className="relative h-[100svh] w-full overflow-hidden bg-cloud"
     >
-      {ytId ? (
+      {/* La vidéo de fond n'est montée qu'à partir de 768 px : en portrait,
+          seuls 24 % de la largeur du cadre 16/9 sont visibles, pour environ
+          1 Mo de JavaScript tiers placé sur la ressource la plus critique de
+          la page. Sur téléphone, le nuancier procédural prend le relais. */}
+      {ytId && grandEcran ? (
         <div className="pointer-events-none absolute inset-0 -z-0 overflow-hidden">
           <iframe
             title="Vidéo de fond"
@@ -64,8 +81,26 @@ export default function Hero({ content }: { content: HeroContent }) {
 
       <motion.div
         style={{ y: textY, opacity: textOpacity }}
-        className="relative z-10 mx-auto flex h-full max-w-6xl flex-col items-center justify-center px-5 text-center"
+        // Le contenu est centré dans l'espace **sous** l'en-tête, et non dans
+        // le viewport entier. La hauteur réelle de l'en-tête est publiée par la
+        // barre de navigation dans `--entete-h` — elle grandit quand le bandeau
+        // d'annonce est activé, ou quand son texte passe sur deux lignes.
+        //
+        // Sans cette réserve, sur un écran court (iPhone SE, Android 360×640)
+        // le sur-titre passait derrière la barre. Un seuil de hauteur avait
+        // d'abord été essayé : il laissait passer le cas « écran de 844 px avec
+        // bandeau activé », où l'en-tête atteint 166 px. Réserver sans
+        // condition est la seule règle qui tienne pour toutes les combinaisons.
+        //
+        // Le centrage se fait par `my-auto` sur le bloc intérieur, et non par
+        // `justify-center` : quand le contenu dépasse la hauteur disponible —
+        // un écran de 568 px, où le titre s'enroule sur plus de lignes — le
+        // centrage flex le rognait des deux côtés et faisait repasser le
+        // sur-titre sous la barre. Les marges automatiques, elles, se réduisent
+        // à zéro et le contenu s'aligne simplement en haut.
+        className="relative z-10 mx-auto flex h-full max-w-6xl flex-col items-center px-5 pt-[var(--entete-h,102px)] text-center"
       >
+        <div className="my-auto flex w-full flex-col items-center">
         <motion.span
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -100,7 +135,7 @@ export default function Hero({ content }: { content: HeroContent }) {
         >
           <MagneticButton href="#reservation">
             {content.ctaPrimary}
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
               <path
                 d="M5 12h14M13 6l6 6-6 6"
                 stroke="currentColor"
@@ -114,6 +149,7 @@ export default function Hero({ content }: { content: HeroContent }) {
             {content.ctaSecondary}
           </MagneticButton>
         </motion.div>
+        </div>
       </motion.div>
 
       {/* Scroll cue */}

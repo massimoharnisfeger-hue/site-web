@@ -84,7 +84,7 @@ npm run dev              # http://localhost:3000
 npm run lint             # obligatoire avant tout commit
 npm run build            # obligatoire avant tout commit
 npm run generate:types   # après toute modification de globals/ ou collections/
-npm run verify           # message de réservation — attendu : 7/7
+npm run verify           # message de réservation — attendu : 10/10
 ```
 
 **Ne jamais lancer `payload generate:importmap`** : le fichier produit casse le
@@ -131,8 +131,6 @@ obligatoires avant commit.
 - **Polices auto-hébergées.** Clash Display et General Sans viennent encore de
   Fontshare par lien externe. Les passer sur `next/font/local` supprimerait une
   dépendance réseau au premier affichage.
-- **Préchargeur.** Ramené de 6,5 s à 3,0 s. Le limiter à la première visite de la
-  session le ferait tomber sous la seconde.
 - **Mise en cache.** La page est en rendu dynamique intégral : chaque visiteur
   interroge MongoDB. `getHome()` est mémoïsée le temps d'une requête, mais deux
   visiteurs successifs déclenchent toujours deux lectures.

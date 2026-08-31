@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Lenis from "lenis";
 import type { AnnouncementContent, NavItem } from "@/lib/types";
@@ -19,6 +19,28 @@ export default function Nav({
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
+  const enteteRef = useRef<HTMLElement>(null);
+
+  // La hauteur réelle de l'en-tête est publiée en variable CSS : le hero s'en
+  // sert pour réserver la place. Un nombre écrit en dur serait faux dès que le
+  // bandeau d'annonce est activé, ou que son texte passe sur deux lignes.
+  useEffect(() => {
+    const el = enteteRef.current;
+    if (!el) return;
+    const publier = () =>
+      document.documentElement.style.setProperty(
+        "--entete-h",
+        `${Math.round(el.getBoundingClientRect().height)}px`
+      );
+    publier();
+    const ro = new ResizeObserver(publier);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      document.documentElement.style.removeProperty("--entete-h");
+    };
+  }, []);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
@@ -36,6 +58,7 @@ export default function Nav({
 
   return (
     <motion.header
+      ref={enteteRef}
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 1.4, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}

@@ -38,27 +38,88 @@ function ligne(etiquette: string, valeur: string) {
   return `${etiquette.padEnd(10)}: ${valeur}`;
 }
 
+/**
+ * Plafonds par champ, exprimés en **longueur encodée** et non en caractères.
+ *
+ * Compter les points de code ne suffit pas : un emoji pèse quatre octets, donc
+ * douze caractères une fois passé dans `encodeURIComponent`. Cent vingt emoji
+ * dans le nom d'une formule suffisaient à faire déborder le lien, et la
+ * troncature finale — qui coupe par la fin — supprimait alors exactement le
+ * bloc de coordonnées. Le club recevait une demande sans aucun moyen de
+ * rappeler le visiteur, soit l'inverse du but.
+ *
+ * Les plafonds sont dimensionnés pour que le pire cas tienne sous MAX_URL.
+ * Attention : formule, date et créneau comptent **deux fois**, puisqu'ils
+ * figurent dans l'objet autant que dans le corps. Le pire cas vaut donc
+ * 2 × (160 + 40 + 40) + 180 + 150 + 50 = 860, auxquels s'ajoutent le texte fixe
+ * et l'en-tête `mailto:`. Il reste ainsi de la marge pour une adresse de club
+ * longue, qui n'est ni encodée ni bornée. La troncature en devient
+ * inatteignable, et les coordonnées survivent par construction : `npm run
+ * verify` le vérifie sur 20 000 cas aléatoires.
+ */
+const PLAFONDS = {
+  formule: 160,
+  date: 40,
+  creneau: 40,
+  nom: 180,
+  email: 150,
+  telephone: 50,
+} as const;
+
+/**
+ * Ramène une valeur sous `maxEncode` caractères une fois encodée, en retirant
+ * des points de code entiers — jamais la moitié d'une paire de substitution,
+ * qui ferait lever `URIError` à l'encodage.
+ */
+function borner(valeur: string, maxEncode: number): string {
+  const points = [...String(valeur ?? "")];
+  if (encodeURIComponent(points.join("")).length <= maxEncode) {
+    return points.join("");
+  }
+  let bas = 0;
+  let haut = points.length;
+  while (bas < haut) {
+    const milieu = Math.ceil((bas + haut) / 2);
+    if (encodeURIComponent(points.slice(0, milieu).join("")).length <= maxEncode) {
+      bas = milieu;
+    } else {
+      haut = milieu - 1;
+    }
+  }
+  return points.slice(0, bas).join("");
+}
+
 export function buildBookingMessage(
   demande: BookingRequest,
   emailClub: string
 ): BookingMessage {
-  const objet = `Demande de réservation — ${demande.formule} — ${demande.date} ${demande.creneau}`.trim();
+  const d = {
+    formule: borner(demande.formule, PLAFONDS.formule),
+    date: borner(demande.date, PLAFONDS.date),
+    creneau: borner(demande.creneau, PLAFONDS.creneau),
+    joueurs: Number.isFinite(demande.joueurs) ? demande.joueurs : 0,
+    nom: borner(demande.nom, PLAFONDS.nom),
+    email: borner(demande.email, PLAFONDS.email),
+    telephone: borner(demande.telephone, PLAFONDS.telephone),
+  };
+
+  const objet = `Demande de réservation — ${d.formule} — ${d.date} ${d.creneau}`.trim();
 
   const corps = [
     "Bonjour,",
     "",
     "Je souhaite réserver :",
     "",
-    ligne("Formule", demande.formule),
-    ligne("Date", demande.date),
-    ligne("Créneau", demande.creneau),
-    ligne("Joueurs", String(demande.joueurs)),
+    ligne("Formule", d.formule),
+    ligne("Date", d.date),
+    ligne("Créneau", d.creneau),
+    ligne("Joueurs", String(d.joueurs)),
     "",
     "Mes coordonnées :",
     "",
-    ligne("Nom", demande.nom),
-    ligne("E-mail", demande.email),
-    ligne("Téléphone", demande.telephone),
+    ligne("Nom", d.nom),
+    ligne("E-mail", d.email),
+    ligne("Téléphone", d.telephone),
     "",
     "Merci de me confirmer la disponibilité.",
   ].join(NL);
@@ -70,28 +131,17 @@ export function buildBookingMessage(
   const base = `mailto:${emailClub.trim()}?subject=${encodeURIComponent(objet)}&body=`;
   let mailtoUrl = base + encodeURIComponent(corps);
 
+  // Le lien est complet ou absent, jamais amputé.
+  //
+  // L'ancienne version tronquait le corps par la fin. Or le corps se termine
+  // par le nom, l'e-mail et le téléphone : couper revenait à envoyer au club une
+  // demande sans aucun moyen de rappeler le visiteur — exactement l'inverse du
+  // but. Les plafonds par champ rendent ce cas inatteignable ; s'il survenait
+  // malgré tout (adresse de club démesurée), mieux vaut aucun lien. L'interface
+  // sait s'en passer : le texte complet reste affiché et copiable, et les
+  // coordonnées du club sont données en clair juste à côté.
   if (mailtoUrl.length > MAX_URL) {
-    // On tronque le corps, jamais l'objet ni le destinataire : une demande
-    // amputée reste exploitable, un lien coupé au milieu ne l'est pas.
-    const budget = MAX_URL - base.length;
-
-    // Adresse de club anormalement longue : il ne reste aucune place pour le
-    // corps. Renvoyer `base` seul produirait une URL plus longue que le plafond
-    // et un message vide ; l'interface sait déjà se passer de lien.
-    if (budget <= 0) return { objet, corps, mailtoUrl: "" };
-
-    // La découpe se fait sur des points de code, jamais sur des unités UTF-16 :
-    // couper entre les deux moitiés d'une paire de substitution (un emoji collé
-    // dans le champ « Nom », par exemple) faisait lever `URIError` à
-    // `encodeURIComponent`, et l'exception remontait jusqu'à la racine React.
-    const points = [...corps];
-    let coupe = corps;
-    for (let fin = points.length; fin > 0; fin -= 20) {
-      coupe = points.slice(0, fin).join("");
-      if (encodeURIComponent(coupe).length <= budget) break;
-      coupe = "";
-    }
-    mailtoUrl = base + encodeURIComponent(coupe);
+    return { objet, corps, mailtoUrl: "" };
   }
 
   return { objet, corps, mailtoUrl };

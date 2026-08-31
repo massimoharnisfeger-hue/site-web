@@ -227,6 +227,10 @@ export default function CoverflowCarousel({
                     : "0 15px 35px rgba(0,0,0,0.45)",
                 }}
               >
+                {/* `alt` vide à dessein quand la médiathèque n'en fournit pas :
+                    le titre de l'étape est juste en dessous dans la même carte,
+                    et l'ancien repli `|| item.titleLine1` le faisait annoncer
+                    deux fois de suite par les lecteurs d'écran. */}
                 <Photo
                   src={item.img}
                   alt={item.imgAlt}

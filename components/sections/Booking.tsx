@@ -190,7 +190,8 @@ export default function Booking({
     try {
       await navigator.clipboard.writeText(message.corps);
       setCopie(true);
-      window.setTimeout(() => setCopie(false), 2500);
+      if (minuteurCopie.current) window.clearTimeout(minuteurCopie.current);
+      minuteurCopie.current = window.setTimeout(() => setCopie(false), 2500);
     } catch {
       // Presse-papiers indisponible : le texte reste sélectionnable à l'écran.
     }
@@ -210,6 +211,15 @@ export default function Booking({
   };
 
   const titreFinalRef = useRef<HTMLHeadingElement>(null);
+  const minuteurCopie = useRef<number | null>(null);
+
+  // Le minuteur du bouton « Copier » survivait au démontage.
+  useEffect(
+    () => () => {
+      if (minuteurCopie.current) window.clearTimeout(minuteurCopie.current);
+    },
+    []
+  );
 
   // Le bouton « Préparer ma demande » est démonté au passage à l'écran final :
   // sans cela le focus retombait sur `document.body`, rien n'était annoncé, et
@@ -455,7 +465,7 @@ export default function Booking({
                       className="flex h-16 w-16 items-center justify-center rounded-full bg-court text-white"
                       aria-hidden
                     >
-                      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l9 6 9-6M3 7h18v10H3z" />
                       </svg>
                     </motion.div>

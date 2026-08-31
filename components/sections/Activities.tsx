@@ -138,7 +138,7 @@ function TiltCard({ activity, index }: { activity: Activity; index: number }) {
                 {activity.ctaLabel}
               </span>
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-lime text-ink transition-transform duration-300 group-hover:rotate-45">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
                   <path
                     d="M7 17L17 7M9 7h8v8"
                     stroke="currentColor"

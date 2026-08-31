@@ -5,10 +5,11 @@ import type { AvisContent } from "@/lib/types";
 
 function Stars({ rating }: { rating: number }) {
   return (
-    <div className="flex gap-1" aria-label={`${rating} sur 5`}>
+    <div className="flex gap-1" role="img" aria-label={`${rating} sur 5`}>
       {Array.from({ length: 5 }).map((_, i) => (
         <svg
           key={i}
+          aria-hidden
           width="16"
           height="16"
           viewBox="0 0 24 24"
@@ -30,7 +31,7 @@ export default function Testimonials({ content }: { content: AvisContent }) {
       className="relative overflow-hidden bg-haze py-28 md:py-36"
     >
       <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-0 opacity-50">
-        <svg viewBox="0 0 1440 200" className="w-full" preserveAspectRatio="none">
+        <svg viewBox="0 0 1440 200" className="w-full" preserveAspectRatio="none" aria-hidden>
           <motion.path
             d="M0,100 C360,40 720,160 1440,100 L1440,200 L0,200 Z"
             initial={{ d: "M0,100 C360,40 720,160 1440,100 L1440,200 L0,200 Z" }}
