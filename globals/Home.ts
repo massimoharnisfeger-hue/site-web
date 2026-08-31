@@ -117,6 +117,13 @@ export const Home: GlobalConfig = {
                     { name: "duration", type: "text", label: "Durée" },
                     { name: "level", type: "text", label: "Niveau" },
                     { name: "price", type: "text", label: "Prix" },
+                    {
+                      name: "badge",
+                      type: "text",
+                      label: "Ruban de mise en avant",
+                      admin: { description: "Ex. « La plus demandée ». Laisser vide pour aucun ruban." },
+                    },
+                    { name: "ctaLabel", type: "text", label: "Libellé du bouton" },
                     { name: "image", type: "upload", relationTo: "media", label: "Photo" },
                   ],
                 },
@@ -193,6 +200,12 @@ export const Home: GlobalConfig = {
                     { name: "value", type: "number", label: "Valeur (nombre)" },
                     { name: "suffix", type: "text", label: "Suffixe (ex. +, /5)" },
                     { name: "label", type: "text", label: "Légende" },
+                    {
+                      name: "caption",
+                      type: "text",
+                      label: "Précision sous la légende",
+                      admin: { description: "Ex. « sur 213 avis Google ». Un chiffre sourcé convainc, un chiffre nu inquiète." },
+                    },
                   ],
                 },
               ],
@@ -248,6 +261,101 @@ export const Home: GlobalConfig = {
                     { name: "role", type: "text", label: "Formule / contexte" },
                     { name: "rating", type: "number", label: "Note (1 à 5)", min: 1, max: 5 },
                     { name: "quote", type: "textarea", label: "Témoignage" },
+                    { name: "date", type: "text", label: "Date (ex. mars 2026)" },
+                    {
+                      name: "source",
+                      type: "select",
+                      label: "Provenance",
+                      options: ["Google", "Facebook", "Sur place", ""],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+
+        // ---------------- FAQ ----------------
+        {
+          label: "FAQ",
+          fields: [
+            {
+              name: "faq",
+              type: "group",
+              label: "Questions fréquentes",
+              admin: {
+                description:
+                  "Affichée juste avant la réservation et publiée au format FAQ pour Google. C'est l'endroit où lever les freins du débutant.",
+              },
+              fields: [
+                { name: "eyebrow", type: "text", label: "Sur-titre" },
+                { name: "title", type: "text", label: "Titre" },
+                { name: "intro", type: "textarea", label: "Introduction" },
+                {
+                  name: "items",
+                  type: "array",
+                  label: "Questions",
+                  labels: { singular: "Question", plural: "Questions" },
+                  fields: [
+                    { name: "question", type: "text", label: "Question" },
+                    { name: "answer", type: "textarea", label: "Réponse" },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+
+        // ---------------- BANDEAU + PAGES LÉGALES ----------------
+        {
+          label: "Bandeau & mentions",
+          fields: [
+            {
+              name: "announcement",
+              type: "group",
+              label: "Bandeau d'annonce",
+              admin: {
+                description:
+                  "Barre affichée tout en haut du site. Pour un tournoi, une fermeture exceptionnelle, une offre limitée.",
+              },
+              fields: [
+                { name: "enabled", type: "checkbox", label: "Afficher le bandeau" },
+                { name: "text", type: "text", label: "Message" },
+                { name: "linkLabel", type: "text", label: "Libellé du lien (facultatif)" },
+                {
+                  name: "linkTarget",
+                  type: "select",
+                  label: "Destination du lien",
+                  options: [
+                    { label: "Réservation", value: "#reservation" },
+                    { label: "Offres", value: "#offres" },
+                    { label: "FAQ", value: "#faq" },
+                    { label: "Galerie", value: "#galerie" },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "legal",
+              type: "group",
+              label: "Pages légales",
+              fields: [
+                {
+                  name: "mentions",
+                  type: "group",
+                  label: "Mentions légales",
+                  fields: [
+                    { name: "title", type: "text", label: "Titre de la page" },
+                    { name: "body", type: "textarea", label: "Contenu", admin: { rows: 14 } },
+                  ],
+                },
+                {
+                  name: "privacy",
+                  type: "group",
+                  label: "Politique de confidentialité",
+                  fields: [
+                    { name: "title", type: "text", label: "Titre de la page" },
+                    { name: "body", type: "textarea", label: "Contenu", admin: { rows: 14 } },
                   ],
                 },
               ],
@@ -294,6 +402,35 @@ export const Home: GlobalConfig = {
                   },
                 },
                 { name: "mapsUrl", type: "text", label: "Lien Google Maps (facultatif)" },
+                {
+                  name: "openingHours",
+                  type: "array",
+                  label: "Horaires d'ouverture",
+                  labels: { singular: "Plage", plural: "Plages" },
+                  admin: {
+                    description:
+                      "Publiés dans la fiche Google du club. Format 24 h, ex. 07:00 et 23:00.",
+                  },
+                  fields: [
+                    {
+                      name: "days",
+                      type: "select",
+                      hasMany: true,
+                      label: "Jours",
+                      options: [
+                        { label: "Lundi", value: "Monday" },
+                        { label: "Mardi", value: "Tuesday" },
+                        { label: "Mercredi", value: "Wednesday" },
+                        { label: "Jeudi", value: "Thursday" },
+                        { label: "Vendredi", value: "Friday" },
+                        { label: "Samedi", value: "Saturday" },
+                        { label: "Dimanche", value: "Sunday" },
+                      ],
+                    },
+                    { name: "opens", type: "text", label: "Ouverture (HH:MM)" },
+                    { name: "closes", type: "text", label: "Fermeture (HH:MM)" },
+                  ],
+                },
                 { name: "legal", type: "text", label: "Mention légale (après l'année)" },
                 {
                   name: "courts",

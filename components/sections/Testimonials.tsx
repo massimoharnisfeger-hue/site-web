@@ -91,7 +91,15 @@ export default function Testimonials({ content }: { content: AvisContent }) {
                   <div className="font-sans text-sm font-medium text-ink">
                     {t.name}
                   </div>
-                  <div className="font-sans text-xs text-ink/55">{t.role}</div>
+                  <div className="font-sans text-xs text-ink/55">
+                    {t.role}
+                    {(t.source || t.date) && (
+                      <>
+                        {" · "}
+                        {[t.source, t.date].filter(Boolean).join(" · ")}
+                      </>
+                    )}
+                  </div>
                 </div>
               </figcaption>
             </motion.figure>

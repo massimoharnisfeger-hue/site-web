@@ -51,6 +51,9 @@ function Counter({ stat, index }: { stat: Stat; index: number }) {
       <div className="mt-3 font-sans text-sm uppercase tracking-[0.2em] text-white/70">
         {stat.label}
       </div>
+      {stat.caption && (
+        <div className="mt-1 font-sans text-xs text-white/50">{stat.caption}</div>
+      )}
     </motion.div>
   );
 }

@@ -12,6 +12,9 @@ import type {
   GalerieContent,
   AvisContent,
   ReservationContent,
+  FaqContent,
+  AnnouncementContent,
+  LegalContent,
   NavContent,
   FooterContent,
 } from "@/lib/types";
@@ -26,6 +29,9 @@ export type HomeContent = {
   chiffres: ChiffresContent;
   galerie: GalerieContent;
   avis: AvisContent;
+  faq: FaqContent;
+  announcement: AnnouncementContent;
+  legal: LegalContent;
   reservation: ReservationContent;
   footer: FooterContent;
 };
@@ -77,6 +83,8 @@ export const defaultContent: HomeContent = {
         duration: "1h",
         level: "Débutant",
         price: "Dès 25€",
+        badge: "",
+        ctaLabel: "Réserver mon initiation",
         image:
           "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1200&q=80",
       },
@@ -88,6 +96,8 @@ export const defaultContent: HomeContent = {
         duration: "1h30",
         level: "Tous niveaux",
         price: "Dès 19€/pers.",
+        badge: "",
+        ctaLabel: "M'inscrire à un cours",
         image:
           "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=1200&q=80",
       },
@@ -99,6 +109,8 @@ export const defaultContent: HomeContent = {
         duration: "1h / 1h30",
         level: "Libre",
         price: "Dès 32€/terrain",
+        badge: "La plus demandée",
+        ctaLabel: "Réserver un terrain",
         image:
           "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=1200&q=80",
       },
@@ -110,6 +122,8 @@ export const defaultContent: HomeContent = {
         duration: "Demi-journée",
         level: "Compétiteur",
         price: "Dès 15€",
+        badge: "",
+        ctaLabel: "M'inscrire au tournoi",
         image:
           "https://images.unsplash.com/photo-1599391398131-cd12dfc6c24e?auto=format&fit=crop&w=1200&q=80",
       },
@@ -121,6 +135,8 @@ export const defaultContent: HomeContent = {
         duration: "Sur mesure",
         level: "Entreprise",
         price: "Sur devis",
+        badge: "",
+        ctaLabel: "Demander un devis",
         image:
           "https://images.unsplash.com/photo-1611251135345-18c56206b863?auto=format&fit=crop&w=1200&q=80",
       },
@@ -180,10 +196,10 @@ export const defaultContent: HomeContent = {
   chiffres: {
     title: "La communauté padel grandit chaque jour",
     items: [
-      { value: 5000, suffix: "+", label: "Joueurs au club" },
-      { value: 4.9, suffix: "/5", label: "Note de satisfaction" },
-      { value: 8, suffix: "", label: "Terrains vitrés" },
-      { value: 40, suffix: "+", label: "Tournois par an" },
+      { value: 5000, suffix: "+", label: "Joueurs au club", caption: "depuis l'ouverture" },
+      { value: 4.9, suffix: "/5", label: "Note de satisfaction", caption: "" },
+      { value: 8, suffix: "", label: "Terrains vitrés", caption: "indoor et outdoor" },
+      { value: 40, suffix: "+", label: "Tournois par an", caption: "" },
     ],
   },
   galerie: {
@@ -206,11 +222,101 @@ export const defaultContent: HomeContent = {
     eyebrow: "Ils jouent chez nous",
     title: "La parole aux joueurs",
     items: [
-      { name: "Camille R.", role: "Cours collectifs", rating: 5, quote: "J'ai commencé débutante il y a six mois, je dispute déjà mes premiers tournois. Les coachs sont au top et l'ambiance est dingue." },
-      { name: "Thomas & Léa", role: "Location de terrain", rating: 5, quote: "On réserve notre terrain chaque semaine en deux clics. Courts impeccables, éclairage parfait le soir. Notre rituel padel préféré." },
-      { name: "Sofia M.", role: "Initiation", rating: 5, quote: "Première séance et déjà accro ! En une heure on tape déjà de vrais échanges. Le padel, c'est le sport le plus fun que j'ai testé." },
-      { name: "L'équipe Marlow", role: "Padel Corporate", rating: 5, quote: "Notre team-building le plus réussi. Organisation millimétrée, fous rires garantis et tout le monde réclame déjà la revanche." },
+      { name: "Camille R.",
+        date: "",
+        source: "", role: "Cours collectifs", rating: 5, quote: "J'ai commencé débutante il y a six mois, je dispute déjà mes premiers tournois. Les coachs sont au top et l'ambiance est dingue." },
+      { name: "Thomas & Léa",
+        date: "",
+        source: "", role: "Location de terrain", rating: 5, quote: "On réserve notre terrain chaque semaine en deux clics. Courts impeccables, éclairage parfait le soir. Notre rituel padel préféré." },
+      { name: "Sofia M.",
+        date: "",
+        source: "", role: "Initiation", rating: 5, quote: "Première séance et déjà accro ! En une heure on tape déjà de vrais échanges. Le padel, c'est le sport le plus fun que j'ai testé." },
+      { name: "L'équipe Marlow",
+        date: "",
+        source: "", role: "Padel Corporate", rating: 5, quote: "Notre team-building le plus réussi. Organisation millimétrée, fous rires garantis et tout le monde réclame déjà la revanche." },
     ],
+  },
+  faq: {
+    eyebrow: "Première fois ?",
+    title: "Tout ce qu'on vous demande avant de venir",
+    intro:
+      "Le padel s'apprend en quelques minutes. Voici les réponses aux questions qu'on nous pose le plus souvent au téléphone.",
+    items: [
+      {
+        question: "Faut-il apporter sa raquette ?",
+        answer:
+          "Non. Les raquettes et les balles sont prêtées avec chaque créneau. Venez en tenue de sport avec des chaussures propres, on s'occupe du reste.",
+      },
+      {
+        question: "Le tarif est-il par personne ou par terrain ?",
+        answer:
+          "La location de terrain se paie au terrain, quel que soit le nombre de joueurs. Les cours et les initiations se paient par personne.",
+      },
+      {
+        question: "Faut-il être quatre pour jouer ?",
+        answer:
+          "Le padel se joue à quatre, mais vous n'avez pas besoin d'arriver à quatre : dites-le nous et nous vous mettons en relation avec d'autres joueurs de votre niveau.",
+      },
+      {
+        question: "Je n'ai jamais joué, est-ce que c'est un problème ?",
+        answer:
+          "Aucun. La majorité de nos visiteurs découvrent le padel chez nous. L'initiation est conçue exactement pour ça : en une heure, vous tapez de vrais échanges.",
+      },
+      {
+        question: "Peut-on annuler une réservation ?",
+        answer:
+          "Oui, jusqu'à 24 h avant le créneau. Passé ce délai, la séance reste due. Prévenez-nous au plus tôt, on trouve presque toujours une solution.",
+      },
+      {
+        question: "Y a-t-il des vestiaires et des douches ?",
+        answer:
+          "Oui, vestiaires et douches sont accessibles à tous les joueurs, sans supplément.",
+      },
+    ],
+  },
+  announcement: {
+    enabled: false,
+    text: "Tournoi d'ouverture le 12 octobre — inscriptions ouvertes",
+    linkLabel: "Je m'inscris",
+    linkTarget: "#reservation",
+  },
+  legal: {
+    mentions: {
+      title: "Mentions légales",
+      body: `À COMPLÉTER — ce texte est un modèle, remplacez chaque crochet.
+
+Éditeur du site
+[Raison sociale], [forme juridique] au capital de [montant] €
+Siège social : [adresse complète]
+SIRET : [numéro] — RCS [ville]
+Téléphone : [numéro] — E-mail : [adresse]
+Directeur de la publication : [nom]
+
+Hébergement
+Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis — vercel.com
+
+Propriété intellectuelle
+L'ensemble des contenus de ce site est protégé. Toute reproduction sans autorisation est interdite. Les photographies de démonstration proviennent d'Unsplash et restent la propriété de leurs auteurs.`,
+    },
+    privacy: {
+      title: "Politique de confidentialité",
+      body: `À COMPLÉTER — ce texte est un modèle, remplacez chaque crochet.
+
+Données collectées
+Lorsque vous envoyez une demande de réservation, nous recueillons votre nom, votre adresse e-mail et les informations du créneau souhaité. Ces données servent uniquement à traiter votre demande.
+
+Base légale et durée
+Le traitement repose sur votre demande. Les données sont conservées [durée] puis supprimées.
+
+Destinataires
+Vos données ne sont ni vendues, ni transmises à des tiers à des fins commerciales.
+
+Vos droits
+Vous disposez d'un droit d'accès, de rectification, d'effacement et d'opposition. Écrivez à [adresse e-mail] pour l'exercer. Vous pouvez également saisir la CNIL.
+
+Cookies
+Ce site ne dépose aucun cookie de mesure d'audience ni de publicité.`,
+    },
   },
   reservation: {
     eyebrow: "Réservation",
@@ -230,6 +336,13 @@ export const defaultContent: HomeContent = {
     addressZip: "",
     addressCity: "",
     mapsUrl: "",
+    openingHours: [
+      {
+        days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        opens: "07:00",
+        closes: "23:00",
+      },
+    ],
     legal: "Tous droits réservés.",
     courts: [
       { name: "Court 1 · Indoor", x: 24, y: 40 },
@@ -268,6 +381,10 @@ function num(value: unknown, fallback: number): number {
   if (value === null || value === undefined || value === ("" as unknown)) return fallback;
   const n = Number(value);
   return Number.isNaN(n) ? fallback : n;
+}
+
+function bool(value: unknown, fallback: boolean): boolean {
+  return typeof value === "boolean" ? value : fallback;
 }
 
 /** Renvoie un tableau Payload s'il contient des éléments, sinon le défaut. */
@@ -360,6 +477,8 @@ export async function getHome(): Promise<HomeContent> {
         duration: str(it.duration, d.offres.items[i]?.duration ?? ""),
         level: str(it.level, d.offres.items[i]?.level ?? ""),
         price: str(it.price, d.offres.items[i]?.price ?? ""),
+        badge: str(it.badge, d.offres.items[i]?.badge ?? ""),
+        ctaLabel: str(it.ctaLabel, d.offres.items[i]?.ctaLabel ?? ""),
         image: imageUrl(it.image, d.offres.items[i]?.image ?? ""),
       })),
     },
@@ -375,6 +494,7 @@ export async function getHome(): Promise<HomeContent> {
         value: num(it.value, d.chiffres.items[i]?.value ?? 0),
         suffix: str(it.suffix, d.chiffres.items[i]?.suffix ?? ""),
         label: str(it.label, d.chiffres.items[i]?.label ?? ""),
+        caption: str(it.caption, d.chiffres.items[i]?.caption ?? ""),
       })),
     },
     galerie: {
@@ -394,7 +514,34 @@ export async function getHome(): Promise<HomeContent> {
         role: str(it.role, d.avis.items[i]?.role ?? ""),
         rating: num(it.rating, d.avis.items[i]?.rating ?? 5),
         quote: str(it.quote, d.avis.items[i]?.quote ?? ""),
+        date: str(it.date, d.avis.items[i]?.date ?? ""),
+        source: str(it.source, d.avis.items[i]?.source ?? ""),
       })),
+    },
+    faq: {
+      eyebrow: str(g.faq?.eyebrow, d.faq.eyebrow),
+      title: str(g.faq?.title, d.faq.title),
+      intro: str(g.faq?.intro, d.faq.intro),
+      items: (arr(g.faq?.items, d.faq.items) as any[]).map((it, i) => ({
+        question: str(it.question, d.faq.items[i]?.question ?? ""),
+        answer: str(it.answer, d.faq.items[i]?.answer ?? ""),
+      })),
+    },
+    announcement: {
+      enabled: bool(g.announcement?.enabled, d.announcement.enabled),
+      text: str(g.announcement?.text, d.announcement.text),
+      linkLabel: str(g.announcement?.linkLabel, d.announcement.linkLabel),
+      linkTarget: str(g.announcement?.linkTarget, d.announcement.linkTarget),
+    },
+    legal: {
+      mentions: {
+        title: str(g.legal?.mentions?.title, d.legal.mentions.title),
+        body: str(g.legal?.mentions?.body, d.legal.mentions.body),
+      },
+      privacy: {
+        title: str(g.legal?.privacy?.title, d.legal.privacy.title),
+        body: str(g.legal?.privacy?.body, d.legal.privacy.body),
+      },
     },
     reservation: {
       eyebrow: str(g.reservation?.eyebrow, d.reservation.eyebrow),
@@ -414,6 +561,13 @@ export async function getHome(): Promise<HomeContent> {
       addressZip: str(g.footer?.addressZip, d.footer.addressZip),
       addressCity: str(g.footer?.addressCity, d.footer.addressCity),
       mapsUrl: str(g.footer?.mapsUrl, d.footer.mapsUrl),
+      openingHours: (arr(g.footer?.openingHours, d.footer.openingHours) as any[]).map((it, i) => ({
+        days: Array.isArray(it.days) && it.days.length
+          ? (it.days as string[])
+          : d.footer.openingHours[i]?.days ?? [],
+        opens: str(it.opens, d.footer.openingHours[i]?.opens ?? ""),
+        closes: str(it.closes, d.footer.openingHours[i]?.closes ?? ""),
+      })),
       legal: str(g.footer?.legal, d.footer.legal),
       courts: (arr(g.footer?.courts, d.footer.courts) as any[]).map((it, i) => ({
         name: str(it.name, d.footer.courts[i]?.name ?? ""),

@@ -112,6 +112,11 @@ function TiltCard({ activity, index }: { activity: Activity; index: number }) {
             className="absolute inset-0 flex flex-col justify-end p-6"
             style={{ transform: "translateZ(50px)" }}
           >
+            {activity.badge && (
+              <span className="absolute right-5 top-5 rounded-full bg-lime px-3 py-1 font-sans text-[10px] font-semibold uppercase tracking-[0.14em] text-ink shadow-[0_6px_20px_-6px_rgba(0,0,0,0.6)]">
+                {activity.badge}
+              </span>
+            )}
             <span className="mb-3 inline-flex w-fit items-center gap-2 rounded-full bg-white/15 px-3 py-1 font-sans text-[10px] uppercase tracking-[0.2em] text-white backdrop-blur-md">
               {activity.level} · {activity.duration}
             </span>

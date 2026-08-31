@@ -8,6 +8,10 @@ export type Activity = {
   level: string;
   price: string;
   image: string;
+  /** Ruban de mise en avant, ex. « La plus demandée ». Vide = pas de ruban. */
+  badge: string;
+  /** Libellé du bouton propre à cette formule. */
+  ctaLabel: string;
 };
 
 export type StoryStep = {
@@ -22,18 +26,23 @@ export type StoryStep = {
   creditLink: string;
 };
 
-export type Stat = { value: number; suffix: string; label: string };
+export type Stat = { value: number; suffix: string; label: string; caption: string };
 
 export type Testimonial = {
   name: string;
   role: string;
   rating: number;
   quote: string;
+  /** Date de l'avis et plateforme d'origine : sans elles, un avis n'est pas crédible. */
+  date: string;
+  source: string;
 };
 
 export type GalleryItem = { src: string; alt: string };
 
 export type NavItem = { label: string; target: string };
+export type OpeningSlot = { days: string[]; opens: string; closes: string };
+export type FaqItem = { question: string; answer: string };
 export type Court = { name: string; x: number; y: number };
 export type Social = { name: string; url: string };
 
@@ -62,6 +71,15 @@ export type ParcoursContent = {
   items: StoryStep[];
 };
 export type ChiffresContent = { title: string; items: Stat[] };
+export type FaqContent = { eyebrow: string; title: string; intro: string; items: FaqItem[] };
+export type AnnouncementContent = {
+  enabled: boolean;
+  text: string;
+  linkLabel: string;
+  linkTarget: string;
+};
+export type LegalPage = { title: string; body: string };
+export type LegalContent = { mentions: LegalPage; privacy: LegalPage };
 export type GalerieContent = {
   eyebrow: string;
   title: string;
@@ -90,6 +108,7 @@ export type FooterContent = {
   addressZip: string;
   addressCity: string;
   mapsUrl: string;
+  openingHours: OpeningSlot[];
   legal: string;
   courts: Court[];
   socials: Social[];
