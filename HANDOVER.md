@@ -1,6 +1,6 @@
 # Padel House — point de reprise
 
-Dernière mise à jour : 31 août 2026 · commit de référence : **`9d9d05c`** sur `main`
+Dernière mise à jour : 31 août 2026 · commit de référence : **`073358d`** sur `main`
 
 Ce document existe pour une raison : que tu puisses revenir sur ce projet dans
 six mois, ou le confier à quelqu'un, sans rien reconstituer de mémoire.
@@ -21,7 +21,7 @@ six mois, ou le confier à quelqu'un, sans rien reconstituer de mémoire.
 Revenir à cet état exact :
 
 ```bash
-git checkout 9d9d05c
+git checkout 073358d
 ```
 
 ---
