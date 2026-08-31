@@ -125,6 +125,27 @@ export default function Footer({
                 {content.contactTitle}
               </h4>
               <ul className="space-y-3 font-sans text-sm text-white/80">
+                {content.addressCity && (
+                  <li>
+                    <address className="not-italic">
+                      {content.addressStreet && <>{content.addressStreet}<br /></>}
+                      {content.addressZip} {content.addressCity}
+                      {content.mapsUrl && (
+                        <>
+                          {" · "}
+                          <a
+                            href={content.mapsUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline underline-offset-2 hover:text-lime"
+                          >
+                            Y aller
+                          </a>
+                        </>
+                      )}
+                    </address>
+                  </li>
+                )}
                 <li>{content.email}</li>
                 <li>{content.phone}</li>
                 <li>{content.hours}</li>

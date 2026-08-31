@@ -22,21 +22,31 @@ export default function Preloader() {
       return () => clearTimeout(t);
     }
 
-    let current = 0;
-    const tick = () => {
-      const remaining = 100 - current;
-      current += Math.max(1.6, remaining * 0.09 + Math.random() * 2);
-      if (current >= 100) {
-        current = 100;
-        setProgress(100);
-        setTimeout(() => setDone(true), 500);
+    // Durée fixe et courte. L'ancienne version avançait par incréments
+    // aléatoires et retenait le contenu 6,5 s : c'est du temps volé au
+    // visiteur, et le principal poste d'abandon sur mobile.
+    const DURATION = 1100;
+    const HOLD = 200;
+    let raf = 0;
+    let hold = 0;
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / DURATION);
+      // Décélération cubique : la barre part vite puis s'apaise.
+      setProgress(Math.round((1 - Math.pow(1 - t, 3)) * 100));
+      if (t < 1) {
+        raf = requestAnimationFrame(tick);
         return;
       }
-      setProgress(current);
-      timer = window.setTimeout(tick, 45 + Math.random() * 45);
+      hold = window.setTimeout(() => setDone(true), HOLD);
     };
-    let timer = window.setTimeout(tick, 200);
-    return () => clearTimeout(timer);
+    raf = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(hold);
+    };
   }, []);
 
   useEffect(() => {
@@ -49,7 +59,7 @@ export default function Preloader() {
         <motion.div
           className="fixed inset-0 z-[10000] flex flex-col items-center justify-center overflow-hidden bg-cloud"
           exit={{ y: "-100%" }}
-          transition={{ duration: 1.0, ease: [0.76, 0, 0.24, 1] }}
+          transition={{ duration: 0.55, ease: [0.76, 0, 0.24, 1] }}
         >
           <div className="relative z-10 flex flex-col items-center gap-6 px-6 text-center">
             <motion.span

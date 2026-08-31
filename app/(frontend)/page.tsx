@@ -9,19 +9,29 @@ import Testimonials from "@/components/sections/Testimonials";
 import Booking from "@/components/sections/Booking";
 import Footer from "@/components/sections/Footer";
 import { getHome } from "@/lib/content";
+import { localBusinessJsonLd } from "@/lib/jsonld";
 
 // Rendu à chaque requête : les modifications faites dans le back-office
 // apparaissent immédiatement, sans reconstruire le site.
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { seo } = await getHome();
+  const { seo, footer } = await getHome();
+
+  // La ville est ajoutée au titre quand elle est renseignée et absente :
+  // « padel + ville » est la recherche réelle des visiteurs, pas « padel ».
+  const city = footer.addressCity.trim();
+  const title =
+    city && !seo.title.toLowerCase().includes(city.toLowerCase())
+      ? `${seo.title} · ${city}`
+      : seo.title;
+
   return {
-    title: seo.title,
+    title,
     description: seo.description,
     keywords: seo.keywords,
     openGraph: {
-      title: seo.title,
+      title,
       description: seo.description,
       type: "website",
       images: seo.ogImage ? [{ url: seo.ogImage }] : undefined,
@@ -31,9 +41,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Home() {
   const home = await getHome();
+  const jsonLd = localBusinessJsonLd(home);
 
   return (
     <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
       <Nav
         brand={home.brand}
         ctaLabel={home.hero.ctaPrimary}

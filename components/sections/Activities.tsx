@@ -47,6 +47,19 @@ function TiltCard({ activity, index }: { activity: Activity; index: number }) {
     mx.set((e.clientX - r.left) / r.width);
     my.set((e.clientY - r.top) / r.height);
   };
+  /**
+   * Emmène le visiteur au tunnel de réservation avec cette formule déjà
+   * sélectionnée. Un événement plutôt qu'un état partagé : les deux sections
+   * sont indépendantes et le site suit déjà ce motif avec window.__lenis.
+   */
+  const selectOffer = (i: number) => {
+    window.dispatchEvent(new CustomEvent("padel:select-offer", { detail: i }));
+    const el = document.querySelector("#reservation");
+    const lenis = (window as unknown as { __lenis?: { scrollTo: (e: HTMLElement, o?: unknown) => void } }).__lenis;
+    if (lenis && el) lenis.scrollTo(el as HTMLElement, { offset: -20 });
+    else el?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const onLeave = () => {
     mx.set(0.5);
     my.set(0.5);
@@ -58,9 +71,19 @@ function TiltCard({ activity, index }: { activity: Activity; index: number }) {
         ref={ref}
         onMouseMove={onMove}
         onMouseLeave={onLeave}
+        onClick={() => selectOffer(index)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            selectOffer(index);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label={`Réserver : ${activity.name}`}
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
         data-cursor="hover"
-        className="group relative h-[26rem] overflow-hidden rounded-[1.75rem] glass-strong p-1 transition-shadow duration-500 hover:shadow-[0_36px_90px_-24px_rgba(27,77,228,0.45)]"
+        className="group relative h-[26rem] cursor-pointer overflow-hidden rounded-[1.75rem] glass-strong p-1 outline-none transition-shadow duration-500 hover:shadow-[0_36px_90px_-24px_rgba(27,77,228,0.45)] focus-visible:ring-2 focus-visible:ring-court focus-visible:ring-offset-2"
       >
         <div
           className={`relative h-full w-full overflow-hidden rounded-[1.5rem] bg-gradient-to-br ${

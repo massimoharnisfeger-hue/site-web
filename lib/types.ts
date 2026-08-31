@@ -86,6 +86,10 @@ export type FooterContent = {
   email: string;
   phone: string;
   hours: string;
+  addressStreet: string;
+  addressZip: string;
+  addressCity: string;
+  mapsUrl: string;
   legal: string;
   courts: Court[];
   socials: Social[];

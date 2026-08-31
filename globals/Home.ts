@@ -282,6 +282,18 @@ export const Home: GlobalConfig = {
                 { name: "email", type: "text", label: "E-mail" },
                 { name: "phone", type: "text", label: "Téléphone" },
                 { name: "hours", type: "text", label: "Horaires" },
+                { name: "addressStreet", type: "text", label: "Adresse — rue" },
+                { name: "addressZip", type: "text", label: "Adresse — code postal" },
+                {
+                  name: "addressCity",
+                  type: "text",
+                  label: "Adresse — ville",
+                  admin: {
+                    description:
+                      "Renseignée, la ville est ajoutée au titre Google et publiée dans les données structurées du club. C'est le levier le plus fort du référencement local.",
+                  },
+                },
+                { name: "mapsUrl", type: "text", label: "Lien Google Maps (facultatif)" },
                 { name: "legal", type: "text", label: "Mention légale (après l'année)" },
                 {
                   name: "courts",

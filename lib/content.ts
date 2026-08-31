@@ -226,6 +226,10 @@ export const defaultContent: HomeContent = {
     email: "bonjour@padel-house.fr",
     phone: "+33 6 00 00 00 00",
     hours: "Ouvert 7j/7 · 7h–23h",
+    addressStreet: "",
+    addressZip: "",
+    addressCity: "",
+    mapsUrl: "",
     legal: "Tous droits réservés.",
     courts: [
       { name: "Court 1 · Indoor", x: 24, y: 40 },
@@ -406,6 +410,10 @@ export async function getHome(): Promise<HomeContent> {
       email: str(g.footer?.email, d.footer.email),
       phone: str(g.footer?.phone, d.footer.phone),
       hours: str(g.footer?.hours, d.footer.hours),
+      addressStreet: str(g.footer?.addressStreet, d.footer.addressStreet),
+      addressZip: str(g.footer?.addressZip, d.footer.addressZip),
+      addressCity: str(g.footer?.addressCity, d.footer.addressCity),
+      mapsUrl: str(g.footer?.mapsUrl, d.footer.mapsUrl),
       legal: str(g.footer?.legal, d.footer.legal),
       courts: (arr(g.footer?.courts, d.footer.courts) as any[]).map((it, i) => ({
         name: str(it.name, d.footer.courts[i]?.name ?? ""),

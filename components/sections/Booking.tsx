@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Activity, ReservationContent } from "@/lib/types";
 
@@ -121,6 +121,19 @@ export default function Booking({
   const [activityIdx, setActivityIdx] = useState(
     Math.min(2, activities.length - 1)
   );
+  // Une carte de la section Offres a été cliquée : on ouvre le tunnel dessus.
+  useEffect(() => {
+    const onSelect = (e: Event) => {
+      const i = (e as CustomEvent<number>).detail;
+      if (typeof i === "number" && i >= 0 && i < activities.length) {
+        setActivityIdx(i);
+        setStep(0);
+      }
+    };
+    window.addEventListener("padel:select-offer", onSelect);
+    return () => window.removeEventListener("padel:select-offer", onSelect);
+  }, [activities.length]);
+
   const [date, setDate] = useState<Date | null>(null);
   const [slot, setSlot] = useState<string | null>(null);
   const [players, setPlayers] = useState(4);
