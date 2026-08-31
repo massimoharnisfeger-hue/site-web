@@ -2,6 +2,7 @@
   "name": "padel-house",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Padel House — site immersif (Next.js + GSAP) avec back-office Payload CMS",
   "scripts": {
     "dev": "next dev",

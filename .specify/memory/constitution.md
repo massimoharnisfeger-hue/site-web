@@ -1,8 +1,13 @@
 <!--
 Sync Impact Report
 ==================
-Version change: (aucune) → 1.0.0
-Type de bump: adoption initiale — le gabarit ne contenait que des placeholders.
+Version change: (aucune) → 1.0.0 → 1.0.1
+Type de bump: 1.0.0 adoption initiale (le gabarit ne contenait que des
+placeholders) ; 1.0.1 PATCH — correction factuelle, sans changement de portée.
+
+1.0.1 — la section « Contraintes techniques » affirmait que importMap.js devait
+être régénéré par `npm run generate:importmap`. C'est faux : la régénération casse
+`next build`. L'exception est désormais documentée explicitement.
 
 Principes ajoutés (aucun renommage, aucun principe préexistant):
   - I. Contenu piloté par Payload (NON NÉGOCIABLE)
@@ -117,8 +122,13 @@ client.
 `@payloadcms/db-mongodb`, stockage Vercel Blob, Tailwind 3, TypeScript 5, Node >= 20.9.
 
 **Séparation des espaces** : `app/(frontend)/` est le site public ; `app/(payload)/`
-est généré par Payload (back-office et API) et NE DOIT PAS être modifié à la main —
-il est régénéré par `npm run generate:importmap`.
+est généré par Payload (back-office et API) et NE DOIT PAS être modifié à la main.
+
+**Exception documentée** : `app/(payload)/admin/importMap.js` est volontairement
+maintenu vide. La version produite par `npm run generate:importmap` importe
+`@payloadcms/storage-vercel-blob/client`, qui tire les internes serveur de Payload
+dans le bundle client et fait échouer `next build`. Ce fichier NE DOIT PAS être
+régénéré tant que ce conflit n'est pas résolu en amont.
 
 **Rendu** : la page publique reste en `export const dynamic = "force-dynamic"` afin
 que les modifications du back-office soient visibles immédiatement. Passer à un
@@ -184,4 +194,4 @@ du plan, avec sa justification. Une violation non justifiée bloque
 déploiement, structure des dossiers). Il DOIT être mis à jour quand une feature
 change l'une de ces trois choses.
 
-**Version**: 1.0.0 | **Ratified**: 2026-08-31 | **Last Amended**: 2026-08-31
+**Version**: 1.0.1 | **Ratified**: 2026-08-31 | **Last Amended**: 2026-08-31
