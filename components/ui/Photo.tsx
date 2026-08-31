@@ -57,6 +57,7 @@ export default function Photo({
   style,
   priority = false,
   quiet = false,
+  onFailed,
 }: {
   src: string;
   alt: string;
@@ -68,6 +69,8 @@ export default function Photo({
   priority?: boolean;
   /** Image d'ambiance : une miniature suffit, elle est floutée ou assombrie. */
   quiet?: boolean;
+  /** Prévient le parent qu'une source est inutilisable, pour qu'il retire son emplacement. */
+  onFailed?: (src: string) => void;
 }) {
   // On mémorise *quelle* source a échoué, et non un simple booléen : le fond
   // d'ambiance du carrousel réutilise la même instance à chaque étape, et un
@@ -94,6 +97,7 @@ export default function Photo({
       onError={(e: SyntheticEvent<HTMLImageElement, Event>) => {
         e.currentTarget.style.display = "none";
         setSrcCassee(src);
+        onFailed?.(src);
       }}
       className={className}
       style={style}

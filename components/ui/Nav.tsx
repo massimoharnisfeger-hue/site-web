@@ -83,14 +83,27 @@ export default function Nav({
       )}
 
       <div
-        className={`mx-auto flex max-w-7xl items-center justify-between px-5 transition-all duration-500 md:px-8 ${
+        className={`relative mx-auto flex max-w-7xl items-center justify-between px-5 transition-all duration-500 md:px-8 ${
           scrolled ? "py-3" : "py-6"
         }`}
       >
+        {/* Fond de la barre, sur mobile uniquement.
+            L'en-tête était entièrement transparent : dès qu'on faisait défiler,
+            le nom du club en encre sombre se retrouvait par-dessus le titre
+            blanc d'une section, et le bouton menu rognait ce titre. Sur grand
+            écran le problème ne se pose pas, les liens ayant déjà leur pastille
+            de verre ; le fond y reste donc absent. */}
+        <div
+          aria-hidden
+          className={`absolute inset-x-0 top-0 h-full glass-strong transition-opacity duration-300 md:hidden ${
+            scrolled ? "opacity-100" : "opacity-0"
+          }`}
+        />
+
         <button
           onClick={() => go("body")}
           data-cursor="hover"
-          className="flex items-center gap-2 font-display text-lg font-semibold tracking-tight text-ink"
+          className="relative flex items-center gap-2 font-display text-lg font-semibold tracking-tight text-ink"
         >
           <span className="inline-block h-2.5 w-2.5 rounded-full bg-lime shadow-[0_0_12px_rgba(205,255,58,0.9)]" />
           {brand}
@@ -125,7 +138,7 @@ export default function Nav({
         <button
           onClick={() => setOpen((o) => !o)}
           aria-label="Menu"
-          className="flex h-11 w-11 items-center justify-center rounded-full glass md:hidden"
+          className="relative flex h-11 w-11 items-center justify-center rounded-full glass md:hidden"
         >
           <div className="space-y-1.5">
             <span

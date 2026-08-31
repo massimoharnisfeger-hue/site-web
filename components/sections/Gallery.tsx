@@ -19,11 +19,13 @@ function ParallaxTile({
   span,
   index,
   onOpen,
+  onFailed,
 }: {
   item: GalleryItem;
   span: string;
   index: number;
   onOpen: (item: GalleryItem) => void;
+  onFailed: (src: string) => void;
 }) {
   const ref = useRef<HTMLButtonElement>(null);
   const { scrollYProgress } = useScroll({
@@ -59,6 +61,7 @@ function ParallaxTile({
           src={item.src}
           alt=""
           sizes={TILE_SIZES}
+          onFailed={onFailed}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
       </motion.div>
@@ -79,6 +82,19 @@ function ParallaxTile({
 
 export default function Gallery({ content }: { content: GalerieContent }) {
   const [active, setActive] = useState<GalleryItem | null>(null);
+
+  // Une photo qui ne se charge pas laissait un rectangle de dégradé vide au
+  // milieu de la mosaïque — un trou qui se lit comme un site cassé, alors qu'un
+  // simple lien Unsplash périmé suffit à le provoquer. La tuile est retirée :
+  // la grille se referme, et rien ne trahit l'absence.
+  const [sourcesEnEchec, setSourcesEnEchec] = useState<string[]>([]);
+  const signalerEchec = useCallback((src: string) => {
+    setSourcesEnEchec((liste) => (liste.includes(src) ? liste : [...liste, src]));
+  }, []);
+
+  const tuiles = content.items.filter(
+    (i) => i.src && !sourcesEnEchec.includes(i.src)
+  );
   const closeRef = useRef<HTMLButtonElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
 
@@ -138,13 +154,14 @@ export default function Gallery({ content }: { content: GalerieContent }) {
         </div>
 
         <div className="grid auto-rows-[200px] grid-cols-2 gap-4 md:auto-rows-[240px] md:grid-cols-4">
-          {content.items.map((img, i) => (
+          {tuiles.map((img, i) => (
             <ParallaxTile
-              key={i}
+              key={img.src}
               item={img}
               span={spanPattern[i % spanPattern.length]}
               index={i}
               onOpen={open}
+              onFailed={signalerEchec}
             />
           ))}
         </div>
