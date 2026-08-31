@@ -19,8 +19,7 @@ const config: Config = {
       },
       fontFamily: {
         display: ["var(--font-display)", "Clash Display", "sans-serif"],
-        sans: ["var(--font-sans)", "General Sans", "Inter", "sans-serif"],
-        inter: ["var(--font-inter)", "Inter", "sans-serif"],
+        sans: ["var(--font-sans)", "General Sans", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       letterSpacing: {
         tightest: "-0.05em",

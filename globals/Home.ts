@@ -61,6 +61,7 @@ export const Home: GlobalConfig = {
                         { label: "Parcours", value: "#parcours" },
                         { label: "Galerie", value: "#galerie" },
                         { label: "Avis", value: "#avis" },
+                        { label: "FAQ", value: "#faq" },
                         { label: "Réservation", value: "#reservation" },
                       ],
                     },

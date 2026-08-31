@@ -6,10 +6,11 @@ import Story from "@/components/sections/Story";
 import Stats from "@/components/sections/Stats";
 import Gallery from "@/components/sections/Gallery";
 import Testimonials from "@/components/sections/Testimonials";
+import Faq from "@/components/sections/Faq";
 import Booking from "@/components/sections/Booking";
 import Footer from "@/components/sections/Footer";
 import { getHome } from "@/lib/content";
-import { localBusinessJsonLd } from "@/lib/jsonld";
+import { faqJsonLd, localBusinessJsonLd } from "@/lib/jsonld";
 
 // Rendu à chaque requête : les modifications faites dans le back-office
 // apparaissent immédiatement, sans reconstruire le site.
@@ -42,6 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Home() {
   const home = await getHome();
   const jsonLd = localBusinessJsonLd(home);
+  const faqLd = faqJsonLd(home);
 
   return (
     <>
@@ -49,6 +51,12 @@ export default async function Home() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      {faqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
         />
       )}
       <Nav
@@ -63,6 +71,7 @@ export default async function Home() {
         <Stats content={home.chiffres} />
         <Gallery content={home.galerie} />
         <Testimonials content={home.avis} />
+        <Faq content={home.faq} />
         <Booking content={home.reservation} activities={home.offres.items} />
       </main>
       <Footer content={home.footer} brand={home.brand} links={home.nav.items} />

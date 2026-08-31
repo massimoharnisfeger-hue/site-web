@@ -1,6 +1,26 @@
 import type { HomeContent } from "@/lib/content";
 
 /**
+ * Questions/réponses au format schema.org. Google peut les afficher
+ * directement sous le résultat de recherche. Renvoie null s'il n'y a rien à
+ * publier — mieux vaut aucun balisage qu'un balisage vide.
+ */
+export function faqJsonLd(home: HomeContent) {
+  const items = home.faq.items.filter((i) => i.question.trim() && i.answer.trim());
+  if (items.length === 0) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((i) => ({
+      "@type": "Question",
+      name: i.question,
+      acceptedAnswer: { "@type": "Answer", text: i.answer },
+    })),
+  };
+}
+
+/**
  * Fiche de lieu au format schema.org, lue par Google pour le référencement
  * local (panneau latéral, résultats cartographiques).
  *
