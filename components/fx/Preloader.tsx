@@ -92,7 +92,7 @@ export default function Preloader() {
                 transition={{ ease: "linear" }}
               />
             </div>
-            <span className="font-sans text-sm tracking-wide text-ink/50">
+            <span className="font-sans text-sm tracking-wide text-ink/65">
               On prépare le terrain…
             </span>
           </div>

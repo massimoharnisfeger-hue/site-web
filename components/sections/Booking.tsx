@@ -76,7 +76,7 @@ function MiniCalendar({
           ›
         </button>
       </div>
-      <div className="mb-2 grid grid-cols-7 gap-1 text-center font-sans text-[10px] uppercase text-ink/40">
+      <div className="mb-2 grid grid-cols-7 gap-1 text-center font-sans text-[10px] uppercase text-ink/65">
         {["L", "M", "M", "J", "V", "S", "D"].map((d, i) => (
           <span key={i}>{d}</span>
         ))}
@@ -236,12 +236,12 @@ export default function Booking({
                   className={`flex h-9 w-9 items-center justify-center rounded-full font-sans text-sm font-semibold transition-all duration-500 ${
                     i <= step
                       ? "bg-court text-white"
-                      : "border border-ink/15 text-ink/40"
+                      : "border border-ink/15 text-ink/65"
                   }`}
                 >
                   {i < step ? "✓" : i + 1}
                 </div>
-                <span className="hidden font-sans text-[11px] text-ink/55 sm:block">
+                <span className="hidden font-sans text-[11px] text-ink/65 sm:block">
                   {label}
                 </span>
               </div>
@@ -283,7 +283,7 @@ export default function Booking({
                         <div className="font-sans font-medium text-ink">
                           {a.name}
                         </div>
-                        <div className="font-sans text-xs text-ink/55">
+                        <div className="font-sans text-xs text-ink/65">
                           {a.duration} · {a.level}
                         </div>
                       </div>
@@ -367,7 +367,7 @@ export default function Booking({
                       onChange={(e) => setName(e.target.value)}
                       autoComplete="name"
                       placeholder="Camille Rivière"
-                      className="mt-2 min-h-[48px] w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/40 focus:border-court focus:outline-none"
+                      className="mt-2 min-h-[48px] w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/65 focus:border-court focus:outline-none"
                     />
                   </div>
                   <div>
@@ -382,7 +382,7 @@ export default function Booking({
                       type="email"
                       autoComplete="email"
                       placeholder="camille@email.com"
-                      className="mt-2 min-h-[48px] w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/40 focus:border-court focus:outline-none"
+                      className="mt-2 min-h-[48px] w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/65 focus:border-court focus:outline-none"
                     />
                   </div>
                   <div>
@@ -397,7 +397,7 @@ export default function Booking({
                       autoComplete="tel"
                       placeholder="06 12 34 56 78"
                       aria-invalid={phone.length > 0 && !telValide}
-                      className="mt-2 min-h-[48px] w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/40 focus:border-court focus:outline-none focus:ring-2 focus:ring-court/40"
+                      className="mt-2 min-h-[48px] w-full rounded-xl border border-ink/15 bg-cloud px-4 py-3 font-sans text-ink placeholder:text-ink/65 focus:border-court focus:outline-none focus:ring-2 focus:ring-court/40"
                     />
                   </div>
 

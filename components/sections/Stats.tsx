@@ -48,11 +48,11 @@ function Counter({ stat, index }: { stat: Stat; index: number }) {
         {display}
         <span className="text-lime">{stat.suffix}</span>
       </div>
-      <div className="mt-3 font-sans text-sm uppercase tracking-[0.2em] text-white/70">
+      <div className="mt-3 font-sans text-sm uppercase tracking-[0.2em] text-white/85">
         {stat.label}
       </div>
       {stat.caption && (
-        <div className="mt-1 font-sans text-xs text-white/50">{stat.caption}</div>
+        <div className="mt-1 font-sans text-xs text-white/85">{stat.caption}</div>
       )}
     </motion.div>
   );

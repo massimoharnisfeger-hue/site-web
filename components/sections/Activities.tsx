@@ -174,11 +174,28 @@ export default function Activities({ content }: { content: OffresContent }) {
           </p>
         </Reveal>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {/*
+          Sous 640 px, cinq cartes empilees produisaient une section de 2710 px,
+          soit plus de trois ecrans de defilement pour un seul bloc. On passe en
+          rail horizontal a aimantation : la section tient en un ecran et le
+          visiteur compare les formules d'un geste. Grille inchangee au-dela.
+        */}
+        <div
+          role="group"
+          aria-label={content.title}
+          className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-6 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3"
+        >
           {content.items.map((a, i) => (
-            <TiltCard key={i} activity={a} index={i} />
+            <div key={i} className="w-[82vw] flex-none snap-center sm:w-auto">
+              <TiltCard activity={a} index={i} />
+            </div>
           ))}
         </div>
+
+        {/* Repere de defilement, mobile seulement */}
+        <p className="mt-3 text-center font-sans text-xs text-ink/65 sm:hidden">
+          Faites glisser pour voir les {content.items.length} formules
+        </p>
       </div>
     </section>
   );

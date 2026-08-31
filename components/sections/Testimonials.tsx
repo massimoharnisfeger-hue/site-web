@@ -91,7 +91,7 @@ export default function Testimonials({ content }: { content: AvisContent }) {
                   <div className="font-sans text-sm font-medium text-ink">
                     {t.name}
                   </div>
-                  <div className="font-sans text-xs text-ink/55">
+                  <div className="font-sans text-xs text-ink/65">
                     {t.role}
                     {(t.source || t.date) && (
                       <>

@@ -89,7 +89,7 @@ export default function Gallery({ content }: { content: GalerieContent }) {
               {content.title}
             </h2>
           </motion.div>
-          <p className="max-w-sm font-sans text-ink/55">{content.intro}</p>
+          <p className="max-w-sm font-sans text-ink/65">{content.intro}</p>
         </div>
 
         <div className="grid auto-rows-[200px] grid-cols-2 gap-4 md:auto-rows-[240px] md:grid-cols-4">
