@@ -9,12 +9,14 @@ import type {
   GalerieContent,
   AvisContent,
   ReservationContent,
+  NavContent,
   FooterContent,
 } from "@/lib/types";
 
 export type HomeContent = {
   seo: { title: string; description: string; keywords: string; ogImage: string };
   brand: string;
+  nav: NavContent;
   hero: HeroContent;
   offres: OffresContent;
   parcours: ParcoursContent;
@@ -39,6 +41,14 @@ export const defaultContent: HomeContent = {
     ogImage: "",
   },
   brand: "Padel House",
+  nav: {
+    items: [
+      { label: "Offres", target: "#offres" },
+      { label: "Le club", target: "#parcours" },
+      { label: "Galerie", target: "#galerie" },
+      { label: "Avis", target: "#avis" },
+    ],
+  },
   hero: {
     eyebrow: "Club de padel nouvelle génération",
     title1: "Le jeu",
@@ -47,6 +57,7 @@ export const defaultContent: HomeContent = {
       "Réservez un terrain, prenez un cours, vibrez à chaque échange. Le padel comme vous ne l'avez jamais vécu — vitré, éclairé, électrique.",
     ctaPrimary: "Réserver un terrain",
     ctaSecondary: "Découvrir le club",
+    scrollHint: "C'est parti",
     videoUrl: "",
   },
   offres: {
@@ -188,9 +199,13 @@ export const defaultContent: HomeContent = {
     ctaTitle: "Prêt à entrer sur le court ?",
     ctaButton: "Réserver un terrain",
     mapTitle: "8 terrains, un seul club",
+    linksTitle: "Navigation",
+    contactTitle: "Contact",
+    socialsTitle: "Suivez-nous",
     email: "bonjour@padel-house.fr",
     phone: "+33 6 00 00 00 00",
     hours: "Ouvert 7j/7 · 7h–23h",
+    legal: "Tous droits réservés.",
     courts: [
       { name: "Court 1 · Indoor", x: 24, y: 40 },
       { name: "Court 2 · Indoor", x: 40, y: 62 },
@@ -260,6 +275,12 @@ export async function getHome(): Promise<HomeContent> {
       ogImage: imageUrl(g.seo?.ogImage, d.seo.ogImage),
     },
     brand: str(g.brand, d.brand),
+    nav: {
+      items: (arr(g.nav?.items, d.nav.items) as any[]).map((it, i) => ({
+        label: str(it.label, d.nav.items[i]?.label ?? ""),
+        target: str(it.target, d.nav.items[i]?.target ?? "#offres"),
+      })),
+    },
     hero: {
       eyebrow: str(g.hero?.eyebrow, d.hero.eyebrow),
       title1: str(g.hero?.title1, d.hero.title1),
@@ -267,6 +288,7 @@ export async function getHome(): Promise<HomeContent> {
       subtitle: str(g.hero?.subtitle, d.hero.subtitle),
       ctaPrimary: str(g.hero?.ctaPrimary, d.hero.ctaPrimary),
       ctaSecondary: str(g.hero?.ctaSecondary, d.hero.ctaSecondary),
+      scrollHint: str(g.hero?.scrollHint, d.hero.scrollHint),
       videoUrl: str(g.hero?.videoUrl, d.hero.videoUrl || ""),
     },
     offres: {
@@ -327,9 +349,13 @@ export async function getHome(): Promise<HomeContent> {
       ctaTitle: str(g.footer?.ctaTitle, d.footer.ctaTitle),
       ctaButton: str(g.footer?.ctaButton, d.footer.ctaButton),
       mapTitle: str(g.footer?.mapTitle, d.footer.mapTitle),
+      linksTitle: str(g.footer?.linksTitle, d.footer.linksTitle),
+      contactTitle: str(g.footer?.contactTitle, d.footer.contactTitle),
+      socialsTitle: str(g.footer?.socialsTitle, d.footer.socialsTitle),
       email: str(g.footer?.email, d.footer.email),
       phone: str(g.footer?.phone, d.footer.phone),
       hours: str(g.footer?.hours, d.footer.hours),
+      legal: str(g.footer?.legal, d.footer.legal),
       courts: (arr(g.footer?.courts, d.footer.courts) as any[]).map((it, i) => ({
         name: str(it.name, d.footer.courts[i]?.name ?? ""),
         x: num(it.x, d.footer.courts[i]?.x ?? 50),

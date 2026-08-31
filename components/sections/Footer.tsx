@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import MagneticButton from "@/components/ui/MagneticButton";
-import type { FooterContent } from "@/lib/types";
+import type { FooterContent, NavItem } from "@/lib/types";
 
 // SVG glyph per supported social network (looked up by name from the CMS).
 const socialPaths: Record<string, string> = {
@@ -18,9 +18,11 @@ const socialPaths: Record<string, string> = {
 export default function Footer({
   content,
   brand,
+  links,
 }: {
   content: FooterContent;
   brand: string;
+  links: NavItem[];
 }) {
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -106,18 +108,21 @@ export default function Footer({
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
             <div>
               <h4 className="mb-4 font-sans text-xs uppercase tracking-[0.2em] text-white/50">
-                Le club
+                {content.linksTitle}
               </h4>
               <ul className="space-y-3 font-sans text-sm text-white/80">
-                <li><a href="#offres" className="hover:text-lime">Offres</a></li>
-                <li><a href="#parcours" className="hover:text-lime">Le parcours</a></li>
-                <li><a href="#galerie" className="hover:text-lime">Galerie</a></li>
-                <li><a href="#avis" className="hover:text-lime">Avis</a></li>
+                {links.map((l) => (
+                  <li key={l.target}>
+                    <a href={l.target} className="hover:text-lime">
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
             <div>
               <h4 className="mb-4 font-sans text-xs uppercase tracking-[0.2em] text-white/50">
-                Contact
+                {content.contactTitle}
               </h4>
               <ul className="space-y-3 font-sans text-sm text-white/80">
                 <li>{content.email}</li>
@@ -127,7 +132,7 @@ export default function Footer({
             </div>
             <div className="col-span-2 sm:col-span-1">
               <h4 className="mb-4 font-sans text-xs uppercase tracking-[0.2em] text-white/50">
-                Suivez-nous
+                {content.socialsTitle}
               </h4>
               <div className="flex gap-3">
                 {content.socials.map((s) => (
@@ -156,7 +161,7 @@ export default function Footer({
             {brand}
           </div>
           <p className="font-sans text-xs text-white/50">
-            © {new Date().getFullYear()} {brand}. Tous droits réservés.
+            © {new Date().getFullYear()} {brand}. {content.legal}
           </p>
         </div>
       </div>

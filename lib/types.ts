@@ -28,6 +28,7 @@ export type Testimonial = {
 
 export type GalleryItem = { src: string; alt: string };
 
+export type NavItem = { label: string; target: string };
 export type Court = { name: string; x: number; y: number };
 export type Social = { name: string; url: string };
 
@@ -38,6 +39,7 @@ export type HeroContent = {
   subtitle: string;
   ctaPrimary: string;
   ctaSecondary: string;
+  scrollHint: string;
   videoUrl?: string;
 };
 
@@ -62,13 +64,19 @@ export type AvisContent = {
   items: Testimonial[];
 };
 export type ReservationContent = { eyebrow: string; title: string };
+export type NavContent = { items: NavItem[] };
+
 export type FooterContent = {
   ctaTitle: string;
   ctaButton: string;
   mapTitle: string;
+  linksTitle: string;
+  contactTitle: string;
+  socialsTitle: string;
   email: string;
   phone: string;
   hours: string;
+  legal: string;
   courts: Court[];
   socials: Social[];
 };

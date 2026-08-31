@@ -34,7 +34,11 @@ export default async function Home() {
 
   return (
     <>
-      <Nav brand={home.brand} ctaLabel={home.hero.ctaPrimary} />
+      <Nav
+        brand={home.brand}
+        ctaLabel={home.hero.ctaPrimary}
+        links={home.nav.items}
+      />
       <main>
         <Hero content={home.hero} />
         <Activities content={home.offres} />
@@ -44,7 +48,7 @@ export default async function Home() {
         <Testimonials content={home.avis} />
         <Booking content={home.reservation} activities={home.offres.items} />
       </main>
-      <Footer content={home.footer} brand={home.brand} />
+      <Footer content={home.footer} brand={home.brand} links={home.nav.items} />
     </>
   );
 }
