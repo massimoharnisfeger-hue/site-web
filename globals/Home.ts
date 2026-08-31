@@ -135,6 +135,18 @@ export const Home: GlobalConfig = {
               label: "Section Parcours",
               fields: [
                 { name: "eyebrow", type: "text", label: "Sur-titre" },
+                { name: "ctaLabel", type: "text", label: "Bouton des cartes" },
+                {
+                  name: "ctaTarget",
+                  type: "select",
+                  label: "Destination du bouton",
+                  options: [
+                    { label: "Réservation", value: "#reservation" },
+                    { label: "Offres", value: "#offres" },
+                    { label: "Galerie", value: "#galerie" },
+                    { label: "Avis", value: "#avis" },
+                  ],
+                },
                 {
                   name: "items",
                   type: "array",
@@ -143,6 +155,7 @@ export const Home: GlobalConfig = {
                   fields: [
                     { name: "step", type: "text", label: "Numéro (ex. 01)" },
                     { name: "title", type: "text", label: "Titre" },
+                    { name: "subtitle", type: "text", label: "Sous-titre (2ᵉ ligne)" },
                     { name: "text", type: "textarea", label: "Texte" },
                     { name: "image", type: "upload", relationTo: "media", label: "Photo de fond" },
                   ],

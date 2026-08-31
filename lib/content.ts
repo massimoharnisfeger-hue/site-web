@@ -125,9 +125,12 @@ export const defaultContent: HomeContent = {
   },
   parcours: {
     eyebrow: "Votre parcours",
+    ctaLabel: "Réserver un terrain",
+    ctaTarget: "#reservation",
     items: [
       {
         step: "01",
+        subtitle: "Le premier échange",
         title: "Découvrir",
         text: "Poussez la porte du club. Raquette en main, ressentez l'adrénaline du premier échange contre la vitre. Le padel s'apprend en quelques minutes.",
         image:
@@ -135,6 +138,7 @@ export const defaultContent: HomeContent = {
       },
       {
         step: "02",
+        subtitle: "Avec nos coachs",
         title: "S'entraîner",
         text: "Affûtez votre jeu avec nos coachs : sortie de vitre, bandeja, lob et amorti. Chaque séance, vous sentez vos automatismes progresser.",
         image:
@@ -142,6 +146,7 @@ export const defaultContent: HomeContent = {
       },
       {
         step: "03",
+        subtitle: "Terrain réservé",
         title: "Jouer",
         text: "Réservez votre terrain, réunissez vos partenaires et vibrez à chaque point. Indoor ou outdoor, le jeu ne s'arrête jamais au club.",
         image:
@@ -149,6 +154,7 @@ export const defaultContent: HomeContent = {
       },
       {
         step: "04",
+        subtitle: "Tournois & soirées",
         title: "Vibrer",
         text: "Tournois, ligues, soirées : montez en niveau et faites partie de la communauté. Le padel, c'est aussi tout ce qui se passe après le match.",
         image:
@@ -307,9 +313,12 @@ export async function getHome(): Promise<HomeContent> {
     },
     parcours: {
       eyebrow: str(g.parcours?.eyebrow, d.parcours.eyebrow),
+      ctaLabel: str(g.parcours?.ctaLabel, d.parcours.ctaLabel),
+      ctaTarget: str(g.parcours?.ctaTarget, d.parcours.ctaTarget),
       items: (arr(g.parcours?.items, d.parcours.items) as any[]).map((it, i) => ({
         step: str(it.step, d.parcours.items[i]?.step ?? ""),
         title: str(it.title, d.parcours.items[i]?.title ?? ""),
+        subtitle: str(it.subtitle, d.parcours.items[i]?.subtitle ?? ""),
         text: str(it.text, d.parcours.items[i]?.text ?? ""),
         image: imageUrl(it.image, d.parcours.items[i]?.image ?? ""),
       })),

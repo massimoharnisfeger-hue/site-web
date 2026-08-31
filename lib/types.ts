@@ -13,6 +13,7 @@ export type Activity = {
 export type StoryStep = {
   step: string;
   title: string;
+  subtitle: string;
   text: string;
   image: string;
 };
@@ -50,7 +51,12 @@ export type OffresContent = {
   items: Activity[];
 };
 
-export type ParcoursContent = { eyebrow: string; items: StoryStep[] };
+export type ParcoursContent = {
+  eyebrow: string;
+  ctaLabel: string;
+  ctaTarget: string;
+  items: StoryStep[];
+};
 export type ChiffresContent = { title: string; items: Stat[] };
 export type GalerieContent = {
   eyebrow: string;
