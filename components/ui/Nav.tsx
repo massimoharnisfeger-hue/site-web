@@ -3,20 +3,16 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Lenis from "lenis";
-
-const links = [
-  { label: "Offres", href: "#offres" },
-  { label: "Le club", href: "#parcours" },
-  { label: "Galerie", href: "#galerie" },
-  { label: "Avis", href: "#avis" },
-];
+import type { NavItem } from "@/lib/types";
 
 export default function Nav({
   brand,
   ctaLabel,
+  links,
 }: {
   brand: string;
   ctaLabel: string;
+  links: NavItem[];
 }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -62,8 +58,8 @@ export default function Nav({
         >
           {links.map((l) => (
             <button
-              key={l.href}
-              onClick={() => go(l.href)}
+              key={l.target}
+              onClick={() => go(l.target)}
               data-cursor="hover"
               className="rounded-full px-4 py-2 font-sans text-sm text-ink/80 transition-colors duration-300 hover:bg-court/10 hover:text-court"
             >
@@ -116,8 +112,8 @@ export default function Nav({
         <div className="flex flex-col p-4">
           {links.map((l) => (
             <button
-              key={l.href}
-              onClick={() => go(l.href)}
+              key={l.target}
+              onClick={() => go(l.target)}
               className="rounded-2xl px-4 py-3 text-left font-sans text-base text-ink/80 transition-colors hover:bg-court/10 hover:text-court"
             >
               {l.label}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { MotionConfig } from "framer-motion";
 import Lenis from "lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -45,5 +46,9 @@ export default function SmoothScroll({
     };
   }, []);
 
-  return <>{children}</>;
+  // Framer Motion has no automatic reduced-motion behaviour: without this,
+  // every <motion.*> below keeps sliding. "user" drops transform and layout
+  // animations when the visitor asks for reduced motion, while keeping the
+  // opacity fades that carry no vestibular risk.
+  return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
 }

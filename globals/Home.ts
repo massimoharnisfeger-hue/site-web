@@ -32,6 +32,45 @@ export const Home: GlobalConfig = {
           ],
         },
 
+        // ---------------- NAVIGATION ----------------
+        {
+          label: "Navigation",
+          fields: [
+            {
+              name: "nav",
+              type: "group",
+              label: "Menu du site",
+              fields: [
+                {
+                  name: "items",
+                  type: "array",
+                  label: "Liens du menu",
+                  labels: { singular: "Lien", plural: "Liens" },
+                  admin: {
+                    description:
+                      "Utilisés en haut du site et dans le pied de page. La destination est limitée aux sections existantes.",
+                  },
+                  fields: [
+                    { name: "label", type: "text", label: "Texte affiché" },
+                    {
+                      name: "target",
+                      type: "select",
+                      label: "Section visée",
+                      options: [
+                        { label: "Offres", value: "#offres" },
+                        { label: "Parcours", value: "#parcours" },
+                        { label: "Galerie", value: "#galerie" },
+                        { label: "Avis", value: "#avis" },
+                        { label: "Réservation", value: "#reservation" },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+
         // ---------------- HERO ----------------
         {
           label: "Bannière",
@@ -47,6 +86,7 @@ export const Home: GlobalConfig = {
                 { name: "subtitle", type: "textarea", label: "Sous-titre" },
                 { name: "ctaPrimary", type: "text", label: "Bouton principal" },
                 { name: "ctaSecondary", type: "text", label: "Bouton secondaire" },
+                { name: "scrollHint", type: "text", label: "Indice de défilement (sous la bannière)" },
                 { name: "videoUrl", type: "text", label: "Vidéo de fond — lien YouTube (vide = fond animé)" },
               ],
             },
@@ -214,9 +254,13 @@ export const Home: GlobalConfig = {
                 { name: "ctaTitle", type: "text", label: "Titre d'appel final" },
                 { name: "ctaButton", type: "text", label: "Bouton" },
                 { name: "mapTitle", type: "text", label: "Titre de la carte" },
+                { name: "linksTitle", type: "text", label: "Titre de la colonne de liens" },
+                { name: "contactTitle", type: "text", label: "Titre de la colonne contact" },
+                { name: "socialsTitle", type: "text", label: "Titre de la colonne réseaux" },
                 { name: "email", type: "text", label: "E-mail" },
                 { name: "phone", type: "text", label: "Téléphone" },
                 { name: "hours", type: "text", label: "Horaires" },
+                { name: "legal", type: "text", label: "Mention légale (après l'année)" },
                 {
                   name: "courts",
                   type: "array",

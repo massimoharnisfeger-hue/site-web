@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 /**
  * Generic scroll-reveal wrapper. Sections fade/slide in once when entering the
  * viewport. Direction and delay are configurable for staggered compositions.
+ * Under reduced-motion the slide is dropped and only the fade remains, via the
+ * MotionConfig set in SmoothScroll.
  */
 export default function Reveal({
   children,
