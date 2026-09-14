@@ -81,3 +81,4 @@ DECISIONS.md et on garde le lien ici : ce fichier doit rester lisible d'un coup.
 @skill.md
 @agents.md
 @verify.md
+@securite.md

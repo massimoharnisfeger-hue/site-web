@@ -80,6 +80,11 @@ C'est ici que « ça marche chez moi » devient « ça marche ». Six contrôles
 | **Nettoyage** | Code mort, `TODO`, traces de débogage, valeurs en dur laissées « pour tester ». |
 | **Transmission** | Ce que quelqu'un doit savoir pour reprendre est écrit quelque part. |
 
+**Et si l'incrément touche une entrée visiteur, l'authentification, une
+dépendance ou une clé** : `securite.md` en régime rapide, maintenant. Une faille
+introduite se répare en dix minutes le jour même, et en trois jours six mois
+plus tard — quand il faut d'abord retrouver ce qui l'a introduite.
+
 Ce qu'on trouve ici se répare **maintenant**. Ce qu'on choisit de ne pas réparer
 devient une ligne de **dette technique** dans `ETAT.md`, avec la date et
 l'échéance à laquelle on la paie. Une dette non écrite n'est pas une dette :
@@ -135,5 +140,6 @@ sont les bonnes idées qui font exploser les périmètres.
 - [ ] `ETAT.md` n'a aucun blocage ouvert non expliqué.
 - [ ] La dette technique est écrite, avec son échéance.
 - [ ] `scripts/controle-cadre.sh` passe.
+- [ ] `securite.md` n'a aucune faille Critique ouverte.
 
 **Ensuite :** `phases/4-lancement.md`.

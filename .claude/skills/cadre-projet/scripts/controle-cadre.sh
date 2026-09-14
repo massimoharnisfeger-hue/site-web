@@ -8,6 +8,9 @@
 # Les ALERTES n'échouent pas le contrôle : elles demandent un coup d'œil.
 
 set -uo pipefail
+RACINE_SCRIPT=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+# shellcheck source=secrets.sh
+. "$RACINE_SCRIPT/secrets.sh"
 cd "${1:-.}" || exit 2
 
 ECHECS=0; ALERTES=0
@@ -39,7 +42,7 @@ printf '%sCONTRÔLE DE CADRE%s — %s\n' "$G" "$Z" "$(pwd)"
 
 # ─── 1. Les fichiers du cadre ────────────────────────────────────────
 titre "1. Les fichiers du cadre"
-for f in CLAUDE.md ETAT.md memory.md skill.md agents.md verify.md; do
+for f in CLAUDE.md ETAT.md memory.md skill.md agents.md verify.md securite.md; do
   [ -f "$f" ] && ok "$f" || echec "$f manquant"
 done
 
@@ -86,6 +89,16 @@ if [ -f verify.md ]; then
     && alerte "verify.md contient au moins un résultat rouge — vérifier qu'il est suivi"
 fi
 
+if [ -f securite.md ]; then
+  d=$(grep -iE '^\*\*Dernier passage' securite.md | head -1)
+  ad=$(age_date "${d:-}")
+  if [ "$ad" = "?" ]; then alerte "securite.md : aucun passage daté"
+  elif [ "$ad" -gt 90 ]; then alerte "dernier passage sécurité il y a ${ad} j — la revue est trimestrielle"
+  else ok "passage sécurité il y a ${ad} j"; fi
+  grep -qiE '^\| *(immédiat|mise en ligne|toujours).*\*\*Critique\*\*|\*\*Critique\*\*.*\|' securite.md \
+    && alerte "securite.md mentionne au moins une faille Critique — vérifier qu'elle est ouverte ou fermée"
+fi
+
 # ─── 5. Les clés ─────────────────────────────────────────────────────
 titre "5. Les clés"
 if git rev-parse --git-dir >/dev/null 2>&1; then
@@ -103,13 +116,7 @@ if git rev-parse --git-dir >/dev/null 2>&1; then
     || { echec "DES CLÉS SONT DANS L'HISTORIQUE — les révoquer, pas les effacer :"
          printf '%s\n' "$hist" | sed 's/^/            /'; }
 
-  # Le nom doit SE TERMINER par KEY/SECRET/TOKEN/PASSWORD : sinon DESIGN_TOKENS_JSON
-  # ressemble à une fuite. Et on écarte les valeurs qui sont des chemins de fichier.
-  fuite=$(git grep -nIE '(^|[^A-Za-z0-9_])([A-Z0-9]+_)*(API_?KEYS?|SECRETS?|TOKENS?|PASSWORDS?|PASSWD|KEYS?)[[:space:]]*[=:][[:space:]]*["'"'"'][A-Za-z0-9+/=_-]{20,}["'"'"']' \
-            -- . ':!*.example' ':!.claude/skills/cadre-projet/*' 2>/dev/null \
-          | grep -vE '["'"'"'][^"'"'"']*\.(json|css|js|jsx|ts|tsx|md|txt|ya?ml|png|svg|webp|env)["'"'"']' \
-          | grep -vE '["'"'"'](\./|/|[a-z0-9_-]+/)' \
-          | grep -vE '[=:][[:space:]]*["'"'"'][a-z][a-z-]*["'"'"']' | head -5)
+  fuite=$(chercher_secrets_git | head -5)
   [ -z "$fuite" ] && ok "aucune valeur de clé en clair dans les fichiers suivis" \
     || { echec "valeur de clé en clair dans un fichier suivi :"
          printf '%s\n' "$fuite" | sed 's/^/            /'; }

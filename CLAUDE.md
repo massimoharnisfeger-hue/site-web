@@ -86,3 +86,4 @@ specs/                spécifications Spec Kit
 @skill.md
 @agents.md
 @verify.md
+@securite.md

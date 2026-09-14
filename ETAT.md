@@ -13,10 +13,12 @@
 > utilisateur »), puis renseigner la ville du club dans « Réservation & Pied de
 > page ».**
 >
-> **Pourquoi elle :** tant que ce compte n'existe pas, rien n'est modifiable et
-> le site affiche le contenu de démonstration — O1 et O4 sont en défaut en
-> production alors que le code les tient. C'est le seul point du chemin
-> critique, il coûte trois minutes, et personne d'autre ne peut le faire.
+> **Pourquoi elle :** ce n'est pas une formalité de mise en service. Vérifié le
+> 2026-09-14 : `/admin` en production sert le formulaire « créer le premier
+> utilisateur ». **Le back-office est réclamable par n'importe qui** — la
+> première personne qui ouvre cette adresse devient administratrice du site.
+> Accessoirement, O1 et O4 restent en défaut tant que c'est vide. Faille
+> Critique ouverte dans `securite.md` : elle prime sur tout le reste.
 
 ---
 
@@ -59,6 +61,9 @@
 | Retour arrière Vercel jamais essayé | moyenne | Déploiement raté = apnée le jour J | déclencher un retour arrière une fois, à froid |
 | Site public sans mentions légales | forte | Non-conformité, dès la première visite réelle | c'est M6, déjà bloqué ci-dessus |
 | Polices chargées depuis Fontshare | faible | Fontshare tombe → affichage dégradé au premier rendu | passer sur `next/font/local` |
+| **`/admin` réclamable par n'importe qui** | **forte** | Perte du back-office du site en ligne | créer le compte — c'est la prochaine action |
+| 12 failles de dépendances, dont 1 critique | moyenne | Surface d'attaque élargie ; l'essentiel ferme avec Next 16 | inscrit dans `securite.md`, ferme avec la montée de version |
+| En-têtes de sécurité absents (dont `X-Frame-Options`) | moyenne | `/admin` encadrable par un site tiers | à poser dans `next.config.mjs` |
 
 ---
 
@@ -91,4 +96,5 @@
 | `verify` niveau 1 | 2026-09-14 — vert (lint, build) |
 | `verify` niveau 2 | **2 sur 5 prouvés** (O2, O3) · O4 partiel · O1 et O5 non prouvables aujourd'hui |
 | Contrôle de cadre | 2026-09-14 — voir dernier passage |
+| `securite.md` | 2026-09-14 — **2 échecs critiques**, 5 alertes |
 | Portes franchies | CADRAGE, FONDATIONS, CONSTRUCTION (M1–M3, M5) |

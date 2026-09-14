@@ -1,6 +1,6 @@
 ---
 name: cadre-projet
-description: "Système de pilotage de projet de bout en bout dans Claude Code : comprendre et challenger une idée, la cadrer, la découper en jalons et en tâches, construire, prouver, stabiliser, lancer, puis exploiter. Tient un tableau de bord vivant (ETAT.md), une mémoire des erreurs (memory.md), des preuves exécutables (verify.md), un plan (CLAUDE.md), l'outillage (skill.md, agents.md) et les clés hors de git. Déclencher dès que l'utilisateur dit : nouveau projet, j'ai une idée, on démarre, on commence, initialise, mets ça en place, reprends le projet, où on en est, quelle est la prochaine étape, c'est quoi la priorité, quel est le plan, la roadmap, le périmètre, le MVP, ajoute cette fonctionnalité, change ça, on est bloqué, ça ne marche pas, note pour ne pas refaire l'erreur, quel skill, quel agent, clé API, secret, .env, vérifie que ça marche, est-ce bien structuré, est-ce stable, on peut lancer, c'est fini, on clôture. Déclencher aussi avant d'écrire la première ligne de code d'un projet neuf, avant toute modification importante d'un projet existant, et avant d'annoncer qu'un travail est terminé."
+description: "Système de pilotage de projet de bout en bout dans Claude Code : comprendre et challenger une idée, la cadrer, la découper en jalons et en tâches, construire, prouver, stabiliser, lancer, puis exploiter. Tient un tableau de bord vivant (ETAT.md), une mémoire des erreurs (memory.md), des preuves exécutables (verify.md), un registre de tests de sécurité (securite.md), un plan (CLAUDE.md), l'outillage (skill.md, agents.md) et les clés hors de git. Déclencher dès que l'utilisateur dit : nouveau projet, j'ai une idée, on démarre, on commence, initialise, mets ça en place, reprends le projet, où on en est, quelle est la prochaine étape, c'est quoi la priorité, quel est le plan, la roadmap, le périmètre, le MVP, ajoute cette fonctionnalité, change ça, on est bloqué, ça ne marche pas, note pour ne pas refaire l'erreur, quel skill, quel agent, clé API, secret, .env, vérifie que ça marche, est-ce bien structuré, est-ce stable, est-ce sécurisé, audit de sécurité, faille, vulnérabilité, npm audit, injection, XSS, en-têtes de sécurité, RGPD, sauvegarde, on peut lancer, c'est fini, on clôture. Déclencher aussi avant d'écrire la première ligne de code d'un projet neuf, avant toute modification importante d'un projet existant, et avant d'annoncer qu'un travail est terminé."
 metadata:
   version: 3.0.0
   langue: fr
@@ -75,14 +75,15 @@ question de semaines. Les autres fichiers **renvoient**, ils ne recopient pas.
 | `CLAUDE.md` | Pourquoi le projet existe, les objectifs `O1..On`, le périmètre, les contraintes, les décisions, la carte du projet | l'avancement, les tâches |
 | `ETAT.md` | Où on en est : phase, jalons, en cours, bloqué, prochaine action, risques, dette | le pourquoi, les décisions |
 | `verify.md` | Ce qui est **prouvé** : les commandes et leur dernier résultat | des intentions |
+| `securite.md` | Le registre des tests de sécurité et leur dernier résultat | des failles sans gravité ni échéance |
 | `memory.md` | Ce qu'on a **appris** : les règles, puis le journal | les problèmes encore ouverts (→ `ETAT.md`) |
 | `skill.md` | Quels outils, et quand ne pas les sortir | des noms inventés |
 | `agents.md` | Qui fait, qui contrôle, à quel moment | des noms inventés |
 | `.env.local` | Les clés et mots de passe | — et **jamais** dans git |
 
 `CLAUDE.md` est chargé automatiquement à chaque session : il tient sur un écran
-et importe les autres (`@ETAT.md`, `@memory.md`, `@skill.md`, `@agents.md`,
-`@verify.md`). Le fichier de clés ne s'importe jamais.
+et importe les autres (`@ETAT.md`, `@memory.md`, `@skill.md`, `@agents.md`, `@verify.md`,
+`@securite.md`). Le fichier de clés ne s'importe jamais.
 
 Modèles prêts à copier : `modeles/`. Table de correspondance en bas de fichier.
 
@@ -126,37 +127,43 @@ qu'on n'a pas vu, une preuve qu'on n'a pas lancée, une date qu'on ne lit nulle
 part. En l'absence d'information, la réponse est « on ne sait pas, et voilà
 comment on le saurait ».
 
-## Les deux portes, qui ne prouvent pas la même chose
+## Les trois preuves, qui ne prouvent pas la même chose
 
-Elles se confondent facilement, et alors on croit être couvert alors qu'on ne
-l'est qu'à moitié.
+Elles se confondent facilement, et alors on se croit couvert alors qu'on ne
+l'est que sur un tiers.
 
-| | `verify.md` | Contrôle de cadre (`scripts/controle-cadre.sh`) |
-|---|---|---|
-| Prouve | que **le produit** fait ce qu'il promet | que **le pilotage** ne ment pas |
-| Répond à | « est-ce que ça marche ? » | « est-ce que ce qu'on lit est vrai ? » |
-| Quand | rapide après chaque tâche, complet à chaque jalon | avant tout « fini », et à chaque fin de phase |
+| | Prouve que… | Répond à | Quand |
+|---|---|---|---|
+| `verify.md` | **le produit fait** ce qu'il promet | « est-ce que ça marche ? » | rapide après chaque tâche, complet à chaque jalon |
+| `securite.md` | **le produit ne fait pas** ce qu'il ne doit pas | « qu'est-ce qu'on peut me faire ? » | à chaque incrément touchant entrée, authentification, dépendance ou clé ; complet avant chaque lancement |
+| `controle-cadre.sh` | **le pilotage ne ment pas** | « est-ce que ce qu'on lit est vrai ? » | avant tout « fini », et à chaque fin de phase |
+
+Le premier suit le chemin prévu, le deuxième cherche ceux qui ne le sont pas.
+Un produit qui passe `verify.md` et échoue `securite.md` marche parfaitement —
+pour l'attaquant aussi.
 
 **Deux régimes pour `verify`**, sinon la règle est trop lourde et meurt :
 - **rapide** = niveau 1 (lint, build, tests) — après chaque tâche ;
 - **complet** = niveaux 1 et 2 (chaque `O` prouvé) — à chaque jalon, avant chaque
   franchissement de porte, avant toute annonce de fin.
 
-## Les dix règles non négociables
+## Les onze règles non négociables
 
 1. **Rien ne se code avant que `CLAUDE.md` et `ETAT.md` existent.**
 2. **Le `.gitignore` avant le fichier de clés** — jamais l'inverse.
 3. **Aucune valeur de clé ne sort du fichier de clés**, même cinq minutes.
-4. **On ne note jamais un résultat qu'on n'a pas vu.** Ni « OK », ni « ça devrait
+4. **Une faille Critique ne se lance pas.** Sans discussion, sans « on corrigera
+   après ». Les autres gravités s'acceptent, mais par écrit et signées.
+5. **On ne note jamais un résultat qu'on n'a pas vu.** Ni « OK », ni « ça devrait
    marcher ».
-5. **« Fait » n'existe pas.** Un incrément est **validé** ou il ne l'est pas — au
+6. **« Fait » n'existe pas.** Un incrément est **validé** ou il ne l'est pas — au
    sens du cycle de `phases/3-construction.md`.
-6. **Une porte ne se franchit pas à l'estime.**
-7. **Ce qui n'est pas dans le périmètre ne se code pas** — ça va dans « Plus
+7. **Une porte ne se franchit pas à l'estime.**
+8. **Ce qui n'est pas dans le périmètre ne se code pas** — ça va dans « Plus
    tard » d'`ETAT.md`, avec son niveau de priorité.
-8. **Une erreur qui a coûté du temps produit une règle le jour même.**
-9. **Un skill ou un agent nommé existe.** Vérifier avant d'écrire la ligne.
-10. **`CLAUDE.md` et `ETAT.md` décrivent ce qui est**, pas ce qu'on espérait.
+9. **Une erreur qui a coûté du temps produit une règle le jour même.**
+10. **Un skill ou un agent nommé existe.** Vérifier avant d'écrire la ligne.
+11. **`CLAUDE.md` et `ETAT.md` décrivent ce qui est**, pas ce qu'on espérait.
 
 ## Être proactif : les sept signaux
 
@@ -211,6 +218,7 @@ Dans le doute, garder la porte. On l'allège quand elle a prouvé qu'elle gênai
 | `manoeuvres/` | changement · blocage · reprise · clôture | à l'événement |
 | `modeles/` | les fichiers du projet prêts à copier | au démarrage |
 | `scripts/controle-cadre.sh` | le contrôle de cadre, exécutable | avant chaque porte |
+| `scripts/controle-securite.sh` | la part mécanisable de `securite.md` | à l'incrément sensible, et avant le lancement |
 
 | Modèle | Destination | Commité ? |
 |---|---|---|
@@ -220,6 +228,7 @@ Dans le doute, garder la porte. On l'allège quand elle a prouvé qu'elle gênai
 | `modeles/skill.md` | `<projet>/skill.md` | oui |
 | `modeles/agents.md` | `<projet>/agents.md` | oui |
 | `modeles/verify.md` | `<projet>/verify.md` | oui |
+| `modeles/securite.md` | `<projet>/securite.md` | oui |
 | `modeles/cles.env.modele` | `<projet>/.env.local` | **jamais** |
 
 Les deux extensions bizarres sont voulues : un fichier nommé `CLAUDE.md` posé

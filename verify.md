@@ -1,7 +1,8 @@
 # Vérification — Padel House
 
-Prouve que **le produit** fait ce qu'il promet. (Que le pilotage ne mente pas,
-c'est le contrôle de cadre — voir `agents.md`.)
+Prouve que **le produit** fait ce qu'il promet.
+Qu'il ne fasse pas ce qu'il ne doit pas, c'est `securite.md`.
+Que le pilotage ne mente pas, c'est le contrôle de cadre — voir `agents.md`.
 
 **Aucune case ne se coche sans avoir vu la sortie de la commande.**
 

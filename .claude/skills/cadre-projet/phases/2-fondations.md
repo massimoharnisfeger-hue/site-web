@@ -24,8 +24,8 @@ Créer le fichier de clés avant la ligne d'exclusion, c'est le `git add .` qui
 brûle tout d'un coup. L'ordre **est** la protection.
 
 **Les fichiers du cadre** — copier depuis `modeles/` :
-`CLAUDE.md`, `ETAT.md`, `memory.md`, `skill.md`, `agents.md`, `verify.md`, et
-`.env.local` (jamais commité).
+`CLAUDE.md`, `ETAT.md`, `memory.md`, `skill.md`, `agents.md`, `verify.md`,
+`securite.md`, et `.env.local` (jamais commité).
 
 `CLAUDE.md` et `ETAT.md` sont déjà remplis : ils sortent de CADRAGE.
 
@@ -96,5 +96,8 @@ Les réponses vont dans `CLAUDE.md`. Ce sont des décisions, pas de la doc.
 - [ ] Les fichiers du cadre existent, `CLAUDE.md` et `ETAT.md` sont remplis.
 - [ ] La carte du projet et les conventions sont écrites.
 - [ ] On sait ce qu'on sauvegarde et comment on revient en arrière.
+- [ ] `scripts/controle-securite.sh` passe sur le projet vide — c'est le
+      moment le moins cher pour le mettre au vert, et la référence contre
+      laquelle on comparera ensuite.
 
 **Ensuite :** `phases/3-construction.md`.

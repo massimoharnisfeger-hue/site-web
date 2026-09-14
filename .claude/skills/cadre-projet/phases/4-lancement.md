@@ -19,7 +19,7 @@ entier.
 |---|---|---|
 | **Fonctionnalités** | Chaque `O` fonctionne **en production**, pas seulement en local | oui |
 | **Tests** | `verify` complet passe sur la version déployée | oui |
-| **Sécurité** | Aucune clé dans le code ni dans l'historique · le back-office est protégé · les entrées utilisateur sont validées · HTTPS partout | oui |
+| **Sécurité** | **`securite.md` passé en entier**, zéro faille Critique ouverte. Le registre remplace cette ligne : une check-list de lancement ne peut pas contenir un audit | oui |
 | **Données** | Sauvegarde faite **avant** le lancement · restauration **testée**, pas supposée | oui |
 | **Configuration** | Toutes les variables d'environnement sont déclarées en production · le projet démarre sans les facultatives | oui |
 | **Déploiement** | Le déploiement est reproductible · **le retour arrière a été essayé une fois** | oui |
@@ -32,6 +32,10 @@ entier.
 **Bloquant** veut dire : on ne lance pas. Pas « on lance en croisant les doigts ».
 
 ## Les trois vérifications qu'on oublie toujours
+
+<!-- La quatrième est dans securite.md et vaut d'être rappelée ici : un
+     back-office fraîchement déployé dont le compte n'a jamais été créé est
+     une porte ouverte, pas une formalité de mise en service. -->
 
 1. **La restauration, pas la sauvegarde.** Une sauvegarde jamais restaurée n'est
    pas une sauvegarde, c'est une croyance. La restaurer une fois, sur une copie.

@@ -27,8 +27,29 @@ Les problèmes encore ouverts sont dans `ETAT.md`, pas ici.
   `components/ui/Photo.tsx`.
 - **Toujours** vérifier qu'un faux contenu ne se fait pas passer pour du vrai
   (un avis « Google » inventé est exactement ce que l'audit reproche).
+- **Jamais** laisser en ligne un back-office dont le premier compte n'a pas été
+  créé : Payload sert alors `create-first-user` publiquement, et le site est
+  réclamable par le premier venu. Créer le compte **dans la foulée du premier
+  déploiement**, pas « quand on aura le temps ».
+- **Toujours** relancer `npm audit` avant de citer un nombre de failles : il
+  monte tout seul, sans qu'on touche au code.
 
 ## Le journal
+
+### 2026-09-14 — Premier passage du registre de sécurité
+
+- **Fait :** `securite.md` posé et passé en entier, avec le contrôle mécanisé
+  et les tests manuels.
+- **Trouvé :** `/admin` en production sert « créer le premier utilisateur » —
+  le back-office du site en ligne est réclamable par n'importe qui. Et
+  `npm audit` remonte 12 failles dont 1 critique, alors que le HANDOVER en
+  annonçait deux.
+- **Cause réelle :** le déploiement et la mise en service ont été traités comme
+  deux choses distinctes, et la seconde a été rangée comme une corvée
+  administrative. Elle était en réalité la fermeture d'une porte.
+- **Coût :** aucun pour l'instant — personne n'a réclamé le back-office. Le coût
+  potentiel était la perte du site.
+- **Règles qui en sortent :** deux, ajoutées en haut.
 
 ### 2026-09-14 — Adoption du cadre de pilotage
 
