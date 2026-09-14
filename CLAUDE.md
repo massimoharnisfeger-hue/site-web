@@ -78,6 +78,7 @@ specs/                spécifications Spec Kit
 | 2026-08 | Rendu `force-dynamic` intégral | Les modifications du back-office doivent être visibles tout de suite | Cache ISR |
 | 2026-08 | Pas de `next/image` | Les URL viennent du back-office et peuvent pointer sur un hôte non déclaré | `next/image` + liste d'hôtes |
 | 2026-08 | Montées de version majeures reportées | Chacune est une migration à part entière | Next 16, Tailwind 4, ESLint 10 |
+| 2026-09-14 | CSP avec `'unsafe-inline'` et `'unsafe-eval'` sur les scripts | Next hydrate en ligne, les deux blocs JSON-LD d'O4 sont en ligne, et l'administration Payload a besoin d'`eval`. Ce qui reste bloqué est l'essentiel : script tiers, encadrement externe, objets embarqués | CSP à nonce — demande une intégration Next plus profonde, à revoir |
 
 ---
 

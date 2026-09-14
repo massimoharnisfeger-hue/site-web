@@ -33,6 +33,11 @@ Les problèmes encore ouverts sont dans `ETAT.md`, pas ici.
   déploiement**, pas « quand on aura le temps ».
 - **Toujours** relancer `npm audit` avant de citer un nombre de failles : il
   monte tout seul, sans qu'on touche au code.
+- **Jamais** écrire une CSP sans avoir listé ce que la page charge vraiment.
+  Ici, `script-src` sans `'unsafe-inline'` aurait bloqué les deux blocs JSON-LD
+  de `page.tsx` — donc tué la fiche d'établissement lue par Google, donc O4,
+  **sans aucune erreur visible à l'œil**. Une CSP se vérifie dans un navigateur,
+  pas dans un `curl` : `curl` montre l'en-tête, pas ce qu'il casse.
 
 ## Le journal
 

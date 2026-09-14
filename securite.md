@@ -5,7 +5,8 @@ Prouve que le produit **ne fait pas ce qu'il ne doit pas faire**.
 
 **Aucune case ne se coche sans avoir vu la sortie.**
 
-**Dernier passage :** 2026-09-14 — **2 échecs critiques**, 5 alertes
+**Dernier passage :** 2026-09-14 — **1 échec critique**, 3 alertes
+*(en-têtes corrigés le 2026-09-14 ; effectifs en production au prochain déploiement)*
 **Prochaine revue :** 2026-12-14
 
 ```bash
@@ -102,10 +103,11 @@ directe de O3, et c'est la meilleure défense du projet.
 |---|---|---|---|
 | T1 | HTTPS partout | Élevée | ✅ 2026-09-14 |
 | T2 | `Strict-Transport-Security` | Moyenne | ✅ présent (Vercel) |
-| T2 | `Content-Security-Policy` | Moyenne | ❌ absent |
-| T2 | `X-Content-Type-Options` | Moyenne | ❌ absent |
-| T2 | `Referrer-Policy` | Moyenne | ❌ absent |
-| T2 | `X-Frame-Options` | **Élevée ici** | ❌ absent — `/admin` peut être encadré par un site tiers |
+| T2 | `Content-Security-Policy` | Moyenne | ✅ 2026-09-14 — posée, **0 violation** sur le site public (vérifié dans Chromium) |
+| T2 | `X-Content-Type-Options` | Moyenne | ✅ 2026-09-14 — `nosniff` |
+| T2 | `Referrer-Policy` | Moyenne | ✅ 2026-09-14 — `strict-origin-when-cross-origin` |
+| T2 | `X-Frame-Options` | **Élevée ici** | ✅ 2026-09-14 — `SAMEORIGIN`, doublé par `frame-ancestors 'self'` |
+| T2 | `Permissions-Policy` | Faible | ✅ 2026-09-14 — caméra, micro, position, paiement, USB refusés |
 | T3 | Pas de cartes de source en production | Moyenne | ✅ aucune dans la sortie de build |
 
 ## 6. Données personnelles
@@ -156,8 +158,7 @@ directe de O3, et c'est la meilleure défense du projet.
 |---|---|---|---|---|
 | mise en ligne | `/admin` réclamable par n'importe qui | **Critique** | Seul le propriétaire peut créer le compte | **immédiat** |
 | 2026-09-14 | 12 failles de dépendances, dont 1 critique | Élevée | Ferme avec la montée en Next 16, qui est une migration à part entière | prochaine vague |
-| mise en ligne | `X-Frame-Options` absent → `/admin` encadrable | Élevée | Jamais posé | avec la correction ci-dessus |
-| mise en ligne | CSP, `X-Content-Type-Options`, `Referrer-Policy` absents | Moyenne | Jamais posés | prochaine vague |
+| 2026-09-14 | **`/admin` sous CSP non vérifié** — le back-office n'a pas pu être chargé faute de base de données dans l'environnement de test | Moyenne | Impossible à tester ici ; le site public est vérifié sans violation | **au premier chargement de `/admin` après déploiement** : ouvrir la console, chercher « Refused to ». Si un refus apparaît, ajouter le domaine à la directive concernée dans `next.config.mjs` |
 | mise en ligne | Mentions légales à l'état de gabarit | Élevée | Informations juridiques que seul le propriétaire détient | avec la mise en service |
 | toujours | Restauration de sauvegarde jamais essayée | Critique | Jamais fait | avant de considérer le site en service |
 | 2026-09-14 | `images.remotePatterns` déclaré alors que `next/image` est inutilisé | Moyenne | Découvert aujourd'hui | proposé, en attente de décision |

@@ -63,7 +63,7 @@
 | Polices chargées depuis Fontshare | faible | Fontshare tombe → affichage dégradé au premier rendu | passer sur `next/font/local` |
 | **`/admin` réclamable par n'importe qui** | **forte** | Perte du back-office du site en ligne | créer le compte — c'est la prochaine action |
 | 12 failles de dépendances, dont 1 critique | moyenne | Surface d'attaque élargie ; l'essentiel ferme avec Next 16 | inscrit dans `securite.md`, ferme avec la montée de version |
-| En-têtes de sécurité absents (dont `X-Frame-Options`) | moyenne | `/admin` encadrable par un site tiers | à poser dans `next.config.mjs` |
+| CSP non éprouvée sur `/admin` | moyenne | Le back-office pourrait mal s'afficher | ouvrir la console au premier chargement après déploiement — voir `securite.md` |
 
 ---
 
@@ -96,5 +96,5 @@
 | `verify` niveau 1 | 2026-09-14 — vert (lint, build) |
 | `verify` niveau 2 | **2 sur 5 prouvés** (O2, O3) · O4 partiel · O1 et O5 non prouvables aujourd'hui |
 | Contrôle de cadre | 2026-09-14 — voir dernier passage |
-| `securite.md` | 2026-09-14 — **2 échecs critiques**, 5 alertes |
+| `securite.md` | 2026-09-14 — **1 échec critique** (`/admin` réclamable), 3 alertes |
 | Portes franchies | CADRAGE, FONDATIONS, CONSTRUCTION (M1–M3, M5) |
