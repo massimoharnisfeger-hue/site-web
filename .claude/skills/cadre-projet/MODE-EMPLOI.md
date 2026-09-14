@@ -18,15 +18,17 @@ code mal, il se perd parce que personne ne sait plus où il en est.**
 
 ## L'installer
 
-Une fois, sur ta machine :
+Une fois, sur ta machine, depuis le dépôt `site-web` :
 
 ```bash
-cp -r .claude/skills/cadre-projet ~/.claude/skills/
-cp .claude/agents/gardien-cadre.md ~/.claude/agents/
+bash .claude/skills/cadre-projet/install.sh
 ```
 
-Il s'applique alors à tous tes projets — PASSCLUB, Grosjean, les sites clients.
-Sans ça, il ne vaut que pour ce dépôt.
+Il s'applique alors à **tous** tes projets. Sans ça, il ne vaut que pour ce
+dépôt.
+
+Relance la même commande après un `git pull` pour récupérer les évolutions du
+cadre : le script réécrit la version installée, sans rien casser.
 
 ---
 
