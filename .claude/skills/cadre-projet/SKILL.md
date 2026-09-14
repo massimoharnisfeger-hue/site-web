@@ -1,298 +1,228 @@
 ---
 name: cadre-projet
-description: "Cadre de démarrage et de conduite de tout projet Claude Code : un dossier au nom du projet et six fichiers — CLAUDE.md (le plan, l'idée, les objectifs numérotés), memory.md (les modifications, les erreurs et les règles qui en sortent pour ne plus les refaire), skill.md (les skills disponibles et lesquels choisir avant d'agir), agents.md (l'équipe d'agents, les gardiens de la boucle et le contrôle de cadre), verify.md (la preuve que le projet tourne et que l'objectif du plan est atteint), et le fichier de clés API et mots de passe, ignoré par git. Déclencher dès que l'utilisateur dit : nouveau projet, on démarre, on commence, initialise le projet, mets ça en place, reprends le projet, quel est le plan, note ça pour ne pas refaire l'erreur, mémoire du projet, apprentissages, quel skill utiliser, quel agent, clé API, mot de passe, variable d'environnement, .env, secret, vérifie que ça marche, est-ce bien structuré, l'objectif est-il atteint, c'est fini. Déclencher aussi avant d'écrire la première ligne de code d'un projet neuf, et avant d'annoncer qu'un travail est terminé."
+description: "Système de pilotage de projet de bout en bout dans Claude Code : comprendre et challenger une idée, la cadrer, la découper en jalons et en tâches, construire, prouver, stabiliser, lancer, puis exploiter. Tient un tableau de bord vivant (ETAT.md), une mémoire des erreurs (memory.md), des preuves exécutables (verify.md), un plan (CLAUDE.md), l'outillage (skill.md, agents.md) et les clés hors de git. Déclencher dès que l'utilisateur dit : nouveau projet, j'ai une idée, on démarre, on commence, initialise, mets ça en place, reprends le projet, où on en est, quelle est la prochaine étape, c'est quoi la priorité, quel est le plan, la roadmap, le périmètre, le MVP, ajoute cette fonctionnalité, change ça, on est bloqué, ça ne marche pas, note pour ne pas refaire l'erreur, quel skill, quel agent, clé API, secret, .env, vérifie que ça marche, est-ce bien structuré, est-ce stable, on peut lancer, c'est fini, on clôture. Déclencher aussi avant d'écrire la première ligne de code d'un projet neuf, avant toute modification importante d'un projet existant, et avant d'annoncer qu'un travail est terminé."
 metadata:
-  version: 2.0.0
+  version: 3.0.0
   langue: fr
 ---
 
-# Cadre projet — six fichiers, une boucle
+# Cadre projet — le système de pilotage
 
-Un projet tient dans un dossier et six fichiers. On lit avant d'agir, on prouve
-avant de dire « fini », on écrit après. Le reste est du code.
+Ce skill est un routeur. Il tient les **invariants** (vrais à toute heure du
+projet) et renvoie vers le **playbook de la phase en cours**. Rien d'autre n'est
+chargé : un projet a cinq phases, on n'en vit qu'une à la fois.
 
-Ces fichiers ne sont pas de la documentation : ce sont les fichiers de travail.
-Créés le premier jour puis jamais rouverts, ils ne servent à rien. C'est **la
-boucle**, plus bas, qui les rend utiles.
+## Ce que tu fais en premier, toujours
 
-## Le principe
+1. Lire `ETAT.md` à la racine du projet → il donne la **phase** et le **jalon**.
+2. Charger `phases/<n>-<phase>.md` de ce skill. Celui-là seulement.
+3. Appliquer les invariants ci-dessous, qui ne dépendent d'aucune phase.
 
-| Fichier | Répond à | Lu | Écrit |
+**Pas d'`ETAT.md` ?** Alors :
+- du code existe déjà → `manoeuvres/reprise.md` ;
+- rien n'existe → phase CADRAGE, `phases/1-cadrage.md`.
+
+## Les cinq phases
+
+| # | Phase | Ce qu'on y fait | **Porte de sortie** |
 |---|---|---|---|
-| `CLAUDE.md` | Qu'est-ce qu'on construit, et c'est fini quand ? | avant chaque tâche | quand une décision change |
-| `memory.md` | Qu'est-ce qui a déjà été payé cher ? | avant chaque tâche | après chaque tâche |
-| `skill.md` | Avec quels outils j'attaque ça ? | avant chaque tâche | quand un outil fait ses preuves |
-| `agents.md` | Qui fait le travail, et qui le contrôle ? | avant de déléguer | quand l'équipe bouge |
-| `verify.md` | Ça tourne ? L'objectif est-il atteint ? | avant de dire « fini » | à chaque passage |
-| `.env.local` | Où sont les clés et les mots de passe ? | quand une clé manque | quand une clé arrive ou tourne |
+| 1 | **CADRAGE** | Comprendre, challenger, décider quoi construire et quoi ne pas construire | Les `O` sont écrits, vérifiables, et le hors-périmètre est explicite |
+| 2 | **FONDATIONS** | Le squelette : dépôt, arborescence, conventions, les fichiers du cadre, les clés | `verify.md` niveau 1 passe sur un projet vide |
+| 3 | **CONSTRUCTION** | Le cycle, répété par jalon | Tous les jalons du périmètre sont **validés** (pas « faits ») |
+| 4 | **LANCEMENT** | Mise en ligne et check-list de go/no-go | Le produit tourne en production, surveillé |
+| 5 | **EXPLOITATION** | Trier ce qui remonte, décider la suite | Permanent, ou clôture via `manoeuvres/cloture.md` |
 
-Les cinq premiers vivent **à la racine du dossier du projet** et se commitent.
-Le sixième vit à la racine aussi et **ne se commite jamais**.
+**Une porte ne se franchit pas à l'estime.** Tant qu'elle n'est pas passée, on
+reste dans la phase — même si le calendrier dit autre chose.
 
-## Démarrer un projet neuf
+**Revenir en arrière est légal et se déclare.** Si CONSTRUCTION révèle que le
+cadrage était faux, on retourne en CADRAGE, on l'écrit dans `ETAT.md` et la
+décision va dans `CLAUDE.md`. Ce qui est interdit, c'est d'avancer en faisant
+comme si.
 
-Dans cet ordre. **Aucune ligne de code avant l'étape 6.**
+### Pourquoi cinq et pas douze
 
-1. **Le dossier** porte le nom du projet : minuscules, tirets, ni accent ni
-   espace. `padel-house`, `passclub-landing`, `grosjean-devis`.
-2. **Le `.gitignore` d'abord.** Avant même qu'un fichier de clés existe :
+Le découpage courant (idée → discovery → spec → planning → setup → build → test
+→ review → stabilisation → lancement → post-lancement → itération) a trois
+défauts. **Douze phases, on n'en habite aucune** : une phase qu'on ne décide pas
+d'ouvrir n'existe pas. **Tester, relire et stabiliser ne sont pas des phases** :
+en faire des étapes de fin de projet, c'est précisément la faute qu'on veut
+éviter — elles appartiennent à *chaque* incrément. Et **spécifier et planifier
+sont un seul geste** : on ne planifie bien que ce qu'on vient de spécifier.
 
-   ```bash
-   grep -qx '.env.local' .gitignore || echo '.env.local' >> .gitignore
-   ```
+D'où : cinq phases, et le reste devient le **cycle** qui tourne à l'intérieur de
+CONSTRUCTION — décrit dans `phases/3-construction.md`.
 
-   Cet ordre n'est pas une préférence. Créer le fichier avant la ligne, c'est
-   risquer le `git add .` qui brûle toutes les clés d'un coup.
-3. **`CLAUDE.md`** — copier `modeles/CLAUDE.modele.md` vers `<projet>/CLAUDE.md`,
-   puis le remplir **avec l'utilisateur**. L'idée, les objectifs numérotés, le
-   hors-sujet, les contraintes. C'est la seule étape qui exige sa présence :
-   inventer un objectif à sa place, c'est construire le mauvais projet vite.
-4. **Les quatre autres** — copier `memory.md`, `skill.md`, `agents.md`,
-   `verify.md`. Ils partent presque vides, sauf `verify.md` : y inscrire dès
-   maintenant une ligne par objectif, même sans savoir encore comment le
-   prouver. Une ligne vide est une question ouverte ; une ligne absente est un
-   objectif oublié.
-5. **Le fichier de clés** — copier `modeles/cles.env.modele` vers
-   `<projet>/.env.local`, puis vérifier qu'il est bien ignoré :
+## Les manœuvres
 
-   ```bash
-   git check-ignore -v .env.local   # doit répondre
-   ```
-6. **Relire les objectifs.** Si l'un d'eux ne se répond pas par oui ou par non,
-   il est mal écrit. Le corriger maintenant coûte cinq minutes ; plus tard, il
-   coûte le projet.
-7. Coder.
+Ce qui arrive sans prévenir, quelle que soit la phase. Charger le fichier, faire
+ce qu'il dit, revenir à la phase en cours.
 
-## Les six fichiers
+| Ça arrive | Charger |
+|---|---|
+| « ajoute donc… », « finalement je voudrais… » | `manoeuvres/changement.md` |
+| ça casse, ça ne marche pas, on tourne en rond | `manoeuvres/blocage.md` |
+| un projet existe déjà, ou part dans tous les sens | `manoeuvres/reprise.md` |
+| on arrête, on livre, on passe la main | `manoeuvres/cloture.md` |
 
-### `CLAUDE.md` — le plan
+## Les fichiers du projet, et qui possède quoi
 
-Claude Code charge ce fichier **automatiquement, à chaque session**. Le plan est
-donc lu sans que personne n'ait à y penser. Deux conséquences :
+**Un fait, un seul endroit.** Un fait écrit à deux endroits diverge — c'est une
+question de semaines. Les autres fichiers **renvoient**, ils ne recopient pas.
 
-- **Il tient sur un écran.** Tout ce qui est chargé à chaque session et n'est
-  pas relu à chaque session est du bruit. Le détail va dans un fichier à part,
-  appelé depuis le plan.
-- **Il importe les autres**, en dernière ligne : `@memory.md` · `@skill.md` ·
-  `@agents.md` · `@verify.md`. Ils cessent d'être une lecture optionnelle.
-  Le fichier de clés, lui, ne s'importe jamais — ses valeurs n'ont rien à faire
-  dans un contexte de session.
-
-Ce qu'il contient : l'idée en une phrase · les objectifs numérotés `O1`, `O2`,
-`O3` · le hors-sujet · les contraintes · les décisions datées avec leur pourquoi
-· l'état actuel en une ligne.
-
-**Un objectif se formule pour qu'un tiers réponde oui ou non sans appeler
-personne.** « Faire un beau tunnel de réservation » n'est pas un objectif :
-c'est une humeur. « Un visiteur envoie une demande sans créer de compte » en est
-un. Chaque `O` est repris tel quel dans `verify.md` — pas d'objectif sans
-preuve, pas de preuve sans objectif.
-
-Ce qu'il ne contient jamais : l'historique des séances (c'est `memory.md`), le
-détail d'implémentation (c'est le code), une clé (c'est `.env.local`), ni un
-état optimiste. **`CLAUDE.md` décrit ce qui est, pas ce qu'on espérait.**
-
-### `memory.md` — la mémoire
-
-Deux zones, parce qu'elles n'ont pas la même durée de vie.
-
-**En haut, les règles.** Impératives, une ligne, dédoublonnées. C'est cette
-zone qu'on lit avant d'agir — donc elle reste courte, sinon elle n'est plus lue.
-
-**En bas, le journal.** Daté, plus récent en haut : ce qui a été fait, ce qui a
-cassé, la cause réelle, le temps perdu.
-
-La règle qui tient l'ensemble : **une entrée qui a coûté du temps produit une
-règle en haut, le jour même.** Sinon la leçon est perdue et l'erreur revient
-— c'est exactement ce que ce fichier existe pour empêcher.
-
-Ça change la façon d'écrire : on note **l'instruction qui aurait fait gagner le
-temps perdu**, pas le récit de ce qui s'est passé.
-
-- ✗ « J'ai galéré avec les types Payload après avoir modifié Home.ts. »
-- ✓ « **Toujours** lancer `npm run generate:types` après toute modification de
-  `globals/` ou `collections/`. »
-
-Quand une règle cesse de s'appliquer, la supprimer. Ce n'est pas un musée.
-
-### `skill.md` — la boîte à outils
-
-Une table de routage, pas un inventaire. Trois colonnes : le skill · quand
-l'appeler · **quand ne pas l'appeler**. La troisième fait tout le travail : elle
-empêche d'ouvrir un skill de design pour un problème de build.
-
-Avant chaque tâche notable : choisir, **le dire en une ligne**, agir. Plusieurs
-skills peuvent se combiner — c'est même le cas courant.
-
-Deux garde-fous :
-
-- **Un skill listé doit exister pour de vrai.** Un nom inventé coûte plus cher
-  que pas de table du tout : on se croit outillé et on ne l'est pas.
-- **Une section « manques »** recense ce qu'on a dû faire à la main faute de
-  skill. Trois occurrences de la même chose à la main, c'est un skill à écrire.
-
-### `agents.md` — l'équipe et les gardiens
-
-Les skills disent *comment*. Les agents disent *qui*. Le fichier tient trois
-choses :
-
-1. **L'équipe** — par agent : sa mission sur ce projet, les skills qu'il charge,
-   quand on l'appelle, et **ce qu'il rend**. Sans cette dernière colonne, on le
-   relance trois fois faute de savoir ce qu'on attendait.
-2. **Les gardiens de la boucle** — qui contrôle quoi, à quel moment, et sur quoi
-   il bloque. Une case vide est un moment non gardé ; c'est là que les projets
-   se cassent.
-3. **Le contrôle de cadre** — neuf points qui vérifient que les six fichiers
-   tiennent debout : ils existent, chaque `O` a sa preuve, `verify.md` a tourné
-   récemment, les leçons sont devenues des règles, les skills et agents cités
-   existent, les clés sont hors de git et **hors de l'historique**, et l'état
-   déclaré correspond au réel.
-
-Ce contrôle se lance avant toute annonce de fin, et à intervalle régulier. C'est
-lui qui répond à « est-ce que tout est bien structuré et tourne bien ».
-
-Même garde-fou que pour les skills : **un agent listé existe pour de vrai.**
-
-### `verify.md` — la preuve
-
-C'est le seul fichier qui autorise le mot « fini ».
-
-**Niveau 1 — est-ce que ça tourne.** Installation, lint, build, tests,
-démarrage. Des commandes réelles, copiables, dans l'ordre, avec le résultat
-attendu.
-
-**Niveau 2 — l'objectif est-il atteint.** Une ligne par objectif de `CLAUDE.md`,
-et en face : la commande, ou le parcours exact à refaire à la main.
-
-Plus une date de dernier passage, et une section **échecs ouverts** — ce qui
-échoue, depuis quand, et *pourquoi ce n'est pas encore réparé*. Un échec sans
-ligne ici est un échec oublié.
-
-La règle, non négociable : **aucune case ne se coche sans avoir vu la sortie de
-la commande.** Écrire « OK » sur une vérification qu'on n'a pas lancée
-transforme le fichier en décor.
-
-Quand le projet a déjà son lanceur de scripts (`npm`, `make`), le niveau 1 se
-câble dedans — `npm run verify` — plutôt que dans un script isolé qui dérivera.
-
-### `.env.local` — les clés
-
-Toutes les clés API et tous les mots de passe du projet, à un seul endroit.
-
-**Le nom est celui que l'outil charge tout seul** : `.env.local` pour Next et
-Vite, `.env` pour Node, Python, Docker. Un fichier joliment nommé que le code ne
-lit pas ne sert à personne.
-
-Pour chaque clé, trois lignes de commentaire au-dessus — ce qu'on cherche
-toujours six mois plus tard : **à quoi elle sert**, **où on l'obtient** (le
-chemin exact pour la regénérer), **où elle est déclarée en production**. Plus la
-date de dernière rotation.
-
-Les trois règles, dans l'ordre d'importance :
-
-1. **Le `.gitignore` avant le fichier.** Toujours. L'inverse, c'est le `git add .`
-   qui brûle tout.
-2. **Aucune valeur ne sort d'ici** — ni dans le code, ni dans un commit, ni dans
-   un message, ni dans une capture.
-3. **Une clé commitée est une clé brûlée.** Elle reste dans l'historique après
-   suppression : elle se **révoque** et se régénère. C'est la seule erreur de ce
-   cadre qui ne se rattrape pas.
-
-Projet partagé ? Garder à côté un `.env.example` : mêmes clés, valeurs vides.
-Lui se commite, et il devient la liste de courses d'un nouvel arrivant.
-
-## La boucle
-
-C'est elle qui fait vivre les six fichiers.
-
-**Avant d'agir**
-1. `CLAUDE.md` — quel objectif cette tâche sert-elle ? Si aucun, ne pas la faire :
-   l'ajouter au plan d'abord, ou s'en passer.
-2. `memory.md` — les règles en haut. Cette erreur a-t-elle déjà été payée ?
-3. `skill.md` et `agents.md` — choisir les skills, et l'agent si on délègue.
-   Le dire en une ligne.
-
-**Pendant**
-4. Faire ce que la tâche demande. Rien de plus.
-
-**Après**
-5. Lancer `verify.md`. Vraiment le lancer.
-6. Écrire dans `memory.md` : ce qui a changé, ce qui a raté, la règle qui en sort.
-7. Corriger `CLAUDE.md` si une décision a bougé ou si l'état actuel a changé.
-
-**Avant de dire « fini »**
-8. Lancer le **contrôle de cadre** d'`agents.md`. Les neuf points, y compris les
-   deux sur les clés.
-
-## Règles non négociables
-
-1. **Pas de code avant les six fichiers.**
-2. **Le `.gitignore` avant le fichier de clés** — jamais l'inverse.
-3. **Aucune valeur de clé ne sort du fichier de clés.**
-4. **Rien n'est « fini » tant que `verify.md` n'est pas passé**, en vrai, la
-   sortie sous les yeux.
-5. **On ne note jamais un résultat qu'on n'a pas vu.**
-6. **Une erreur qui a coûté du temps produit une règle le jour même.**
-7. **Un skill ou un agent nommé existe.**
-8. **`CLAUDE.md` décrit ce qui est**, pas ce qu'on espérait.
-9. **Ce qui n'est pas dans le plan ne se code pas** — on l'ajoute au plan
-   d'abord, ou on s'abstient.
-
-## Les pièges
-
-| Le piège | Ce qu'on voit | La sortie |
+| Fichier | Possède | Ne contient jamais |
 |---|---|---|
-| `memory.md` devient un journal intime | Personne ne le relit, l'erreur revient | Les règles en haut, une ligne chacune. Le journal est l'archive, pas l'outil. |
-| `CLAUDE.md` enfle | Chargé à chaque session, il encombre au lieu d'orienter | Le plan tient sur un écran. Le détail part dans un fichier appelé depuis le plan. |
-| `skill.md` ou `agents.md` listent des noms inventés | On croit être outillé, on perd du temps à chercher | Vérifier l'existence avant d'ajouter la ligne. |
-| `verify.md` coché sans être lancé | « Tout est vert » puis la production casse | Règle 5. La sortie ou rien. |
-| La clé « juste pour tester » dans le code | Elle part au premier commit et ne revient jamais | Règle 3. Elle passe par le fichier de clés, même pour cinq minutes. |
-| Le fichier de clés créé avant le `.gitignore` | Un `git add .` et tout est brûlé | Règle 2. L'ordre est la protection. |
-| Les six fichiers, puis plus rien | Six fichiers datés du premier jour | La boucle, pas la cérémonie. Le fichier qu'on n'a pas rouvert depuis dix séances ment déjà. |
+| `CLAUDE.md` | Pourquoi le projet existe, les objectifs `O1..On`, le périmètre, les contraintes, les décisions, la carte du projet | l'avancement, les tâches |
+| `ETAT.md` | Où on en est : phase, jalons, en cours, bloqué, prochaine action, risques, dette | le pourquoi, les décisions |
+| `verify.md` | Ce qui est **prouvé** : les commandes et leur dernier résultat | des intentions |
+| `memory.md` | Ce qu'on a **appris** : les règles, puis le journal | les problèmes encore ouverts (→ `ETAT.md`) |
+| `skill.md` | Quels outils, et quand ne pas les sortir | des noms inventés |
+| `agents.md` | Qui fait, qui contrôle, à quel moment | des noms inventés |
+| `.env.local` | Les clés et mots de passe | — et **jamais** dans git |
 
-## Reprendre un projet déjà commencé
+`CLAUDE.md` est chargé automatiquement à chaque session : il tient sur un écran
+et importe les autres (`@ETAT.md`, `@memory.md`, `@skill.md`, `@agents.md`,
+`@verify.md`). Le fichier de clés ne s'importe jamais.
 
-La plupart des projets existent avant ce cadre. Les adopter rétroactivement,
-dans cet ordre :
+Modèles prêts à copier : `modeles/`. Table de correspondance en bas de fichier.
 
-1. **Les clés d'abord.** Vérifier que le fichier de clés existe, qu'il est
-   ignoré, et surtout qu'aucune clé n'est **déjà** dans l'historique :
+## La boucle — invariant, à chaque tâche
 
-   ```bash
-   git log --all --oneline -- .env .env.local
-   ```
+**Avant** — quel `O` cette tâche sert-elle ? (aucun → ne pas la faire, l'ajouter
+au plan d'abord) · les règles en haut de `memory.md` · les outils de `skill.md`,
+l'agent d'`agents.md` si on délègue, **dit en une ligne**.
 
-   Si cette commande renvoie quoi que ce soit, révoquer ces clés avant toute
-   autre chose. Le reste du cadre peut attendre une heure ; une clé publiée, non.
-2. **`CLAUDE.md`** — reconstituer l'idée et les objectifs depuis ce qui tourne
-   déjà, pas depuis ce qui était rêvé au départ. Ce qui est construit et hors
-   plan : soit ça devient un objectif, soit ça part.
-3. **`verify.md`** — écrire les commandes qui existent déjà (le `README` et les
-   scripts `package.json` les donnent), puis une ligne par objectif. **Lancer le
-   tout tout de suite.** Le premier passage dit l'état réel du projet, qui est
-   rarement celui qu'on croyait.
-4. **`memory.md`** — n'inventer aucun journal. Écrire directement les règles
-   déjà connues : les pièges du projet, les commandes interdites, les ordres à
-   respecter.
-5. **`skill.md` et `agents.md`** — lister ce qui est réellement utilisé sur ce
-   projet, puis lancer le contrôle de cadre pour voir ce qui manque.
+**Pendant** — comprendre avant de modifier. Ce qu'on s'apprête à toucher, qui en
+dépend ? Un changement se veut **ciblé, réversible, documenté, prouvable**. On
+ne supprime rien dont on n'a pas tracé les dépendances.
 
-## Les modèles
+**Après** — `verify` **rapide** (niveau 1) · écrire dans `memory.md` · mettre
+`ETAT.md` à jour (c'est le geste qu'on oublie, et c'est celui qui fait mentir
+tout le reste).
 
-`modeles/` contient les six fichiers prêts à copier :
+## Le point de situation
+
+Quand on demande « où on en est », « c'est quoi la suite », « qu'est-ce qui
+reste » : **lire `ETAT.md` et répondre dans cet ordre**, court, sans broder.
+
+```
+Phase · jalon en cours
+Fait          <les jalons validés, en une ligne>
+En cours      <la tâche, et depuis quand>
+Bloqué        <quoi, la cause, chez qui — ou « rien »>
+Reste         <les jalons à faire>
+Prochaine     <l'action, et pourquoi elle passe devant>
+Risques       <ceux qui peuvent frapper cette semaine — ou « rien de neuf »>
+```
+
+**Avant de répondre, vérifier la date en tête d'`ETAT.md`.** Si elle a plus
+d'une semaine, le fichier ment déjà : le dire d'abord, proposer de le remettre à
+jour, et ne pas présenter son contenu comme l'état réel. Une réponse confiante
+tirée d'un fichier périmé est pire que pas de réponse — elle fait décider sur du
+faux.
+
+Trois choses ne s'inventent jamais dans un point de situation : un avancement
+qu'on n'a pas vu, une preuve qu'on n'a pas lancée, une date qu'on ne lit nulle
+part. En l'absence d'information, la réponse est « on ne sait pas, et voilà
+comment on le saurait ».
+
+## Les deux portes, qui ne prouvent pas la même chose
+
+Elles se confondent facilement, et alors on croit être couvert alors qu'on ne
+l'est qu'à moitié.
+
+| | `verify.md` | Contrôle de cadre (`scripts/controle-cadre.sh`) |
+|---|---|---|
+| Prouve | que **le produit** fait ce qu'il promet | que **le pilotage** ne ment pas |
+| Répond à | « est-ce que ça marche ? » | « est-ce que ce qu'on lit est vrai ? » |
+| Quand | rapide après chaque tâche, complet à chaque jalon | avant tout « fini », et à chaque fin de phase |
+
+**Deux régimes pour `verify`**, sinon la règle est trop lourde et meurt :
+- **rapide** = niveau 1 (lint, build, tests) — après chaque tâche ;
+- **complet** = niveaux 1 et 2 (chaque `O` prouvé) — à chaque jalon, avant chaque
+  franchissement de porte, avant toute annonce de fin.
+
+## Les dix règles non négociables
+
+1. **Rien ne se code avant que `CLAUDE.md` et `ETAT.md` existent.**
+2. **Le `.gitignore` avant le fichier de clés** — jamais l'inverse.
+3. **Aucune valeur de clé ne sort du fichier de clés**, même cinq minutes.
+4. **On ne note jamais un résultat qu'on n'a pas vu.** Ni « OK », ni « ça devrait
+   marcher ».
+5. **« Fait » n'existe pas.** Un incrément est **validé** ou il ne l'est pas — au
+   sens du cycle de `phases/3-construction.md`.
+6. **Une porte ne se franchit pas à l'estime.**
+7. **Ce qui n'est pas dans le périmètre ne se code pas** — ça va dans « Plus
+   tard » d'`ETAT.md`, avec son niveau de priorité.
+8. **Une erreur qui a coûté du temps produit une règle le jour même.**
+9. **Un skill ou un agent nommé existe.** Vérifier avant d'écrire la ligne.
+10. **`CLAUDE.md` et `ETAT.md` décrivent ce qui est**, pas ce qu'on espérait.
+
+## Être proactif : les sept signaux
+
+Ne pas attendre qu'on demande. Quand l'un de ces signaux apparaît, **le dire
+avant de continuer**, en une ou deux phrases, puis proposer la correction.
+
+| Le signal | Ce qu'on dit |
+|---|---|
+| Une information manque pour bien faire | ce qui manque, et ce que ça change selon la réponse |
+| Une décision porte un risque | le risque, sa probabilité, ce qui l'éteint |
+| Il existe une meilleure approche | l'alternative et ce qu'elle coûte, sans imposer |
+| Une tâche est trop vague pour être commencée | sa version concrète, avec un critère de fin |
+| Une étape n'est pas validée | qu'on ne peut pas encore dire « fini », et ce qui manque |
+| Le code, le plan et la doc divergent | lequel des trois ment, et la correction proposée |
+| Une demande sort du périmètre | qu'elle est intéressante mais pas prioritaire, et où on la range |
+
+Le septième est le plus utile, et le plus impopulaire. Le dire quand même.
+
+## L'échelle de priorité
+
+Un seul vocabulaire, partout — `ETAT.md`, arbitrages, roadmap V2.
+
+| Niveau | Définition opérationnelle |
+|---|---|
+| **ESSENTIEL** | Sans lui, le projet ne remplit aucun `O`. C'est le MVP, rien d'autre. |
+| **IMPORTANT** | Le projet marche sans, mais mal. Première vague après le lancement. |
+| **UTILE** | Gain réel, mesurable, mais personne ne bloque dessus. |
+| **OPTIONNEL** | Ça fait plaisir. Se fait s'il reste du temps, ce qui n'arrive jamais. |
+| **PLUS TARD** | Bonne idée, mauvais moment. Datée et rangée, pas jetée. |
+
+Règle du MVP : **seul l'ESSENTIEL entre dans le périmètre de la V1.** Tout le
+reste va dans « Plus tard » d'`ETAT.md` — rangé, pas perdu.
+
+## Profils de projet
+
+Les phases ne changent pas ; les portes s'ajustent.
+
+| Profil | Ce qui s'allège | Ce qui ne s'allège jamais |
+|---|---|---|
+| **Site vitrine / landing** | pas de tests unitaires ; le niveau 2 de `verify` est un parcours manuel écrit | le `O` sur le contenu réel, l'accessibilité, le référencement |
+| **Application / SaaS** | — | tests, migrations de données, sécurité, sauvegardes |
+| **Script / outil interne** | pas de lancement, pas d'exploitation | `verify` niveau 1, et le README qui dit comment le lancer |
+| **Contenu / marketing** | pas de build | les `O` chiffrés, et la source de chaque donnée avancée |
+
+Dans le doute, garder la porte. On l'allège quand elle a prouvé qu'elle gênait.
+
+## Où est quoi
+
+| Dossier | Contenu | Chargé |
+|---|---|---|
+| `phases/` | un playbook par phase | la phase en cours, une seule |
+| `manoeuvres/` | changement · blocage · reprise · clôture | à l'événement |
+| `modeles/` | les fichiers du projet prêts à copier | au démarrage |
+| `scripts/controle-cadre.sh` | le contrôle de cadre, exécutable | avant chaque porte |
 
 | Modèle | Destination | Commité ? |
 |---|---|---|
 | `modeles/CLAUDE.modele.md` | `<projet>/CLAUDE.md` | oui |
+| `modeles/ETAT.md` | `<projet>/ETAT.md` | oui |
 | `modeles/memory.md` | `<projet>/memory.md` | oui |
 | `modeles/skill.md` | `<projet>/skill.md` | oui |
 | `modeles/agents.md` | `<projet>/agents.md` | oui |
 | `modeles/verify.md` | `<projet>/verify.md` | oui |
 | `modeles/cles.env.modele` | `<projet>/.env.local` | **jamais** |
 
-Deux extensions sont volontaires. `CLAUDE.modele.md` : un fichier nommé
-`CLAUDE.md` posé n'importe où dans un dépôt est chargé comme mémoire de projet,
-et un gabarit vide chargé à chaque session est du bruit. `cles.env.modele` : le
-modèle ne doit surtout pas ressembler à un vrai fichier de clés, pour qu'on ne
-le confonde jamais avec celui qui en contient. **Renommer à la copie**, jamais
-avant.
+Les deux extensions bizarres sont voulues : un fichier nommé `CLAUDE.md` posé
+n'importe où est chargé comme mémoire de projet (un gabarit vide chargé à chaque
+session est du bruit), et le modèle de clés ne doit jamais ressembler à un vrai
+fichier de clés. **Renommer à la copie, jamais avant.**

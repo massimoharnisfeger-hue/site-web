@@ -4,53 +4,57 @@ Les skills disent **comment** faire. Les agents disent **qui** le fait : un
 exécutant à qui on confie une tâche cadrée, avec les skills qu'il charge et ce
 qu'il doit rendre.
 
-Même garde-fou que `skill.md` : **un agent listé ici existe pour de vrai.**
-Vérifier la liste des types d'agents disponibles avant d'ajouter une ligne.
+Déléguer a un second effet, souvent le plus utile : l'agent travaille dans son
+propre contexte. Une grosse lecture confiée à un agent ne vient pas encombrer la
+session principale.
+
+**Un agent listé ici existe pour de vrai.** Vérifier la liste des types d'agents
+disponibles avant d'écrire une ligne — un nom inventé fait perdre plus de temps
+qu'une table vide.
 
 ## L'équipe
 
 | Agent | Sa mission sur ce projet | Skills qu'il charge | Quand on l'appelle | Ce qu'il rend |
 |---|---|---|---|---|
 |  |  |  |  |  |
-|  |  |  |  |  |
 
-> Un agent sans colonne « ce qu'il rend » est un agent qu'on relancera trois
-> fois faute de savoir ce qu'on attendait de lui.
+<!-- Un agent sans colonne « ce qu'il rend » se relance trois fois, faute de
+     savoir ce qu'on attendait de lui. -->
 
 ## Les gardiens de la boucle
 
-Qui contrôle quoi, et à quel moment. **Une case vide est un moment non gardé** —
-c'est là que les projets se cassent.
+Qui contrôle quoi, et quand. **Une case vide est un moment non gardé** — c'est là
+que les projets se cassent. Remplir avec les agents réellement disponibles.
 
-| Moment de la boucle | Agent | Ce qu'il vérifie | Il bloque si |
+| Moment | Rôle attendu | Agent | Il bloque si |
 |---|---|---|---|
-| Avant d'agir |  | la tâche sert un `O` de CLAUDE.md, les règles de memory.md sont lues | aucun `O` concerné |
-| Pendant |  | le build et les types tiennent | build rouge |
-| Après |  | la qualité du diff, pas de régression | régression |
-| Avant de dire « fini » |  | `verify.md` est passé **en vrai** | une ligne non prouvée |
-| Régulièrement |  | le contrôle de cadre ci-dessous | un point échoue |
+| COMPRENDRE | explorer l'existant et les dépendances sans rien modifier |  | une dépendance n'est pas tracée |
+| CONSTRUIRE | tenir le build et les types |  | build rouge |
+| PROUVER | relire le diff, chercher la régression |  | régression trouvée |
+| STABILISER | cas limites, comportement en panne |  | un cas limite casse |
+| VALIDER | contrôle de cadre |  | un point en échec |
 
 ## Le contrôle de cadre
 
-À lancer avant toute annonce de fin, et à intervalle régulier. C'est ce qui
-empêche les six fichiers de devenir du décor.
+Il prouve que **le pilotage ne ment pas** — à ne pas confondre avec `verify.md`,
+qui prouve que le produit marche. Les deux sont nécessaires, ils ne répondent pas
+à la même question.
 
-| # | Ce qu'on vérifie | Comment | Dernier passage |
-|---|---|---|---|
-| 1 | Les six fichiers sont à la racine | `ls CLAUDE.md memory.md skill.md verify.md agents.md .env.local` |  |
-| 2 | Chaque `O` de CLAUDE.md a sa ligne dans `verify.md` | lecture croisée |  |
-| 3 | `verify.md` a un passage daté de moins de \<N\> jours | en-tête du fichier |  |
-| 4 | Chaque entrée coûteuse de `memory.md` a produit une règle | lecture du journal |  |
-| 5 | Les skills et les agents listés existent | liste des skills / des types d'agents |  |
-| 6 | Le fichier de clés est ignoré par git | `git check-ignore -v .env.local` |  |
-| 7 | **Aucune clé n'est dans l'historique** | `git log --all --oneline -- .env.local` → doit être vide |  |
-| 8 | L'« état actuel » de CLAUDE.md dit la vérité | le comparer au dernier passage de `verify.md` |  |
-| 9 | L'arborescence réelle correspond à celle déclarée | `ls` contre ce qu'annonce CLAUDE.md |  |
+**Il s'exécute, il ne se relit pas :**
 
-> **Le point 7 est le seul irréversible.** Une clé trouvée dans l'historique ne
-> s'efface pas : on la **révoque**, on en génère une nouvelle, et on note la
-> règle dans `memory.md` le jour même. Réécrire l'historique ne suffit pas —
-> la clé a déjà voyagé.
+```bash
+bash .claude/skills/cadre-projet/scripts/controle-cadre.sh
+```
+
+À lancer avant chaque franchissement de porte, avant toute annonce de fin, et à
+la revue régulière. Le script est la référence : ne pas recopier sa liste de
+points ici, elle divergerait à la première évolution du cadre.
+
+**Dernier passage :** <AAAA-MM-JJ — passe / N points en échec>
+
+Le seul point irréversible est celui des clés dans l'historique. Une clé trouvée
+là ne s'efface pas : on la **révoque**, on en génère une nouvelle, et la règle va
+dans `memory.md` le jour même.
 
 ## Manques
 
