@@ -1,6 +1,6 @@
 ---
 name: ui-styling
-description: "Use when WRITING or MODIFYING interface code: shadcn/ui components (Radix UI + Tailwind), Tailwind utility styling, responsive layouts, accessible dialogs, dropdowns, forms and tables, theme and dark-mode implementation. This is the implementation skill — it turns a decided design into working code. Do NOT use it to decide WHETHER a design is good or to redesign it (use impeccable), to look up palettes, font pairings, style references or UX guidelines (use ui-ux-pro-max), to define a token architecture (use design-system), or for logos, banners and slides (use design)."
+description: "Use when WRITING or MODIFYING interface code: shadcn/ui components (Radix UI + Tailwind), Tailwind utility styling, responsive layouts, accessible dialogs, dropdowns, forms and tables, theme and dark-mode implementation. This is the implementation skill — it turns a decided design into working code. Do NOT use it to decide WHETHER a design is good or to redesign it (use impeccable), to look up palettes, font pairings, style references or UX guidelines (use ui-ux-pro-max), to define a token architecture (use design-system), for banners (use banner-design), or for logos and slides (use design)."
 argument-hint: "[component or layout]"
 license: MIT
 metadata:
