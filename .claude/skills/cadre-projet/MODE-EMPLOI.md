@@ -104,6 +104,32 @@ livraison. C'est leur raison d'être.
 
 ---
 
+## Où vivent tes projets, et comment ils s'appellent
+
+Une seule question : **est-ce que ça contient du code qui se construit ?**
+
+| Réponse | Où |
+|---|---|
+| Oui | `C:\Users\massi\Projects\` — hors OneDrive |
+| Non | `C:\Users\massi\OneDrive\Bureau\` |
+
+Le code est sauvegardé par git ; tes documents ne le sont par rien. Donc OneDrive
+là où il sert, et pas là où il casse — `node_modules` synchronisé fait échouer
+les builds, et un `.env` synchronisé est un secret publié.
+
+Le nom suit `<client-ou-domaine>-<objet>` : `grosjean-relance-devis`,
+`padel-house-site`, `passclub-boutique`. Le client devant, pour que le classement
+alphabétique regroupe tout seul.
+
+**Un projet ne se renomme jamais sans ton accord** : le cadre propose, explique
+ce que ça touche, et attend. Refusé une fois, il ne le repropose plus.
+
+Pour voir l'état d'un dossier :
+
+```bash
+bash ~/.claude/skills/cadre-projet/scripts/ranger-projets.sh ~/Projects
+```
+
 ## Les cinq phases
 
 ```

@@ -20,6 +20,13 @@ On la remplace, on ne l'efface pas.
 
 Le reste du cadre peut attendre une heure. Une clé publiée, non.
 
+## 1 bis. Le nom et l'emplacement
+
+Avant de toucher au contenu : le projet est-il bien nommé, et au bon endroit ?
+`bash scripts/ranger-projets.sh <dossier parent>` le constate. S'il faut
+renommer, **on propose et on attend un oui** — jamais en silence. Le rituel est
+dans `conventions/nommage.md`.
+
 ## 2. Comprendre ce qui existe
 
 Sans rien modifier. Répondre à six questions :

@@ -10,7 +10,10 @@ fondation posée après coup coûte dix fois son prix — et se pose rarement.
 
 ## 1. Le squelette
 
-**Le dossier** porte le nom du projet : minuscules, tirets, ni accent ni espace.
+**Le dossier** se nomme et se range selon `conventions/nommage.md` :
+`<client-ou-domaine>-<objet>`, minuscules et tirets, le client devant pour que
+le classement alphabétique regroupe tout seul. Et hors OneDrive dès qu'il y a
+du code à construire.
 
 **Le `.gitignore` avant tout fichier de configuration.** Dans cet ordre, jamais
 l'inverse :

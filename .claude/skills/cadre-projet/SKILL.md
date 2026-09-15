@@ -147,23 +147,26 @@ pour l'attaquant aussi.
 - **complet** = niveaux 1 et 2 (chaque `O` prouvé) — à chaque jalon, avant chaque
   franchissement de porte, avant toute annonce de fin.
 
-## Les onze règles non négociables
+## Les douze règles non négociables
 
 1. **Rien ne se code avant que `CLAUDE.md` et `ETAT.md` existent.**
-2. **Le `.gitignore` avant le fichier de clés** — jamais l'inverse.
-3. **Aucune valeur de clé ne sort du fichier de clés**, même cinq minutes.
-4. **Une faille Critique ne se lance pas.** Sans discussion, sans « on corrigera
+2. **Un projet se nomme et se range avant son premier fichier** — et **un
+   projet ne se renomme jamais sans accord** : on propose, on explique ce que
+   ça touche, on attend un oui. Voir `conventions/nommage.md`.
+3. **Le `.gitignore` avant le fichier de clés** — jamais l'inverse.
+4. **Aucune valeur de clé ne sort du fichier de clés**, même cinq minutes.
+5. **Une faille Critique ne se lance pas.** Sans discussion, sans « on corrigera
    après ». Les autres gravités s'acceptent, mais par écrit et signées.
-5. **On ne note jamais un résultat qu'on n'a pas vu.** Ni « OK », ni « ça devrait
+6. **On ne note jamais un résultat qu'on n'a pas vu.** Ni « OK », ni « ça devrait
    marcher ».
-6. **« Fait » n'existe pas.** Un incrément est **validé** ou il ne l'est pas — au
+7. **« Fait » n'existe pas.** Un incrément est **validé** ou il ne l'est pas — au
    sens du cycle de `phases/3-construction.md`.
-7. **Une porte ne se franchit pas à l'estime.**
-8. **Ce qui n'est pas dans le périmètre ne se code pas** — ça va dans « Plus
+8. **Une porte ne se franchit pas à l'estime.**
+9. **Ce qui n'est pas dans le périmètre ne se code pas** — ça va dans « Plus
    tard » d'`ETAT.md`, avec son niveau de priorité.
-9. **Une erreur qui a coûté du temps produit une règle le jour même.**
-10. **Un skill ou un agent nommé existe.** Vérifier avant d'écrire la ligne.
-11. **`CLAUDE.md` et `ETAT.md` décrivent ce qui est**, pas ce qu'on espérait.
+10. **Une erreur qui a coûté du temps produit une règle le jour même.**
+11. **Un skill ou un agent nommé existe.** Vérifier avant d'écrire la ligne.
+12. **`CLAUDE.md` et `ETAT.md` décrivent ce qui est**, pas ce qu'on espérait.
 
 ## Être proactif : les sept signaux
 
@@ -216,9 +219,11 @@ Dans le doute, garder la porte. On l'allège quand elle a prouvé qu'elle gênai
 |---|---|---|
 | `phases/` | un playbook par phase | la phase en cours, une seule |
 | `manoeuvres/` | changement · blocage · reprise · clôture | à l'événement |
+| `conventions/nommage.md` | comment un projet se nomme et où il vit | à la création, à la reprise |
 | `modeles/` | les fichiers du projet prêts à copier | au démarrage |
 | `scripts/controle-cadre.sh` | le contrôle de cadre, exécutable | avant chaque porte |
 | `scripts/controle-securite.sh` | la part mécanisable de `securite.md` | à l'incrément sensible, et avant le lancement |
+| `scripts/ranger-projets.sh` | constate noms et emplacements d'un dossier de projets | à la demande, ou en croisant du désordre |
 
 | Modèle | Destination | Commité ? |
 |---|---|---|

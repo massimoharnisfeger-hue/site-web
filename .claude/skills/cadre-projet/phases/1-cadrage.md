@@ -1,7 +1,8 @@
 # Phase 1 — CADRAGE
 
 **On y entre avec** une idée, parfois floue, parfois déjà trop précise.
-**On en sort avec** `CLAUDE.md` rempli et `ETAT.md` initialisé.
+**On en sort avec** un projet nommé, rangé, `CLAUDE.md` rempli et `ETAT.md`
+initialisé.
 **Porte de sortie :** les `O` sont écrits et vérifiables, le hors-périmètre est
 explicite, au moins une alternative a été examinée, et les inconnues restantes
 sont listées avec ce qu'elles bloquent.
@@ -117,6 +118,8 @@ Ne pas passer en FONDATIONS tant que les cinq tiennent :
 - [ ] Au moins une alternative a été examinée, et on sait pourquoi elle perd.
 - [ ] Chaque jalon dit quel `O` il sert.
 - [ ] Les inconnues sont listées avec ce qu'elles bloquent.
+- [ ] Le projet porte un nom conforme et vit au bon endroit
+      (`conventions/nommage.md`).
 
 Si l'un des cinq manque, le dire et rester ici. C'est la porte la plus rentable
 du cadre : une heure ici en économise dix en CONSTRUCTION.
