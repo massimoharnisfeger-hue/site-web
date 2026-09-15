@@ -1,6 +1,6 @@
 ---
 name: cadre-projet
-description: "Système de pilotage de projet de bout en bout dans Claude Code : comprendre et challenger une idée, la cadrer, la découper en jalons et en tâches, construire, prouver, stabiliser, lancer, puis exploiter. Tient un tableau de bord vivant (ETAT.md), une mémoire des erreurs (memory.md), des preuves exécutables (verify.md), un registre de tests de sécurité (securite.md), un plan (CLAUDE.md), l'outillage (skill.md, agents.md) et les clés hors de git. Range et nomme aussi les projets : où poser un dossier (le code hors OneDrive, les documents dans OneDrive), comment le nommer (client-objet, minuscules et tirets), et le rituel qui propose un renommage sans jamais l'imposer. Déclencher dès que l'utilisateur dit : nouveau projet, j'ai une idée, on démarre, on commence, initialise, mets ça en place, reprends le projet, où on en est, quelle est la prochaine étape, c'est quoi la priorité, quel est le plan, la roadmap, le périmètre, le MVP, ajoute cette fonctionnalité, change ça, on est bloqué, ça ne marche pas, note pour ne pas refaire l'erreur, quel skill, quel agent, clé API, secret, .env, range mes projets, mes dossiers sont en désordre, comment nommer ce projet, renomme ce dossier, quel nom donner, où je mets ce projet, OneDrive, Bureau, arborescence, vérifie que ça marche, est-ce bien structuré, est-ce stable, est-ce sécurisé, audit de sécurité, faille, vulnérabilité, npm audit, injection, XSS, en-têtes de sécurité, RGPD, sauvegarde, on peut lancer, c'est fini, on clôture. Déclencher aussi avant d'écrire la première ligne de code d'un projet neuf, avant toute modification importante d'un projet existant, et avant d'annoncer qu'un travail est terminé."
+description: "Système de pilotage de projet de bout en bout dans Claude Code : comprendre et challenger une idée, la cadrer, la découper en jalons et en tâches, construire, prouver, stabiliser, lancer, puis exploiter. Tient un tableau de bord vivant (ETAT.md), une mémoire des erreurs (memory.md), des preuves exécutables (verify.md), un registre de tests de sécurité (securite.md), un plan (CLAUDE.md), l'outillage (skill.md, agents.md) et les clés hors de git. Range et nomme aussi les projets : où poser un dossier (le code hors OneDrive, les documents dans OneDrive), comment le nommer (client-objet, minuscules et tirets), et le rituel qui propose un renommage sans jamais l'imposer. Déclencher dès que l'utilisateur dit : nouveau projet, j'ai une idée, on démarre, on commence, initialise, mets ça en place, reprends le projet, où on en est, quelle est la prochaine étape, c'est quoi la priorité, quel est le plan, la roadmap, le périmètre, le MVP, ajoute cette fonctionnalité, change ça, on est bloqué, ça ne marche pas, note pour ne pas refaire l'erreur, quel skill, quel agent, clé API, secret, .env, délègue ça, quel agent, brief d'agent, sous-agent, range mes projets, mes dossiers sont en désordre, comment nommer ce projet, renomme ce dossier, quel nom donner, où je mets ce projet, OneDrive, Bureau, arborescence, vérifie que ça marche, est-ce bien structuré, est-ce stable, est-ce sécurisé, audit de sécurité, faille, vulnérabilité, npm audit, injection, XSS, en-têtes de sécurité, RGPD, sauvegarde, on peut lancer, c'est fini, on clôture. Déclencher aussi avant d'écrire la première ligne de code d'un projet neuf, avant toute modification importante d'un projet existant, et avant d'annoncer qu'un travail est terminé."
 metadata:
   version: 3.0.0
   langue: fr
@@ -78,7 +78,7 @@ question de semaines. Les autres fichiers **renvoient**, ils ne recopient pas.
 | `securite.md` | Le registre des tests de sécurité et leur dernier résultat | des failles sans gravité ni échéance |
 | `memory.md` | Ce qu'on a **appris** : les règles, puis le journal | les problèmes encore ouverts (→ `ETAT.md`) |
 | `skill.md` | Quels outils, et quand ne pas les sortir | des noms inventés |
-| `agents.md` | Qui fait, qui contrôle, à quel moment | des noms inventés |
+| `agents.md` | Qui fait, qui contrôle, à quel moment — et **le brief de chaque agent**, qui est leur seule mémoire | des noms inventés |
 | `.env.local` | Les clés et mots de passe | — et **jamais** dans git |
 
 `CLAUDE.md` est chargé automatiquement à chaque session : il tient sur un écran
@@ -126,6 +126,26 @@ Trois choses ne s'inventent jamais dans un point de situation : un avancement
 qu'on n'a pas vu, une preuve qu'on n'a pas lancée, une date qu'on ne lit nulle
 part. En l'absence d'information, la réponse est « on ne sait pas, et voilà
 comment on le saurait ».
+
+## Déléguer
+
+Un agent travaille dans un contexte vide : il ne sait rien du projet et ne se
+souviendra de rien. **Donc un agent n'apprend pas — son brief apprend.** Ce qu'on
+a dû lui réexpliquer une deuxième fois appartient au brief, et s'écrit le jour
+même dans `agents.md`.
+
+Trois réflexes, à chaque délégation :
+
+- **Choisir la forme** — solo, parallèle, en chaîne, ou en contradiction (deux
+  agents sur la même question, sans qu'ils le sachent) pour une décision
+  irréversible.
+- **Recopier le brief tel quel**, pas une version improvisée de mémoire.
+- **Juger le retour** : une affirmation sans `fichier:ligne` ni sortie de
+  commande n'a pas été vérifiée, elle a été supposée. Et « tout va bien » n'est
+  pas un résultat.
+
+Un retour raté se corrige d'abord **dans le brief**, pas en blâmant l'agent :
+neuf fois sur dix la cause y est. Détail dans `modeles/agents.md`.
 
 ## Les trois preuves, qui ne prouvent pas la même chose
 
