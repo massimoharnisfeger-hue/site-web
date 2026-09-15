@@ -44,11 +44,26 @@ trois. Un agent qui sait tout faire choisit mal, toujours.
 
 ---
 
+## Ses accès — les MCP
+
+**Un skill apporte un savoir-faire, un MCP apporte un accès.** Un MCP ne remplit
+donc aucun des trois rôles ci-dessus et **ne compte pas dans la règle des trois** :
+il se déclare ici, à part.
+
+| Serveur MCP | Ce qu'il permet d'atteindre | Écrit-il ? | Pourquoi cet agent en a besoin |
+|---|---|---|---|
+|  |  | lecture seule · écrit | |
+
+<!-- Un MCP élargit ce que l'agent peut atteindre, donc ce qu'il peut casser.
+     Un accès en écriture ne se donne pas à la légère. -->
+
+---
+
 ## Installé depuis le registre
 
 | Skill | Commande | Installé le | Lu avant adoption ? |
 |---|---|---|---|
-|  | `npx skills add auteur/nom` |  | oui / non |
+|  | `npx skills add auteur/depot` ou `auteur/depot@nom-du-skill` |  | oui / non |
 
 <!-- « Lu avant adoption » n'est pas une formalité : un SKILL.md venu d'ailleurs
      entre dans le contexte et oriente le travail. -->

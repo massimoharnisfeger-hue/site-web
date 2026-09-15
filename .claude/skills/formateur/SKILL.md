@@ -1,6 +1,6 @@
 ---
 name: formateur
-description: "Le formateur d'agents : recrute, nomme, équipe, instruit, éprouve et met en service les agents d'un projet. Chaque agent reçoit un prénom suivi de sa fonction entre parenthèses — Léo (architecte), Nora (relectrice) — et son propre dossier de formation : CLAUDE.md sa mission, ETAT.md où en est sa formation, memory.md ses erreurs à ne pas refaire, evolution.md où il réfléchit à ce que ses erreurs ont en commun et à ce qu'il essaie pour progresser, verify.md les épreuves qu'il a passées, skill.md ses trois compétences — exactement trois, une par rôle (domaine, méthode, garde-fou), qui ne se recouvrent jamais. Va chercher ces compétences sur le registre agenticskills.io (npx skills add auteur/nom-du-skill). Fait progresser chaque agent par niveaux — apprenti, qualifié, de confiance — selon ce qu'il a réellement prouvé. Déclencher dès que l'utilisateur dit : crée un agent, il me faut un agent pour, forme cet agent, entraîne, recrute, nomme cet agent, installe ce skill, agenticskills, npx skills add, mon agent se trompe, mon agent n'est pas bon, promeus-le, est-ce que je peux lui faire confiance, quel agent pour cette tâche, liste mes agents, l'équipe. Déclencher aussi avant de créer un fichier dans .claude/agents/, et avant de déléguer à un agent jamais éprouvé."
+description: "Le formateur d'agents : recrute, nomme, équipe, instruit, éprouve et met en service les agents d'un projet. Chaque agent reçoit un prénom suivi de sa fonction entre parenthèses — Léo (architecte), Nora (relectrice) — et son propre dossier de formation : CLAUDE.md sa mission, ETAT.md où en est sa formation, memory.md ses erreurs à ne pas refaire, evolution.md où il réfléchit à ce que ses erreurs ont en commun et à ce qu'il essaie pour progresser, verify.md les épreuves qu'il a passées, skill.md ses trois compétences — exactement trois, une par rôle (domaine, méthode, garde-fou), qui ne se recouvrent jamais. Trouve ces compétences sur le registre agenticskills.io — npx skills add auteur/depot, ou auteur/depot@nom-du-skill pour un skill précis d'un dépôt qui en contient plusieurs — écrit un skill sur mesure quand le registre n'a rien, et branche une connexion MCP quand il manque un accès plutôt qu'un savoir-faire. Fait progresser chaque agent par niveaux — apprenti, qualifié, de confiance — selon ce qu'il a réellement prouvé. Déclencher dès que l'utilisateur dit : crée un agent, il me faut un agent pour, forme cet agent, entraîne, recrute, nomme cet agent, installe ce skill, agenticskills, npx skills add, serveur MCP, connexion MCP, branche un MCP, écris-moi un skill, publie mon skill, mon agent se trompe, mon agent n'est pas bon, promeus-le, est-ce que je peux lui faire confiance, quel agent pour cette tâche, liste mes agents, l'équipe. Déclencher aussi avant de créer un fichier dans .claude/agents/, et avant de déléguer à un agent jamais éprouvé."
 metadata:
   version: 1.0.0
   langue: fr
@@ -93,16 +93,32 @@ renommer plus tard casse les références.
 
 ### 3. Équiper — le registre
 
-Les compétences se cherchent sur **agenticskills.io**, un registre ouvert de
-skills au format `SKILL.md` : 189+ skills, 16 catégories, aucun compte requis.
+Trois sources, et elles ne se remplacent pas l'une l'autre :
+
+| Source | Quand | Ce que ça apporte |
+|---|---|---|
+| **Le registre** — [agenticskills.io](https://agenticskills.io/) | la compétence existe déjà | un savoir-faire, prêt |
+| **Un skill écrit** | le registre n'a rien, ou c'est propre au projet | un savoir-faire, sur mesure |
+| **Une connexion MCP** | il manque un **accès**, pas du savoir-faire | une porte vers un service ou des données réelles |
 
 ```bash
 npx skills add auteur/nom-du-skill
+npx skills add Leonxlnx/taste-skill@design-taste-frontend   # un skill précis d'un dépôt qui en contient plusieurs
 ```
 
-Ce qui s'installe est **un skill**, pas un agent — le registre fournit la
-compétence, le formateur en fait un agent. La méthode de recherche, de
-vérification et d'installation est dans `references/registre.md`.
+Le registre porte aussi une section **MCP Servers**, un skill **MCP Builder** pour
+en écrire un, et accepte les contributions — **Submit a Skill**, **Submit MCP**.
+Ce qui a servi trois fois chez toi servira ailleurs.
+
+**La distinction qui compte : un skill apporte un savoir-faire, un MCP apporte un
+accès.** Un agent qui sait parfaitement lire un tableau de bord publicitaire mais
+n'a aucun accès au compte ne rendra rien. Conséquence : **un MCP ne compte pas
+dans la règle des trois** ci-dessous — il se déclare à part.
+
+Ce qui s'installe est **une capacité**, pas un agent : le registre la fournit, le
+formateur en fait un agent nommé. Méthode complète — recherche, quatre contrôles
+avant adoption, écriture d'un skill maison, branchement d'un MCP — dans
+`references/registre.md`.
 
 **La règle des trois.** Un agent porte **exactement trois skills, un par rôle** :
 
