@@ -74,6 +74,19 @@ for f in "$FICHES"/*.md; do
     fi
   fi
 
+  # --- la règle des trois ---
+  if [ -f "$d/skill.md" ]; then
+    roles=0
+    for r in Domaine Méthode "Garde-fou"; do
+      grep -qiE "^\| *\*\*$r\*\* *\|[^|]*[A-Za-z0-9\`]" "$d/skill.md" && roles=$((roles+1))
+    done
+    case "$roles" in
+      3) ok "trois skills, un par rôle" ;;
+      0) alerte "aucun skill declaré — l'agent travaille à mains nues" ;;
+      *) echec "$roles skill(s) sur 3 — il manque un rôle (domaine · méthode · garde-fou)" ;;
+    esac
+  fi
+
   # --- la réflexion ---
   if [ -f "$d/evolution.md" ] && [ "${util:-0}" -ge 5 ]; then
     grep -qE '[0-9]{4}-[0-9]{2}-[0-9]{2}' "$d/evolution.md" \

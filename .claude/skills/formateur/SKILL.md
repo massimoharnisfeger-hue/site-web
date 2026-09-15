@@ -1,6 +1,6 @@
 ---
 name: formateur
-description: "Le formateur d'agents : recrute, nomme, équipe, instruit, éprouve et met en service les agents d'un projet. Chaque agent reçoit un prénom suivi de sa fonction entre parenthèses — Léo (architecte), Nora (relectrice) — et son propre dossier de formation : CLAUDE.md sa mission, ETAT.md où en est sa formation, memory.md ses erreurs à ne pas refaire, evolution.md où il réfléchit à ce que ses erreurs ont en commun et à ce qu'il essaie pour progresser, verify.md les épreuves qu'il a passées, skill.md ses compétences. Va chercher ces compétences sur le registre agenticskills.io (npx skills add auteur/nom-du-skill). Fait progresser chaque agent par niveaux — apprenti, qualifié, de confiance — selon ce qu'il a réellement prouvé. Déclencher dès que l'utilisateur dit : crée un agent, il me faut un agent pour, forme cet agent, entraîne, recrute, nomme cet agent, installe ce skill, agenticskills, npx skills add, mon agent se trompe, mon agent n'est pas bon, promeus-le, est-ce que je peux lui faire confiance, quel agent pour cette tâche, liste mes agents, l'équipe. Déclencher aussi avant de créer un fichier dans .claude/agents/, et avant de déléguer à un agent jamais éprouvé."
+description: "Le formateur d'agents : recrute, nomme, équipe, instruit, éprouve et met en service les agents d'un projet. Chaque agent reçoit un prénom suivi de sa fonction entre parenthèses — Léo (architecte), Nora (relectrice) — et son propre dossier de formation : CLAUDE.md sa mission, ETAT.md où en est sa formation, memory.md ses erreurs à ne pas refaire, evolution.md où il réfléchit à ce que ses erreurs ont en commun et à ce qu'il essaie pour progresser, verify.md les épreuves qu'il a passées, skill.md ses trois compétences — exactement trois, une par rôle (domaine, méthode, garde-fou), qui ne se recouvrent jamais. Va chercher ces compétences sur le registre agenticskills.io (npx skills add auteur/nom-du-skill). Fait progresser chaque agent par niveaux — apprenti, qualifié, de confiance — selon ce qu'il a réellement prouvé. Déclencher dès que l'utilisateur dit : crée un agent, il me faut un agent pour, forme cet agent, entraîne, recrute, nomme cet agent, installe ce skill, agenticskills, npx skills add, mon agent se trompe, mon agent n'est pas bon, promeus-le, est-ce que je peux lui faire confiance, quel agent pour cette tâche, liste mes agents, l'équipe. Déclencher aussi avant de créer un fichier dans .claude/agents/, et avant de déléguer à un agent jamais éprouvé."
 metadata:
   version: 1.0.0
   langue: fr
@@ -104,6 +104,31 @@ Ce qui s'installe est **un skill**, pas un agent — le registre fournit la
 compétence, le formateur en fait un agent. La méthode de recherche, de
 vérification et d'installation est dans `references/registre.md`.
 
+**La règle des trois.** Un agent porte **exactement trois skills, un par rôle** :
+
+| Rôle | Il répond à |
+|---|---|
+| **Le domaine** | qu'est-ce qu'il faut savoir ? |
+| **La méthode** | comment on procède ? |
+| **Le garde-fou** | est-ce que le résultat tient ? |
+
+Trois rôles qui ne peuvent pas se confondre — connaissance, procédé, contrôle —
+donc trois skills qui ne se marchent pas dessus **par construction**.
+
+Pourquoi trois et pas un autre nombre : avec un seul, rien ne vérifie le travail.
+Avec deux, c'est presque toujours savoir et faire — personne ne contrôle. Trois
+ferment la boucle. **À quatre, l'agent choisit entre des sources qui se
+recouvrent, et sort la mauvaise.**
+
+Avant d'adopter, le **test de non-collision** : « A fait ___, B fait ___ ». Si les
+deux blancs se remplissent avec les mêmes mots, il y a collision — on resserre
+l'un, ou on n'en garde qu'un. Le piège le plus fréquent est deux skills de
+domaine : ils paraissent complémentaires et disent la même chose autrement.
+
+Et quand un quatrième semble nécessaire, ce n'est pas l'agent qui doit grossir :
+**c'est un deuxième poste qui se cache dedans.** On le découpe en deux agents,
+chacun avec ses trois.
+
 **Rien ne s'installe sans avoir été lu.** Un `SKILL.md` venu d'ailleurs entre dans
 ton contexte et oriente ton travail : on l'ouvre avant de l'adopter.
 
@@ -183,7 +208,7 @@ rêverie.**
 | Plausible mais faux | il manquait le contexte du projet | `CLAUDE.md` — ce qu'il ne peut pas savoir |
 | Il déborde | aucune limite n'était posée | `CLAUDE.md` — hors périmètre |
 | Il touche à ce qu'il ne devait pas | interdiction non écrite, ou outil accordé à tort | la fiche : limites et `tools:` |
-| Il sort le mauvais outil | sa table d'outils est trop large | `skill.md` — quand ne pas l'appeler |
+| Il sort le mauvais outil | deux de ses skills se recouvrent, ou il en a plus de trois | `skill.md` — le test de non-collision |
 
 **Trois ratés sur le même point** ne sont plus un problème de dossier : ou l'agent
 n'est pas le bon, ou la compétence manque — chercher un skill sur le registre, ou

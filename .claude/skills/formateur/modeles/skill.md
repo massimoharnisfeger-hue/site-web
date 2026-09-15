@@ -1,16 +1,48 @@
 # <Prénom> — compétences
 
-Table de routage, pas inventaire. **Un skill listé ici existe pour de vrai** —
-vérifier avant d'écrire la ligne.
+## La règle des trois
 
-## Ce qu'il charge
+**Exactement trois skills. Un par rôle. Jamais deux dans le même rôle.**
 
-| Skill | Quand le sortir | Quand NE PAS le sortir | Source |
-|---|---|---|---|
-|  |  |  | local · `agenticskills.io` |
+| Rôle | Il répond à | Exemple de ce qu'il apporte |
+|---|---|---|
+| **Le domaine** | *Qu'est-ce qu'il faut savoir ?* | palettes, règles WCAG, patterns d'un framework, normes d'un métier |
+| **La méthode** | *Comment on procède ?* | les étapes, l'ordre, ce qu'on fait avant quoi |
+| **Le garde-fou** | *Est-ce que le résultat tient ?* | la vérification, la relecture, l'audit du travail rendu |
 
-<!-- La troisième colonne fait tout le travail : elle empêche de sortir un skill
-     de design pour un problème de build. -->
+Trois rôles qui ne peuvent pas se confondre : l'un est de la connaissance, le
+deuxième un procédé, le troisième un contrôle. Ils ne se marchent pas dessus
+**par construction**.
+
+### Ses trois
+
+| Rôle | Skill | Quand le sortir | Quand NE PAS le sortir | Source |
+|---|---|---|---|---|
+| **Domaine** |  |  |  | local · `agenticskills.io` |
+| **Méthode** |  |  |  |  |
+| **Garde-fou** |  |  |  |  |
+
+### Le test de non-collision
+
+Avant d'adopter un skill, écrire la phrase à voix haute :
+
+> « <skill A> fait ______, <skill B> fait ______. »
+
+**Si les deux blancs se remplissent avec les mêmes mots, il y a collision** — et
+c'est le mauvais des deux qui se déclenchera. Alors : soit on resserre la
+description de l'un pour qu'il cède le terrain, soit on n'en garde qu'un.
+
+Le piège le plus fréquent est **deux skills de domaine** : ils se ressemblent,
+ils paraissent complémentaires, et ils disent la même chose avec des mots
+différents. Un seul domaine par agent.
+
+### Quand il en faudrait un quatrième
+
+Ce n'est pas un agent qui a besoin d'un quatrième skill : **c'est un deuxième
+poste qui se cache dans le premier.** Le découper en deux agents, chacun avec ses
+trois. Un agent qui sait tout faire choisit mal, toujours.
+
+---
 
 ## Installé depuis le registre
 
@@ -23,6 +55,6 @@ vérifier avant d'écrire la ligne.
 
 ## Ce qui lui manque
 
-| Fait à la main | Occurrences | Skill à chercher ou à écrire |
-|---|---|---|
-|  |  |  |
+| Fait à la main | Rôle concerné | Occurrences | Skill à chercher ou à écrire |
+|---|---|---|---|
+|  | domaine · méthode · garde-fou |  |  |
