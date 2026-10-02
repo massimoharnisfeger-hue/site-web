@@ -1,36 +1,395 @@
-/* Clash Display (titres) + General Sans (texte), servies par Fontshare.
-   La feuille de style n'est plus chargée ici par @import : un @import dans un
-   fichier CSS est sérialisé — le navigateur doit télécharger et analyser
-   globals.css avant seulement de découvrir l'adresse des polices. Elle est
-   désormais déclarée en <link> dans le layout, où le préchargeur du navigateur
-   la voit dès le premier octet de HTML, précédée de deux préconnexions. */
+/* Direction « Tableau tactique ».
+   Les polices sont déclarées par next/font dans app/(frontend)/fonts.ts et
+   exposées en variables CSS sur <html> : --font-display, --font-sans,
+   --font-mono. Aucun appel à un service de polices externe. */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --font-display: "Clash Display", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
-  --font-sans: "General Sans", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    background-color: #f4f6f9;
+  }
+
+  body {
+    @apply bg-paper font-sans text-[16px] leading-[1.55] text-ink;
+    /* `clip` et non `hidden` : `hidden` crée un conteneur de défilement et
+       casse le `position: sticky` de la séquence du héros. */
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: rgba(31, 85, 168, 0.18);
+    color: #0d1b2a;
+  }
+
+  /* Les ancres arrivent sous l'en-tête fixe, pas dessous. */
+  section[id] {
+    scroll-margin-top: calc(var(--header-h, 64px) + 8px);
+  }
+
+  /* Cible d'un lien interne : reçoit le focus sans s'entourer d'un cadre. */
+  [tabindex="-1"]:focus {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid #1f55a8;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
 }
 
-* {
-  box-sizing: border-box;
+@layer components {
+  .container-site {
+    @apply mx-auto w-full max-w-site px-4 sm:px-6 lg:px-10;
+  }
+
+  /* Repère : petit texte technique en mono, capitales espacées. */
+  .label {
+    @apply font-mono text-[12px] uppercase leading-[1.4] tracking-[0.08em];
+  }
+
+  .h1 {
+    @apply font-display font-medium leading-[1.02] tracking-[-0.03em];
+    font-size: clamp(2.25rem, 4.4vw, 4rem);
+  }
+
+  .h2 {
+    @apply font-display font-medium leading-[1.08] tracking-[-0.025em];
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+  }
+
+  .h3 {
+    @apply font-display text-[22px] font-medium leading-[1.2] tracking-[-0.015em];
+  }
+
+  .lead {
+    @apply max-w-[30rem] text-[17px] leading-[1.6] text-muted;
+  }
+
+  .btn {
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2 whitespace-nowrap rounded-full px-5 text-[14px] font-medium leading-none transition-colors duration-200;
+  }
+
+  .btn-primary {
+    @apply btn bg-turf text-white hover:bg-turf-deep active:bg-turf-deep;
+  }
+
+  .btn-quiet {
+    @apply btn border border-rule bg-card text-ink hover:border-turf hover:text-turf;
+  }
+
+  .link-arrow {
+    @apply inline-flex min-h-[44px] items-center gap-1.5 text-[14px] font-medium text-ink transition-colors duration-200 hover:text-turf;
+  }
+
+  /* Le point final du grand titre est une balle. */
+  .ball-dot {
+    display: inline-block;
+    width: 0.2em;
+    height: 0.2em;
+    margin-left: 0.04em;
+    border-radius: 9999px;
+    background: #dff24a;
+    box-shadow: inset 0 0 0 1.5px rgba(13, 27, 42, 0.18);
+  }
+
+  .section {
+    @apply border-t border-rule py-[88px] lg:py-[120px];
+  }
 }
 
-html {
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+/* ---------------------------------------------------------------------------
+   Séquence du héros : une scène collante de la hauteur de l'écran, dans une
+   section haute dont le défilement pilote la 3D. En mouvement réduit ou sans
+   WebGL, la section reprend sa hauteur naturelle et affiche le plan statique.
+   --------------------------------------------------------------------------- */
+.seq {
+  height: 360vh;
+}
+@media (min-width: 768px) {
+  .seq {
+    height: 440vh;
+  }
+}
+.seq-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+.seq-copy-wrap {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  height: 100%;
+  /* Même hauteur en mode statique (scène non collante, hauteur automatique) :
+     le texte d'accueil ne bouge pas quand la 3D est écartée. */
+  min-height: 100svh;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 96px;
+}
+@media (min-width: 768px) {
+  .seq-copy-wrap {
+    justify-content: center;
+    padding-top: 64px;
+  }
+}
+.seq-copy {
+  max-width: 31rem;
+  will-change: opacity, transform;
+}
+.seq-poster {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: 3svh;
+  height: 44svh;
+  transform: translateX(-38%) rotate(-14deg);
+}
+@media (min-width: 768px) {
+  .seq-poster {
+    left: auto;
+    right: 9vw;
+    top: 50%;
+    bottom: auto;
+    height: 74vh;
+    transform: translateY(-44%) rotate(-14deg);
+  }
+}
+.seq-captions {
+  position: absolute;
+  z-index: 3;
+  inset: auto 0 20px 0;
+  pointer-events: none;
+}
+.seq-caption {
+  position: absolute;
+  bottom: 0;
+  left: 16px;
+  right: 16px;
+  padding: 20px;
+  border: 1px solid rgba(13, 27, 42, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  will-change: opacity, transform;
+}
+@media (min-width: 768px) {
+  .seq-captions {
+    bottom: 32px;
+  }
+  .seq-caption {
+    right: auto;
+    left: max(24px, calc((100vw - 1240px) / 2 + 40px));
+    width: 360px;
+  }
+}
+.seq-rail {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .seq-rail {
+    position: absolute;
+    z-index: 3;
+    right: 40px;
+    top: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding: 14px 14px 14px 18px;
+    border: 1px solid rgba(13, 27, 42, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transform: translateY(-50%);
+  }
+}
+.seq-rail-item {
+  color: #526073;
+  font-size: 11px;
+  transition: color 0.3s ease;
+}
+.seq-rail[data-active="0"] [data-i="0"],
+.seq-rail[data-active="1"] [data-i="1"],
+.seq-rail[data-active="2"] [data-i="2"],
+.seq-rail[data-active="3"] [data-i="3"] {
+  color: #0d1b2a;
+}
+.seq-rail-ball {
+  position: absolute;
+  left: 7px;
+  top: calc(14px + var(--p, 0) * (100% - 28px));
+  width: 9px;
+  height: 9px;
+  margin-top: -4.5px;
+  border-radius: 9999px;
+  background: #dff24a;
+  box-shadow: inset 0 0 0 1px rgba(13, 27, 42, 0.3);
+}
+.seq-hint {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 24px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transform: translateX(-50%);
+}
+@media (min-width: 768px) {
+  .seq-hint {
+    display: flex;
+  }
+}
+.seq-hint-line {
+  position: relative;
+  width: 1px;
+  height: 40px;
+  overflow: hidden;
+  background: rgba(13, 27, 42, 0.12);
+}
+.seq-hint-line::after {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: #dff24a;
+  box-shadow: inset 0 0 0 1px rgba(13, 27, 42, 0.3);
+  animation: seq-drop 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes seq-drop {
+  0% {
+    transform: translateY(-8px);
+  }
+  70%,
+  100% {
+    transform: translateY(44px);
+  }
+}
+.seq-skip {
+  position: absolute;
+  z-index: 4;
+  right: 16px;
+  top: 76px;
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  border: 1px solid rgba(13, 27, 42, 0.12);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #526073;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.seq-skip::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+}
+.seq-skip:hover {
+  color: #0d1b2a;
+  border-color: #1f55a8;
+}
+@media (min-width: 768px) {
+  .seq-skip {
+    top: auto;
+    right: 40px;
+    bottom: 20px;
+  }
+}
+.seq-static {
+  display: none;
 }
 
-body {
-  background-color: #eef3fa;
-  color: #0b1b3a;
-  font-family: var(--font-sans);
-  overflow-x: hidden;
+/* Mode statique : réglage explicite (3D indisponible) ou mouvement réduit. */
+.seq[data-mode="static"] {
+  height: auto;
+}
+.seq[data-mode="static"] .seq-stage {
+  position: relative;
+  height: auto;
+  min-height: 100svh;
+}
+.seq[data-mode="static"] :is(.seq-canvas, .seq-captions, .seq-rail, .seq-hint, .seq-skip) {
+  display: none;
+}
+.seq[data-mode="static"] .seq-static {
+  display: block;
+}
+@media (prefers-reduced-motion: reduce) {
+  .seq {
+    height: auto !important;
+  }
+  .seq-stage {
+    position: relative !important;
+    height: auto !important;
+    min-height: 100svh;
+  }
+  :is(.seq-canvas, .seq-captions, .seq-rail, .seq-hint, .seq-skip) {
+    display: none !important;
+  }
+  .seq-static {
+    display: block !important;
+  }
 }
 
-/* Lenis smooth scroll */
+/* Apparition au défilement (components/fx/Reveal.tsx). L'état masqué
+   n'existe qu'une fois l'observateur prêt (classe `reveal-ready` sur <html>)
+   et jamais en mouvement réduit : sans JavaScript, tout reste visible. */
+.reveal {
+  transition-property: opacity, transform, border-color, background-color, color;
+  transition-duration: 0.5s, 0.5s, 0.2s, 0.2s, 0.2s;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-ready .reveal:not(.is-in) {
+  opacity: 0;
+  transform: translate3d(0, 12px, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal-ready .reveal:not(.is-in) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Entrée d'une étape du formulaire de réservation. */
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translate3d(12px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.step-in {
+  animation: step-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Lenis : défilement fluide */
 html.lenis,
 html.lenis body {
   height: auto;
@@ -38,73 +397,11 @@ html.lenis body {
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
 .lenis.lenis-stopped {
   overflow: hidden;
-}
-
-/* Le curseur natif n'est masqué que là où le curseur de remplacement existe
-   vraiment : pointeur fin ET au moins 768 px. La classe `has-custom-cursor` est
-   posée par le composant sous exactement la même condition. */
-@media (hover: hover) and (pointer: fine) and (min-width: 768px) {
-  body.has-custom-cursor,
-  body.has-custom-cursor * {
-    cursor: none !important;
-  }
-}
-
-::selection {
-  background: rgba(27, 77, 228, 0.18);
-  color: #0b1b3a;
-}
-
-::-webkit-scrollbar {
-  width: 0;
-}
-
-/* Grain de pellicule. Un calque plein écran en `mix-blend-mode` force la
-   recomposition de toute la pile à chaque image de défilement ; couplé au
-   défilement JavaScript et au canvas WebGL, c'est le premier poste de saccade
-   sur téléphone. Il est donc réservé aux écrans larges. */
-.grain::before {
-  content: none;
-}
-
-@media (min-width: 768px) {
-  .grain::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 9990;
-    pointer-events: none;
-    opacity: 0.035;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    mix-blend-mode: multiply;
-  }
-}
-
-/* Frosted glass on light backgrounds */
-.glass {
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  border: 1px solid rgba(11, 27, 58, 0.08);
-}
-
-.glass-strong {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(26px) saturate(150%);
-  -webkit-backdrop-filter: blur(26px) saturate(150%);
-  border: 1px solid rgba(11, 27, 58, 0.1);
-  box-shadow: 0 24px 70px -28px rgba(11, 27, 58, 0.3);
-}
-
-.display-shadow {
-  text-shadow: 0 18px 50px rgba(27, 77, 228, 0.18);
-}
-
-.char {
-  display: inline-block;
-  will-change: transform, opacity;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -118,26 +415,10 @@ html.lenis body {
   }
 }
 
-/* Carrousel du Parcours : les dimensions des cartes viennent du CSS et non
-   d'une mesure JavaScript, pour que le rendu serveur soit déjà correct sur
-   téléphone. Mobile d'abord ; le second rang de cartes n'apparaît qu'à partir
-   de 768 px, faute de place. */
-.coverflow {
-  --cf-w: 250px;
-  --cf-h: 400px;
-  --cf-near: 168px;
-  --cf-far: 300px;
-  --cf-far-opacity: 0;
-  --cf-far-events: none;
-}
-
-@media (min-width: 768px) {
-  .coverflow {
-    --cf-w: 330px;
-    --cf-h: 500px;
-    --cf-near: 285px;
-    --cf-far: 510px;
-    --cf-far-opacity: 0.35;
-    --cf-far-events: auto;
+/* Sur téléphone, le lien d'évitement attend que le texte d'accueil soit parti. */
+@media (max-width: 767px) {
+  .seq-skip {
+    opacity: 0;
+    visibility: hidden;
   }
 }

@@ -8,10 +8,18 @@ export type Activity = {
   level: string;
   price: string;
   image: string;
+  /** Texte alternatif : celui de l'image téléversée, sinon celui de la photo de démonstration. */
+  imageAlt: string;
+  /** Partie de la photo gardée au recadrage. */
+  imageFocus: "top" | "center" | "bottom";
   /** Ruban de mise en avant, ex. « La plus demandée ». Vide = pas de ruban. */
   badge: string;
   /** Libellé du bouton propre à cette formule. */
   ctaLabel: string;
+  /** Pictogramme de la carte : joueurs de chaque côté du filet, et un coach. */
+  playersLeft: number;
+  playersRight: number;
+  coach: boolean;
 };
 
 export type StoryStep = {
@@ -38,7 +46,7 @@ export type Testimonial = {
   source: string;
 };
 
-export type GalleryItem = { src: string; alt: string };
+export type GalleryItem = { src: string; alt: string; caption: string };
 
 export type NavItem = { label: string; target: string };
 export type OpeningSlot = { days: string[]; opens: string; closes: string };
@@ -54,7 +62,23 @@ export type HeroContent = {
   ctaPrimary: string;
   ctaSecondary: string;
   scrollHint: string;
-  videoUrl?: string;
+  /** Lien qui saute la séquence 3D. */
+  skipLabel: string;
+};
+
+export type SequenceStep = { label: string; title: string; text: string };
+
+/** Séquence 3D du héros : légendes, cotes et repères du plan final. */
+export type SequenceContent = {
+  steps: SequenceStep[];
+  figureLabel: string;
+  figureTitle: string;
+  figureCaption: string;
+  dimLength: string;
+  dimWidth: string;
+  dimService: string;
+  /** Repères des quatre joueurs, séparés par des virgules. */
+  players: string;
 };
 
 export type OffresContent = {
@@ -66,6 +90,8 @@ export type OffresContent = {
 
 export type ParcoursContent = {
   eyebrow: string;
+  title: string;
+  intro: string;
   ctaLabel: string;
   ctaTarget: string;
   items: StoryStep[];
@@ -89,11 +115,15 @@ export type GalerieContent = {
 export type AvisContent = {
   eyebrow: string;
   title: string;
+  /** Vrai tant que les avis affichés sont ceux de démonstration. */
+  examples: boolean;
+  examplesNote: string;
   items: Testimonial[];
 };
 export type ReservationContent = {
   eyebrow: string;
   title: string;
+  intro: string;
   ctaLabel: string;
   responseDelay: string;
   finalTitle: string;
@@ -101,6 +131,8 @@ export type ReservationContent = {
   paymentNote: string;
   privacyNote: string;
   steps: string[];
+  /** Heures de début proposées, format HH:MM. */
+  slots: string[];
 };
 export type NavContent = { items: NavItem[] };
 

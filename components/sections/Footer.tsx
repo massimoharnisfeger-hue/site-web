@@ -1,225 +1,158 @@
-"use client";
-
-import { useState } from "react";
-import { motion } from "framer-motion";
-import MagneticButton from "@/components/ui/MagneticButton";
 import type { FooterContent, NavItem } from "@/lib/types";
-
-// SVG glyph per supported social network (looked up by name from the CMS).
-const socialPaths: Record<string, string> = {
-  Instagram:
-    "M12 2.2c3.2 0 3.6 0 4.9.07 3.3.15 4.8 1.7 4.95 4.95.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.15 3.25-1.65 4.8-4.95 4.95-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-3.3-.15-4.8-1.7-4.95-4.95C2.08 15.6 2.07 15.2 2.07 12s0-3.6.07-4.9C2.29 3.85 3.79 2.3 7.1 2.15 8.4 2.09 8.8 2.08 12 2.08zM12 7a5 5 0 100 10 5 5 0 000-10zm0 8.2a3.2 3.2 0 110-6.4 3.2 3.2 0 010 6.4zM17.8 5.6a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z",
-  TikTok:
-    "M16.5 3c.3 2.1 1.5 3.6 3.5 3.9V10c-1.4.1-2.7-.3-3.9-1v5.6c0 4-3.4 6.7-7 5.7-2.8-.8-4-4-2.8-6.6.9-2 3.2-3.1 5.3-2.6v3.2c-.4-.1-.8-.2-1.2-.1-1 .1-1.7 1-1.6 2 .1 1 1 1.7 2 1.6 1-.1 1.7-1 1.7-2V3h3z",
-  YouTube:
-    "M23 12s0-3.2-.4-4.7c-.2-.9-.9-1.5-1.7-1.7C19.4 5.2 12 5.2 12 5.2s-7.4 0-8.9.4c-.8.2-1.5.8-1.7 1.7C1 8.8 1 12 1 12s0 3.2.4 4.7c.2.9.9 1.5 1.7 1.7 1.5.4 8.9.4 8.9.4s7.4 0 8.9-.4c.8-.2 1.5-.8 1.7-1.7.4-1.5.4-4.7.4-4.7zM9.8 15.2V8.8l5.4 3.2-5.4 3.2z",
-};
+import CourtIcon from "@/components/court/CourtIcon";
+import ClubPlan from "@/components/sections/ClubPlan";
+import ScrollLink from "@/components/ui/ScrollLink";
 
 export default function Footer({
   content,
   brand,
   links,
   year,
+  legalLinks,
+  onHome = true,
 }: {
   content: FooterContent;
   brand: string;
+  links: NavItem[];
   /**
-   * Calculée sur le serveur et transmise. `new Date().getFullYear()` était
-   * évalué au rendu : le 31 décembre, un visiteur en avance sur UTC obtenait
-   * une année différente de celle du HTML serveur, donc une erreur
-   * d'hydratation et un re-rendu du sous-arbre.
+   * Calculée sur le serveur et transmise : évaluée au rendu, elle pouvait
+   * différer entre serveur et navigateur le 31 décembre.
    */
   year: number;
-  links: NavItem[];
+  legalLinks: { href: string; label: string }[];
+  onHome?: boolean;
 }) {
-  const [hovered, setHovered] = useState<string | null>(null);
+  const href = (target: string) => (onHome || !target.startsWith("#") ? target : `/${target}`);
+  const tel = content.phone.replace(/[^\d+]/g, "");
+  const socials = content.socials.filter((s) => s.url && s.url !== "#");
+  const address = [content.addressStreet, [content.addressZip, content.addressCity].filter(Boolean).join(" ")].filter(Boolean);
 
   return (
-    <footer className="relative overflow-hidden bg-ink pt-28 text-white">
-      {/* Animated energy background */}
-      <div className="pointer-events-none absolute inset-0 -z-0">
-        <div className="absolute inset-0 animate-gradient-pan bg-[length:200%_200%] bg-gradient-to-tr from-ink via-court to-teal opacity-40" />
-        <svg
-          aria-hidden
-          viewBox="0 0 1440 320"
-          className="absolute bottom-0 w-full opacity-25"
-          preserveAspectRatio="none"
-        >
-          <motion.path
-            d="M0,160 C320,260 720,60 1440,160 L1440,320 L0,320 Z"
-            initial={{ d: "M0,160 C320,260 720,60 1440,160 L1440,320 L0,320 Z" }}
-            animate={{
-              d: [
-                "M0,160 C320,260 720,60 1440,160 L1440,320 L0,320 Z",
-                "M0,180 C320,80 720,240 1440,140 L1440,320 L0,320 Z",
-                "M0,160 C320,260 720,60 1440,160 L1440,320 L0,320 Z",
-              ],
-            }}
-            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-            fill="#CDFF3A"
-            opacity="0.18"
-          />
-        </svg>
-      </div>
-
-      <div className="relative z-10 mx-auto max-w-7xl px-5 md:px-8">
-        {/* CTA band */}
-        <div className="mb-20 flex flex-col items-center gap-8 rounded-[2rem] border border-white/10 bg-white/5 p-10 text-center backdrop-blur-md md:p-16">
-          <h2 className="max-w-2xl font-display text-3xl font-semibold leading-tight text-white md:text-5xl">
+    <footer className="bg-turf-deep text-white">
+      <div className="container-site">
+        {/* Dernier appel */}
+        <div className="flex flex-col gap-6 border-b border-white/15 py-14 md:flex-row md:items-end md:justify-between lg:py-20">
+          <h2 className="max-w-[18ch] font-display text-[clamp(1.75rem,3.2vw,2.75rem)] font-medium leading-[1.08] tracking-[-0.025em]">
             {content.ctaTitle}
           </h2>
-          <MagneticButton href="#reservation">
-            {content.ctaButton}
-          </MagneticButton>
+          <ScrollLink
+            href={href("#reservation")}
+            className="btn self-start bg-white text-turf-deep hover:bg-glass md:self-auto"
+          >
+            {content.ctaButton} <span aria-hidden="true">→</span>
+          </ScrollLink>
         </div>
 
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-          {/* Club courts map */}
-          <div>
-            <h3 className="mb-5 font-display text-xl font-semibold text-white">
-              {content.mapTitle}
-            </h3>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-              <div className="absolute inset-0 bg-gradient-to-br from-court/40 to-ink" />
-              {/* stylized court lines */}
-              <svg viewBox="0 0 100 75" className="absolute inset-0 h-full w-full opacity-40" aria-hidden>
-                <rect x="14" y="12" width="72" height="51" rx="2" fill="none" stroke="#CDFF3A" strokeWidth="0.5" />
-                <line x1="50" y1="12" x2="50" y2="63" stroke="#CDFF3A" strokeWidth="0.5" />
-                <line x1="14" y1="37.5" x2="86" y2="37.5" stroke="#CDFF3A" strokeWidth="0.3" />
-                <line x1="30" y1="12" x2="30" y2="63" stroke="#CDFF3A" strokeWidth="0.3" />
-                <line x1="70" y1="12" x2="70" y2="63" stroke="#CDFF3A" strokeWidth="0.3" />
-              </svg>
-              {content.courts.map((s, i) => (
-                <button
-                  key={i}
-                  onMouseEnter={() => setHovered(s.name)}
-                  onMouseLeave={() => setHovered(null)}
-                  // Le nom du terrain n'apparaissait qu'au survol : sur écran
-                  // tactile, ces cinq boutons ne faisaient donc strictement
-                  // rien. Une pression bascule maintenant l'étiquette.
-                  onClick={() => setHovered((h) => (h === s.name ? null : s.name))}
-                  aria-pressed={hovered === s.name}
-                  // La pastille visible garde ses 12 px, la zone tactile en fait
-                  // 32 : en dessous de 24, la cible est sous le minimum de la
-                  // WCAG 2.2 (2.5.8).
-                  className="group absolute flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center"
-                  style={{ left: `${s.x}%`, top: `${s.y}%` }}
-                  aria-label={s.name}
-                >
-                  <span className="relative block h-3 w-3 rounded-full bg-lime shadow-[0_0_12px_rgba(205,255,58,0.9)]">
-                    <span className="absolute inset-0 animate-ping rounded-full bg-lime/60" />
-                  </span>
-                  <span
-                    className={`absolute left-1/2 top-5 -translate-x-1/2 whitespace-nowrap rounded-full bg-white px-3 py-1 font-sans text-xs text-ink transition-opacity duration-300 ${
-                      hovered === s.name ? "opacity-100" : "opacity-0"
-                    }`}
-                  >
-                    {s.name}
-                  </span>
-                </button>
-              ))}
-            </div>
+        <div className="grid gap-12 py-14 lg:grid-cols-12 lg:gap-14 lg:py-16">
+          <div className="lg:col-span-6">
+            <ClubPlan courts={content.courts} title={content.mapTitle} />
           </div>
 
-          {/* Links + contact */}
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
-            <div>
-              <h4 className="mb-4 font-sans text-xs uppercase tracking-[0.2em] text-white/50">
-                {content.linksTitle}
-              </h4>
-              <ul className="space-y-3 font-sans text-sm text-white/80">
+          <div
+            className={`grid gap-10 lg:col-span-6 ${
+              socials.length > 0
+                ? "sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1.3fr)_minmax(0,0.9fr)]"
+                : "sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1.6fr)]"
+            }`}
+          >
+            <nav aria-label={content.linksTitle}>
+              <p className="label text-white/60">{content.linksTitle}</p>
+              <ul className="mt-4 space-y-1">
                 {links.map((l) => (
                   <li key={l.target}>
-                    <a
-                      href={l.target}
-                      className="inline-flex min-h-[24px] items-center py-1 hover:text-lime"
+                    <ScrollLink
+                      href={href(l.target)}
+                      className="inline-flex min-h-[36px] items-center text-[15px] text-white/85 transition-colors hover:text-white"
                     >
                       {l.label}
-                    </a>
+                    </ScrollLink>
                   </li>
                 ))}
               </ul>
-            </div>
+            </nav>
+
             <div>
-              <h4 className="mb-4 font-sans text-xs uppercase tracking-[0.2em] text-white/50">
-                {content.contactTitle}
-              </h4>
-              <ul className="space-y-3 font-sans text-sm text-white/80">
-                {content.addressCity && (
+              <p className="label text-white/60">{content.contactTitle}</p>
+              <ul className="mt-4 space-y-1.5 text-[15px] text-white/85">
+                {address.length > 0 && (
                   <li>
                     <address className="not-italic">
-                      {content.addressStreet && <>{content.addressStreet}<br /></>}
-                      {content.addressZip} {content.addressCity}
-                      {content.mapsUrl && (
-                        <>
-                          {" · "}
-                          <a
-                            href={content.mapsUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline underline-offset-2 hover:text-lime"
-                          >
-                            Y aller
-                          </a>
-                        </>
-                      )}
+                      {address.map((line, i) => (
+                        <span key={i} className="block">
+                          {line}
+                        </span>
+                      ))}
                     </address>
+                    {content.mapsUrl && (
+                      <a
+                        href={content.mapsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1 inline-flex min-h-[32px] items-center gap-1 text-white underline underline-offset-4 hover:no-underline"
+                      >
+                        Itinéraire <span aria-hidden="true">↗</span>
+                        <span className="sr-only">(nouvel onglet)</span>
+                      </a>
+                    )}
                   </li>
                 )}
-                <li>{content.email}</li>
-                <li>{content.phone}</li>
-                <li>{content.hours}</li>
+                {content.email && (
+                  <li>
+                    <a href={`mailto:${content.email}`} className="inline-flex min-h-[32px] items-center [overflow-wrap:anywhere] underline-offset-4 hover:underline">
+                      {content.email}
+                    </a>
+                  </li>
+                )}
+                {tel && (
+                  <li>
+                    <a href={`tel:${tel}`} className="inline-flex min-h-[32px] items-center underline-offset-4 hover:underline">
+                      {content.phone}
+                    </a>
+                  </li>
+                )}
+                {content.hours && <li className="text-white/70">{content.hours}</li>}
               </ul>
             </div>
-            <div className="col-span-2 sm:col-span-1">
-              <h4 className="mb-4 font-sans text-xs uppercase tracking-[0.2em] text-white/50">
-                {content.socialsTitle}
-              </h4>
-              <div className="flex gap-3">
-                {content.socials.map((s) => (
-                  <a
-                    key={s.name}
-                    href={s.url || "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={s.name}
-                    data-cursor="hover"
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition-all duration-300 hover:scale-110 hover:bg-lime hover:text-ink"
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                      <path d={socialPaths[s.name] || socialPaths.Instagram} />
-                    </svg>
-                  </a>
-                ))}
+
+            {socials.length > 0 && (
+              <div>
+                <p className="label text-white/60">{content.socialsTitle}</p>
+                <ul className="mt-4 space-y-1">
+                  {socials.map((s) => (
+                    <li key={s.name}>
+                      <a
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex min-h-[36px] items-center gap-1 text-[15px] text-white/85 transition-colors hover:text-white"
+                      >
+                        {s.name} <span aria-hidden="true">↗</span>
+                        <span className="sr-only">(nouvel onglet)</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/10 py-8 md:flex-row">
-          <div className="flex items-center gap-2 font-display text-lg font-semibold text-white">
-            <span className="inline-block h-2.5 w-2.5 rounded-full bg-lime" />
-            {brand}
-          </div>
-          <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-6">
-            <nav className="flex gap-5 font-sans text-xs">
-              <a
-                href="/mentions-legales"
-                className="inline-flex min-h-[24px] items-center py-1 text-white/75 underline underline-offset-4 hover:text-lime"
-              >
-                Mentions légales
-              </a>
-              <a
-                href="/confidentialite"
-                className="inline-flex min-h-[24px] items-center py-1 text-white/75 underline underline-offset-4 hover:text-lime"
-              >
-                Confidentialité
-              </a>
-            </nav>
-            <p className="font-sans text-xs text-white/75">
+        <div className="flex flex-col gap-4 border-t border-white/15 py-6 text-[13px] text-white/70 md:flex-row md:items-center md:justify-between">
+          <p className="flex items-center gap-2.5">
+            <CourtIcon className="h-[12px] w-[24px]" />
+            <span>
               © {year} {brand}. {content.legal}
-            </p>
-          </div>
+            </span>
+          </p>
+          <ul className="flex flex-wrap gap-x-6 gap-y-1">
+            {legalLinks.map((l) => (
+              <li key={l.href}>
+                <a href={l.href} className="inline-flex min-h-[32px] items-center underline underline-offset-4 hover:text-white">
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </footer>

@@ -1,111 +1,80 @@
-"use client";
-
-import { motion } from "framer-motion";
 import type { AvisContent } from "@/lib/types";
+import SectionHead from "@/components/ui/SectionHead";
+import Reveal from "@/components/fx/Reveal";
 
-function Stars({ rating }: { rating: number }) {
+/** Note sur cinq, en balles : pleine pour un point, au trait sinon. */
+function BallRating({ rating }: { rating: number }) {
+  const r = Math.max(0, Math.min(5, Math.round(rating)));
   return (
-    <div className="flex gap-1" role="img" aria-label={`${rating} sur 5`}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <svg
+    <span role="img" aria-label={`${r} sur 5`} className="flex gap-1.5">
+      {Array.from({ length: 5 }, (_, i) => (
+        <span
           key={i}
-          aria-hidden
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill={i < rating ? "#1B4DE4" : "none"}
-          stroke="#1B4DE4"
-          strokeWidth="1.5"
-        >
-          <path d="M12 2l2.9 6.3 6.9.7-5.1 4.7 1.4 6.8L12 18l-6 3.5 1.4-6.8L2.3 9l6.9-.7L12 2z" />
-        </svg>
+          aria-hidden="true"
+          className={`h-[10px] w-[10px] rounded-full ${
+            i < r ? "bg-ball shadow-[inset_0_0_0_1px_rgba(13,27,42,0.3)]" : "border border-ink/25"
+          }`}
+        />
       ))}
-    </div>
+    </span>
   );
 }
 
+/**
+ * Les avis, présentés comme une feuille de match. Tant que ce sont des avis
+ * d'exemple, la section le dit en clair ; la date et la source ne s'affichent
+ * que si elles sont renseignées.
+ */
 export default function Testimonials({ content }: { content: AvisContent }) {
+  const items = content.items.filter((t) => t.quote.trim());
+  if (items.length === 0) return null;
+
   return (
-    <section
-      id="avis"
-      className="relative overflow-hidden bg-haze py-28 md:py-36"
-    >
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-0 opacity-50">
-        <svg viewBox="0 0 1440 200" className="w-full" preserveAspectRatio="none" aria-hidden>
-          <motion.path
-            d="M0,100 C360,40 720,160 1440,100 L1440,200 L0,200 Z"
-            initial={{ d: "M0,100 C360,40 720,160 1440,100 L1440,200 L0,200 Z" }}
-            animate={{
-              d: [
-                "M0,100 C360,40 720,160 1440,100 L1440,200 L0,200 Z",
-                "M0,120 C360,160 720,40 1440,120 L1440,200 L0,200 Z",
-                "M0,100 C360,40 720,160 1440,100 L1440,200 L0,200 Z",
-              ],
-            }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-            fill="#1B4DE4"
-            opacity="0.1"
-          />
-        </svg>
-      </div>
+    <section id="avis" aria-labelledby="avis-titre" className="section">
+      <div className="container-site">
+        <SectionHead
+          id="avis-titre"
+          eyebrow={content.eyebrow}
+          title={content.title}
+          aside={
+            content.examples && content.examplesNote ? (
+              <p className="inline-flex items-center gap-2 rounded-full border border-dashed border-ink/30 px-3.5 py-2 text-[13px] text-muted">
+                <span aria-hidden="true" className="h-[7px] w-[7px] rounded-full border border-ink/40" />
+                {content.examplesNote}
+              </p>
+            ) : undefined
+          }
+        />
 
-      <div className="mx-auto max-w-7xl px-5 md:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mb-16 max-w-2xl"
-        >
-          <span className="font-sans text-xs uppercase tracking-[0.35em] text-court">
-            {content.eyebrow}
-          </span>
-          <h2 className="mt-4 font-display text-4xl font-semibold text-ink md:text-6xl">
-            {content.title}
-          </h2>
-        </motion.div>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {content.items.map((t, i) => (
-            <motion.figure
-              key={i}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-10%" }}
-              transition={{
-                duration: 0.8,
-                delay: i * 0.1,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="animate-float rounded-3xl bg-white p-6 shadow-[0_20px_50px_-24px_rgba(11,27,58,0.35)]"
-              style={{ animationDelay: `${i * 0.6}s` }}
-            >
-              <Stars rating={t.rating} />
-              <blockquote className="mt-4 font-sans text-base leading-relaxed text-ink/85">
-                “{t.quote}”
-              </blockquote>
-              <figcaption className="mt-6 flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-court font-display text-sm font-semibold text-white">
-                  {t.name.charAt(0)}
-                </span>
-                <div>
-                  <div className="font-sans text-sm font-medium text-ink">
-                    {t.name}
-                  </div>
-                  <div className="font-sans text-xs text-ink/65">
-                    {t.role}
-                    {(t.source || t.date) && (
-                      <>
-                        {" · "}
-                        {[t.source, t.date].filter(Boolean).join(" · ")}
-                      </>
-                    )}
-                  </div>
+        <ul className="grid gap-px overflow-hidden rounded-lg border border-rule bg-rule md:grid-cols-2">
+          {items.map((t, i) => (
+            <Reveal key={i} as="li" delay={(i % 2) * 0.06} className="flex bg-card">
+              <figure className="flex w-full flex-col p-6 lg:p-8">
+                <div className="flex items-center justify-between gap-4">
+                  <BallRating rating={t.rating} />
+                  {t.role && <p className="label text-right text-muted">{t.role}</p>}
                 </div>
-              </figcaption>
-            </motion.figure>
+                <blockquote className="mt-5 font-display text-[19px] leading-[1.45] tracking-[-0.01em] lg:text-[20px]">
+                  <p>«&nbsp;{t.quote}&nbsp;»</p>
+                </blockquote>
+                <figcaption className="mt-auto flex items-center gap-3 pt-7">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-turf/40 font-mono text-[13px] text-turf"
+                  >
+                    {t.name.trim().charAt(0).toUpperCase()}
+                  </span>
+                  <span className="flex flex-col">
+                    <span className="text-[15px] font-medium">{t.name}</span>
+                    {(t.source || t.date) && (
+                      <span className="text-[13px] text-muted">{[t.source, t.date].filter(Boolean).join(" · ")}</span>
+                    )}
+                  </span>
+                </figcaption>
+              </figure>
+            </Reveal>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   );

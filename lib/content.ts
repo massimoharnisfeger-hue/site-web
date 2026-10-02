@@ -6,6 +6,7 @@ import { searchPhotos } from "@/lib/unsplash";
 
 import type {
   HeroContent,
+  SequenceContent,
   OffresContent,
   ParcoursContent,
   StoryStep,
@@ -25,6 +26,7 @@ export type HomeContent = {
   brand: string;
   nav: NavContent;
   hero: HeroContent;
+  sequence: SequenceContent;
   offres: OffresContent;
   parcours: ParcoursContent;
   chiffres: ChiffresContent;
@@ -41,6 +43,10 @@ export type HomeContent = {
 // Contenu par défaut : ce qui s'affiche tant que rien n'a été modifié dans
 // le back-office. Garantit que le site n'est jamais vide.
 // ---------------------------------------------------------------------------
+/** Photo Pexels de démonstration (licence Pexels : gratuite, usage commercial autorisé). */
+const pexels = (id: number, w = 1200) =>
+  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
+
 export const defaultContent: HomeContent = {
   seo: {
     title: "Padel House — Club de padel à Lyon",
@@ -60,15 +66,42 @@ export const defaultContent: HomeContent = {
     ],
   },
   hero: {
-    eyebrow: "Club de padel nouvelle génération",
+    eyebrow: "Club de padel · Lyon 8e",
     title1: "Le jeu",
     title2: "commence ici",
     subtitle:
-      "Réservez un terrain, prenez un cours, vibrez à chaque échange. Le padel comme vous ne l'avez jamais vécu — vitré, éclairé, électrique.",
+      "Réservez un terrain, prenez un cours, vibrez à chaque échange. Huit terrains vitrés, ouverts tous les jours de 7h à 23h.",
     ctaPrimary: "Réserver un terrain",
     ctaSecondary: "Découvrir le club",
-    scrollHint: "C'est parti",
-    videoUrl: "",
+    scrollHint: "Faites défiler",
+    skipLabel: "Passer la séquence",
+  },
+  sequence: {
+    steps: [
+      {
+        label: "01 · La raquette",
+        title: "Un tamis plein, perforé",
+        text: "Pas de cordage au padel : la raquette est pleine, percée, et mesure 38 mm d'épaisseur au plus.",
+      },
+      {
+        label: "02 · Le service",
+        title: "À la cuillère, en diagonale",
+        text: "On laisse rebondir la balle, on la frappe sous la ceinture, et on vise le carré de service d'en face.",
+      },
+      {
+        label: "03 · Le court",
+        title: "20 mètres sur 10, entourés de vitres",
+        text: "Après le rebond au sol, la balle peut toucher les vitres : elles font partie du jeu.",
+      },
+    ],
+    figureLabel: "Fig. 1",
+    figureTitle: "La sortie de vitre",
+    figureCaption:
+      "La balle rebondit au sol, touche la vitre du fond, puis revient en jeu : J3 la reprend après le rebond.",
+    dimLength: "20 m",
+    dimWidth: "10 m",
+    dimService: "6,95 m",
+    players: "J1, J2, J3, J4",
   },
   offres: {
     eyebrow: "Nos offres",
@@ -80,148 +113,170 @@ export const defaultContent: HomeContent = {
         name: "Initiation Padel",
         tagline: "Vos premiers échanges",
         description:
-          "Une séance ludique pour découvrir le padel : prise en main, service, vitrage et premiers points. Encadré par un coach, raquettes fournies.",
-        duration: "1h",
+          "Une séance ludique pour découvrir le padel : prise en main, service, vitrage et premiers points. Encadrée par un coach, raquettes fournies.",
+        duration: "1 h",
         level: "Débutant",
-        price: "Dès 25€",
+        price: "Dès 25 €",
         badge: "",
         ctaLabel: "Réserver mon initiation",
-        image:
-          "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1200&q=80",
+        image: pexels(35248374),
+        imageFocus: "center",
+        imageAlt: "Joueuse sur un court de padel bleu en salle, balle en main, prête à servir",
+        playersLeft: 1,
+        playersRight: 0,
+        coach: true,
       },
       {
         name: "Cours collectifs",
         tagline: "Progressez à plusieurs",
         description:
-          "Des sessions de coaching par niveau pour travailler technique, placement et tactique. Ambiance conviviale et progression garantie.",
-        duration: "1h30",
+          "Des sessions par niveau pour travailler technique, placement et tactique, dans une ambiance conviviale.",
+        duration: "1 h 30",
         level: "Tous niveaux",
-        price: "Dès 19€/pers.",
+        price: "Dès 19 € / pers.",
         badge: "",
         ctaLabel: "M'inscrire à un cours",
-        image:
-          "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=1200&q=80",
+        image: pexels(35248501),
+        imageFocus: "center",
+        imageAlt: "Quatre joueuses alignées sur un court de padel en salle, raquette en main",
+        playersLeft: 3,
+        playersRight: 0,
+        coach: true,
       },
       {
         name: "Location de terrain",
         tagline: "Réservez, jouez",
         description:
-          "Un court rien que pour vous et vos partenaires. Terrains indoor et outdoor, vitrés et éclairés, disponibles 7j/7 de 7h à 23h.",
-        duration: "1h / 1h30",
+          "Un court rien que pour vous et vos partenaires, vitré et éclairé, disponible 7j/7 de 7h à 23h.",
+        duration: "1 h ou 1 h 30",
         level: "Libre",
-        price: "Dès 32€/terrain",
+        price: "Dès 32 € / terrain",
         badge: "La plus demandée",
         ctaLabel: "Réserver un terrain",
-        image:
-          "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=1200&q=80",
+        image: pexels(32897040),
+        imageFocus: "bottom",
+        imageAlt: "Raquette et balles de padel posées au pied du filet, sur un court éclairé",
+        playersLeft: 2,
+        playersRight: 2,
+        coach: false,
       },
       {
         name: "Tournois & ligues",
         tagline: "L'esprit de compétition",
         description:
-          "Tournois du week-end, soirées américaines et ligues entre clubs. Tous les niveaux, des lots à gagner et une ambiance électrique.",
+          "Tournois du week-end, soirées américaines et ligues entre clubs. Tous les niveaux, des lots à gagner.",
         duration: "Demi-journée",
         level: "Compétiteur",
-        price: "Dès 15€",
+        price: "Dès 15 €",
         badge: "",
         ctaLabel: "M'inscrire au tournoi",
-        image:
-          "https://images.unsplash.com/photo-1599391398131-cd12dfc6c24e?auto=format&fit=crop&w=1200&q=80",
+        image: pexels(37980449),
+        imageFocus: "top",
+        imageAlt: "Joueur de padel en plein smash, photo en noir et blanc",
+        playersLeft: 2,
+        playersRight: 2,
+        coach: false,
       },
       {
         name: "Padel Corporate",
         tagline: "L'événement d'entreprise",
         description:
-          "Team building, séminaires et privatisations. On organise tout : terrains, coachs, animation et catering. Le smash fédérateur idéal.",
+          "Team building, séminaires et privatisations. On organise tout : terrains, coachs, animation et repas.",
         duration: "Sur mesure",
         level: "Entreprise",
         price: "Sur devis",
         badge: "",
         ctaLabel: "Demander un devis",
-        image:
-          "https://images.unsplash.com/photo-1611251135345-18c56206b863?auto=format&fit=crop&w=1200&q=80",
+        image: pexels(34079998),
+        imageFocus: "center",
+        imageAlt: "Joueuses en plein échange de part et d'autre du filet",
+        playersLeft: 2,
+        playersRight: 2,
+        coach: true,
       },
     ],
   },
   parcours: {
-    eyebrow: "Votre parcours",
+    eyebrow: "Le club",
+    title: "Le club en quatre temps",
+    intro:
+      "On pousse la porte pour essayer, on revient pour progresser, puis on ne compte plus ses soirées au club.",
     ctaLabel: "Réserver un terrain",
     ctaTarget: "#reservation",
     items: [
       {
         step: "01",
-        imageAlt: "",
+        imageAlt: "Raquette et balle de padel posées sur un court bleu, près du filet",
         credit: "",
         creditLink: "",
         subtitle: "Le premier échange",
         title: "Découvrir",
         text: "Poussez la porte du club. Raquette en main, ressentez l'adrénaline du premier échange contre la vitre. Le padel s'apprend en quelques minutes.",
-        image:
-          "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1400&q=80",
+        image: pexels(31012869, 1600),
       },
       {
         step: "02",
-        imageAlt: "",
+        imageAlt: "Joueuse concentrée qui frappe la balle sur un court de padel intérieur",
         credit: "",
         creditLink: "",
         subtitle: "Avec nos coachs",
         title: "S'entraîner",
         text: "Affûtez votre jeu avec nos coachs : sortie de vitre, bandeja, lob et amorti. Chaque séance, vous sentez vos automatismes progresser.",
-        image:
-          "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=1400&q=80",
+        image: pexels(35248286, 1600),
       },
       {
         step: "03",
-        imageAlt: "",
+        imageAlt: "Joueuse en plein échange sur un court de padel bleu",
         credit: "",
         creditLink: "",
         subtitle: "Terrain réservé",
         title: "Jouer",
         text: "Réservez votre terrain, réunissez vos partenaires et vibrez à chaque point. Indoor ou outdoor, le jeu ne s'arrête jamais au club.",
-        image:
-          "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=1400&q=80",
+        image: pexels(35248475, 1600),
       },
       {
         step: "04",
-        imageAlt: "",
+        imageAlt: "Joueuse de padel souriante, raquette en main, sous les lumières du club",
         credit: "",
         creditLink: "",
         subtitle: "Tournois & soirées",
         title: "Vibrer",
         text: "Tournois, ligues, soirées : montez en niveau et faites partie de la communauté. Le padel, c'est aussi tout ce qui se passe après le match.",
-        image:
-          "https://images.unsplash.com/photo-1599391398131-cd12dfc6c24e?auto=format&fit=crop&w=1400&q=80",
+        image: pexels(33641987, 1600),
       },
     ],
   },
+  // Des faits vérifiables, tirés des offres et de la FAQ : pas de promesse
+  // chiffrée qu'on ne pourrait pas prouver.
   chiffres: {
-    title: "La communauté padel grandit chaque jour",
+    title: "Le club en chiffres",
     items: [
-      { value: 5000, suffix: "+", label: "Joueurs au club", caption: "depuis l'ouverture" },
-      { value: 4.9, suffix: "/5", label: "Note de satisfaction", caption: "" },
       { value: 8, suffix: "", label: "Terrains vitrés", caption: "indoor et outdoor" },
-      { value: 40, suffix: "+", label: "Tournois par an", caption: "" },
+      { value: 16, suffix: " h", label: "D'ouverture par jour", caption: "de 7h à 23h, 7j/7" },
+      { value: 0, suffix: " €", label: "De location de raquette", caption: "balles comprises" },
+      { value: 24, suffix: " h", label: "Pour annuler sans frais", caption: "avant le créneau" },
     ],
   },
   galerie: {
     eyebrow: "En images",
     title: "L'énergie du terrain",
-    intro:
-      "Faites défiler : les images glissent en profondeur. Cliquez pour un zoom plein écran.",
+    intro: "Huit courts vitrés, des soirées qui finissent tard et une communauté qui grandit.",
     items: [
-      { src: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=900&q=80", alt: "Joueur de padel frappant la balle" },
-      { src: "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=900&q=80", alt: "Balle de padel sur le terrain" },
-      { src: "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=900&q=80", alt: "Terrain de padel vitré" },
-      { src: "https://images.unsplash.com/photo-1599391398131-cd12dfc6c24e?auto=format&fit=crop&w=900&q=80", alt: "Match de padel en double" },
-      { src: "https://images.unsplash.com/photo-1611251135345-18c56206b863?auto=format&fit=crop&w=900&q=80", alt: "Raquette et balle de padel" },
-      { src: "https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?auto=format&fit=crop&w=900&q=80", alt: "Action de jeu au padel" },
-      { src: "https://images.unsplash.com/photo-1617339860293-978cf33cce43?auto=format&fit=crop&w=900&q=80", alt: "Joueuse de padel au service" },
-      { src: "https://images.unsplash.com/photo-1530915365347-e35b749a0381?auto=format&fit=crop&w=900&q=80", alt: "Terrain de padel éclairé le soir" },
+      { src: pexels(35248338, 1600), alt: "Joueuse au filet pendant un match de padel en salle", caption: "Au filet" },
+      { src: pexels(32474981, 1200), alt: "Court de padel intérieur au sol bleu, sous une grande charpente", caption: "Court intérieur" },
+      { src: pexels(35248469, 900), alt: "Joueuse souriante qui renvoie la balle sur un court bleu", caption: "Retour de service" },
+      { src: pexels(4536850, 900), alt: "Raquette de padel et balles jaunes contre le filet", caption: "Avant le match" },
+      { src: pexels(38155778, 900), alt: "Allée entre deux courts de padel vitrés", caption: "Entre deux courts" },
+      { src: pexels(31559322, 900), alt: "Joueuse blonde en polo rose, raquette en main, appuyée au filet d'un court extérieur", caption: "En extérieur" },
+      { src: pexels(32897038, 1200), alt: "Raquette de padel et balles posées sur le court", caption: "Le matériel" },
+      { src: pexels(35248481, 1600), alt: "Joueuse qui se prépare avant un match de padel en salle", caption: "Échauffement" },
     ],
   },
   avis: {
     eyebrow: "Ils jouent chez nous",
     title: "La parole aux joueurs",
+    examples: true,
+    examplesNote: "Avis d'exemple, en attendant les vôtres.",
     items: [
       { name: "Camille R.",
         date: "",
@@ -286,12 +341,11 @@ export const defaultContent: HomeContent = {
       title: "Mentions légales",
       body: `Éditeur du site
 
-Padel House, société par actions simplifiée au capital de 25 000 €.
-Siège social : 18 rue des Frères Lumière, 69008 Lyon, France.
-SIRET : 123 456 789 00011 — RCS Lyon 123 456 789.
-TVA intracommunautaire : FR00123456789.
+[Raison sociale], [forme juridique] au capital de [montant] €.
+Siège social : [adresse du siège].
+SIRET : [numéro] — RCS [ville] [numéro].
 Téléphone : 04 26 68 12 34 — E-mail : contact@padel-house.fr
-Directeur de la publication : Massimo Harnisfeger.
+Directeur de la publication : [prénom et nom].
 
 Hébergement
 
@@ -303,24 +357,23 @@ Base de données hébergée par MongoDB Atlas, région Europe (Francfort).
 Propriété intellectuelle
 
 L'ensemble des contenus de ce site — textes, mise en page, identité visuelle —
-est la propriété de Padel House. Toute reproduction, même partielle, sans
+est la propriété de [raison sociale]. Toute reproduction, même partielle, sans
 autorisation écrite préalable est interdite.
 
-Les photographies proviennent d'Unsplash et restent la propriété de leurs
-auteurs, crédités au pied de chaque visuel concerné.
+Les photographies de démonstration proviennent de Pexels et restent la
+propriété de leurs auteurs.
 
 Médiation de la consommation
 
 Conformément à l'article L612-1 du Code de la consommation, tout client peut
 recourir gratuitement à un médiateur de la consommation en vue de la résolution
-amiable d'un litige. Le médiateur compétent est indiqué sur simple demande à
-contact@padel-house.fr.`,
+amiable d'un litige : [nom et coordonnées du médiateur].`,
     },
     privacy: {
       title: "Politique de confidentialité",
       body: `Responsable du traitement
 
-Padel House, 18 rue des Frères Lumière, 69008 Lyon.
+[Raison sociale], 18 rue des Frères Lumière, 69008 Lyon.
 Contact : contact@padel-house.fr
 
 Ce que nous collectons, et ce que nous ne collectons pas
@@ -330,8 +383,7 @@ vous saisissez — nom, e-mail, téléphone, créneau souhaité — restent dans
 navigateur le temps de composer le message que vous nous envoyez vous-même
 depuis votre messagerie. Elles disparaissent dès que vous fermez la page.
 
-Aucune base de données du site ne conserve vos coordonnées, aucun journal
-serveur ne les enregistre, aucun prestataire tiers n'y a accès.
+Aucune base de données du site ne conserve vos coordonnées.
 
 Les demandes que nous recevons
 
@@ -351,16 +403,19 @@ contact@padel-house.fr : nous répondons sous un mois.
 En cas de désaccord, vous pouvez saisir la CNIL — 3 place de Fontenoy,
 TSA 80715, 75334 Paris Cedex 07, www.cnil.fr
 
-Cookies et mesure d'audience
+Cookies et services tiers
 
-Ce site ne dépose aucun cookie. Aucun outil de mesure d'audience, aucun
-traceur publicitaire, aucun bouton de réseau social n'y est installé. C'est
-pourquoi aucune bannière de consentement ne vous est présentée.`,
+Ce site ne dépose aucun cookie et n'installe aucun outil de mesure d'audience
+ni traceur publicitaire. C'est pourquoi aucune bannière de consentement ne vous
+est présentée. Les photos de démonstration sont chargées depuis Pexels, qui
+reçoit votre adresse IP comme pour toute image chargée depuis un autre site.`,
     },
   },
   reservation: {
     eyebrow: "Réservation",
     title: "Réservez votre terrain",
+    intro:
+      "Composez votre demande en quatre étapes, puis envoyez-la au club. Nous vous rappelons pour confirmer le créneau.",
     ctaLabel: "Préparer ma demande",
     responseDelay: "sous 24 h ouvrées",
     finalTitle: "Votre demande est prête",
@@ -370,6 +425,7 @@ pourquoi aucune bannière de consentement ne vous est présentée.`,
     privacyNote:
       "Vos coordonnées ne sont pas enregistrées : elles servent uniquement à composer le message que vous enverrez vous-même.",
     steps: ["Formule", "Créneau", "Coordonnées", "Votre message"],
+    slots: ["09:00", "10:30", "12:00", "14:00", "17:30", "19:00", "20:30", "22:00"],
   },
   footer: {
     ctaTitle: "Prêt à entrer sur le court ?",
@@ -393,12 +449,16 @@ pourquoi aucune bannière de consentement ne vous est présentée.`,
       },
     ],
     legal: "Tous droits réservés.",
+    // Centre de chaque court sur le plan du club, en % (plan au format 2:1).
     courts: [
-      { name: "Court 1 · Indoor", x: 24, y: 40 },
-      { name: "Court 2 · Indoor", x: 40, y: 62 },
-      { name: "Court 3 · Panoramique", x: 60, y: 34 },
-      { name: "Court 4 · Outdoor", x: 78, y: 56 },
-      { name: "Court Central", x: 50, y: 48 },
+      { name: "Court 1 · Indoor", x: 15, y: 27 },
+      { name: "Court 2 · Indoor", x: 38, y: 27 },
+      { name: "Court 3 · Indoor", x: 62, y: 27 },
+      { name: "Court 4 · Indoor", x: 85, y: 27 },
+      { name: "Court 5 · Outdoor", x: 15, y: 73 },
+      { name: "Court 6 · Outdoor", x: 38, y: 73 },
+      { name: "Court panoramique", x: 62, y: 73 },
+      { name: "Court central", x: 85, y: 73 },
     ],
     socials: [
       { name: "Instagram", url: "#" },
@@ -518,6 +578,19 @@ async function resolveParcoursItems(g: any, d: HomeContent): Promise<StoryStep[]
 }
 
 /**
+ * Créneaux saisis dans le back-office : seules les heures bien formées sont
+ * gardées, triées et sans doublon. Aucune heure valable → créneaux par défaut.
+ */
+function readSlots(value: unknown, fallback: string[]): string[] {
+  if (!Array.isArray(value)) return fallback;
+  const valid = value
+    .map((it) => (typeof it === "string" ? it : str(it?.time, "")).trim())
+    .filter((t) => /^([01]\d|2[0-3]):[0-5]\d$/.test(t));
+  const unique = Array.from(new Set(valid)).sort();
+  return unique.length > 0 ? unique : fallback;
+}
+
+/**
  * Lecture du contenu, mémoïsée le temps d'une requête.
  *
  * `generateMetadata` et le composant de page appelaient chacun `getHome()` :
@@ -562,7 +635,21 @@ export const getHome = cache(async (): Promise<HomeContent> => {
       ctaPrimary: str(g.hero?.ctaPrimary, d.hero.ctaPrimary),
       ctaSecondary: str(g.hero?.ctaSecondary, d.hero.ctaSecondary),
       scrollHint: str(g.hero?.scrollHint, d.hero.scrollHint),
-      videoUrl: str(g.hero?.videoUrl, d.hero.videoUrl || ""),
+      skipLabel: str(g.hero?.skipLabel, d.hero.skipLabel),
+    },
+    sequence: {
+      steps: (arr(g.sequence?.steps, d.sequence.steps) as any[]).map((it, i) => ({
+        label: str(it.label, d.sequence.steps[i]?.label ?? ""),
+        title: str(it.title, d.sequence.steps[i]?.title ?? ""),
+        text: str(it.text, d.sequence.steps[i]?.text ?? ""),
+      })),
+      figureLabel: str(g.sequence?.figureLabel, d.sequence.figureLabel),
+      figureTitle: str(g.sequence?.figureTitle, d.sequence.figureTitle),
+      figureCaption: str(g.sequence?.figureCaption, d.sequence.figureCaption),
+      dimLength: str(g.sequence?.dimLength, d.sequence.dimLength),
+      dimWidth: str(g.sequence?.dimWidth, d.sequence.dimWidth),
+      dimService: str(g.sequence?.dimService, d.sequence.dimService),
+      players: str(g.sequence?.players, d.sequence.players),
     },
     offres: {
       eyebrow: str(g.offres?.eyebrow, d.offres.eyebrow),
@@ -578,10 +665,25 @@ export const getHome = cache(async (): Promise<HomeContent> => {
         badge: str(it.badge, d.offres.items[i]?.badge ?? ""),
         ctaLabel: str(it.ctaLabel, d.offres.items[i]?.ctaLabel ?? ""),
         image: imageUrl(it.image, d.offres.items[i]?.image ?? ""),
+        // Une photo téléversée sans texte alternatif ne doit pas hériter de la
+        // description de la photo de démonstration qu'elle remplace.
+        imageAlt: imageUrl(it.image, "")
+          ? imageAlt(it.image, "")
+          : d.offres.items[i]?.imageAlt ?? "",
+        imageFocus: (["top", "center", "bottom"] as const).includes(it.imageFocus)
+          ? it.imageFocus
+          : imageUrl(it.image, "")
+            ? "center"
+            : d.offres.items[i]?.imageFocus ?? "center",
+        playersLeft: Math.max(0, Math.min(3, num(it.playersLeft, d.offres.items[i]?.playersLeft ?? 2))),
+        playersRight: Math.max(0, Math.min(3, num(it.playersRight, d.offres.items[i]?.playersRight ?? 2))),
+        coach: bool(it.coach, d.offres.items[i]?.coach ?? false),
       })),
     },
     parcours: {
       eyebrow: str(g.parcours?.eyebrow, d.parcours.eyebrow),
+      title: str(g.parcours?.title, d.parcours.title),
+      intro: str(g.parcours?.intro, d.parcours.intro),
       ctaLabel: str(g.parcours?.ctaLabel, d.parcours.ctaLabel),
       ctaTarget: str(g.parcours?.ctaTarget, d.parcours.ctaTarget),
       items: parcoursItems,
@@ -605,13 +707,19 @@ export const getHome = cache(async (): Promise<HomeContent> => {
         // champ de la galerie : l'éditeur n'a plus à le retaper.
         alt: str(
           it.alt,
-          imageAlt(it.src, d.galerie.items[i]?.alt ?? "")
+          imageUrl(it.src, "") ? imageAlt(it.src, "") : d.galerie.items[i]?.alt ?? ""
         ),
+        caption: str(it.caption, d.galerie.items[i]?.caption ?? ""),
       })),
     },
     avis: {
       eyebrow: str(g.avis?.eyebrow, d.avis.eyebrow),
       title: str(g.avis?.title, d.avis.title),
+      examples: bool(
+        g.avis?.examples,
+        !(Array.isArray(g.avis?.items) && g.avis.items.length > 0)
+      ),
+      examplesNote: str(g.avis?.examplesNote, d.avis.examplesNote),
       items: (arr(g.avis?.items, d.avis.items) as any[]).map((it, i) => ({
         name: str(it.name, d.avis.items[i]?.name ?? ""),
         role: str(it.role, d.avis.items[i]?.role ?? ""),
@@ -649,6 +757,7 @@ export const getHome = cache(async (): Promise<HomeContent> => {
     reservation: {
       eyebrow: str(g.reservation?.eyebrow, d.reservation.eyebrow),
       title: str(g.reservation?.title, d.reservation.title),
+      intro: str(g.reservation?.intro, d.reservation.intro),
       ctaLabel: str(g.reservation?.ctaLabel, d.reservation.ctaLabel),
       responseDelay: str(g.reservation?.responseDelay, d.reservation.responseDelay),
       finalTitle: str(g.reservation?.finalTitle, d.reservation.finalTitle),
@@ -658,6 +767,7 @@ export const getHome = cache(async (): Promise<HomeContent> => {
       steps: (arr(g.reservation?.steps, d.reservation.steps) as any[]).map((it, i) =>
         typeof it === "string" ? it : str(it?.label, d.reservation.steps[i] ?? "")
       ),
+      slots: readSlots(g.reservation?.slots, d.reservation.slots),
     },
     footer: {
       ctaTitle: str(g.footer?.ctaTitle, d.footer.ctaTitle),

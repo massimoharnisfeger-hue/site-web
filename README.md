@@ -1,6 +1,6 @@
 # Padel House — Site + back-office Payload CMS
 
-Site vitrine immersif (Next.js, GSAP, Lenis, Tailwind) avec un **back-office d'administration Payload CMS** pour modifier tout le contenu en ligne.
+Site vitrine immersif (Next.js, Three.js, Lenis, Tailwind) avec un **back-office d'administration Payload CMS** pour modifier tout le contenu en ligne.
 
 - **Le site public** : `/`
 - **Le back-office** (pour modifier le contenu) : `/admin`
@@ -125,9 +125,12 @@ En local, les images uploadées vont dans le dossier `media/` (pas besoin de Ver
 ## 🗂️ Où est quoi ? (structure du projet)
 
 ```
-app/(frontend)/      → le site public (page d'accueil, layout)
+app/(frontend)/      → le site public (page d'accueil, pages légales, affiche /og)
 app/(payload)/       → le back-office /admin et l'API (ne pas toucher)
-components/           → toutes les sections visuelles (Hero, Galerie, etc.)
+app/robots.ts, app/sitemap.ts → robots.txt et plan du site
+components/sections/  → les sections visuelles (séquence 3D, offres, galerie…)
+components/three/     → la scène 3D : raquette, court, caméra, textures
+components/court/     → dessins vectoriels (raquette, plan du court, pictogrammes)
 globals/Home.ts       → définit TOUS les champs modifiables du back-office
 collections/          → Utilisateurs (admin) et Médias (images)
 lib/content.ts        → lit le contenu + contenu de démonstration par défaut

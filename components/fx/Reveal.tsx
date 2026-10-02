@@ -1,35 +1,32 @@
-"use client";
-
-import { motion } from "framer-motion";
+import { createElement } from "react";
 
 /**
- * Generic scroll-reveal wrapper. Sections fade/slide in once when entering the
- * viewport. Direction and delay are configurable for staggered compositions.
- * Under reduced-motion the slide is dropped and only the fade remains, via the
- * MotionConfig set in SmoothScroll.
+ * Apparition au défilement : fondu et montée de 12 px, une seule fois.
+ *
+ * Composant serveur : il ne pose que la classe `reveal`. Un seul observateur,
+ * monté dans la mise en page (RevealObserver), la fait passer à `is-in` quand
+ * le bloc arrive à l'écran. L'état masqué n'existe qu'avec JavaScript actif
+ * (classe `js` sur <html>) et jamais en mouvement réduit : sans JavaScript,
+ * ou s'il échoue, rien ne reste invisible.
  */
 export default function Reveal({
   children,
   className = "",
   delay = 0,
-  y = 40,
-  once = true,
+  as = "div",
 }: {
   children: React.ReactNode;
   className?: string;
   delay?: number;
-  y?: number;
-  once?: boolean;
+  as?: "div" | "li" | "article" | "figure";
 }) {
-  return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once, margin: "-12% 0px -12% 0px" }}
-      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay }}
-    >
-      {children}
-    </motion.div>
+  return createElement(
+    as,
+    {
+      className: `reveal ${className}`,
+      // Le délai ne touche que l'apparition, pas les transitions de survol.
+      style: delay ? { transitionDelay: `${delay}s, ${delay}s, 0s, 0s, 0s` } : undefined,
+    },
+    children
   );
 }
