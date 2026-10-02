@@ -2,52 +2,41 @@ import Link from "next/link";
 import type { LegalPage as LegalPageContent } from "@/lib/types";
 
 /**
- * Gabarit commun aux pages légales. Volontairement sobre : ici le visiteur
+ * Gabarit commun aux pages légales. Volontairement sobre : le visiteur
  * cherche une information précise, pas une expérience.
  */
-export default function LegalPage({
-  page,
-  brand,
-}: {
-  page: LegalPageContent;
-  brand: string;
-}) {
+export default function LegalPage({ page }: { page: LegalPageContent }) {
   return (
-    <main className="min-h-screen bg-cloud px-5 py-24 md:px-8 md:py-32">
-      <div className="mx-auto max-w-2xl">
+    <main id="contenu" className="container-site pb-24 pt-[calc(var(--header-h,64px)_+_48px)] lg:pb-32">
+      <div className="mx-auto max-w-[44rem]">
         <Link
           href="/"
-          className="inline-flex min-h-[44px] items-center font-sans text-sm text-court underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-court"
+          className="inline-flex min-h-[44px] items-center gap-1.5 text-[14px] text-muted transition-colors hover:text-ink"
         >
-          ← Retour au site
+          <span aria-hidden="true">←</span> Retour à l&apos;accueil
         </Link>
 
-        <h1 className="mt-6 font-display text-4xl font-semibold leading-tight text-ink md:text-5xl">
-          {page.title}
-        </h1>
+        <h1 className="h2 mt-6">{page.title}</h1>
 
-        {/* Le contenu vient du back-office : les lignes vides séparent les blocs,
-            une ligne seule suivie d'un blanc fait office de sous-titre. */}
-        <div className="mt-10 space-y-6">
+        {/* Le contenu vient du back-office : les lignes vides séparent les
+            blocs, une ligne seule et courte sans point final fait office de
+            sous-titre. */}
+        <div className="mt-10 space-y-5 border-t border-rule pt-8">
           {page.body.split(/\n\s*\n/).map((bloc, i) => {
             const texte = bloc.trim();
             if (!texte) return null;
             const estTitre = !texte.includes("\n") && texte.length < 60 && !texte.endsWith(".");
             return estTitre ? (
-              <h2 key={i} className="pt-4 font-display text-xl font-semibold text-ink">
+              <h2 key={i} className="pt-5 font-display text-[20px] font-medium tracking-[-0.01em] first:pt-0">
                 {texte}
               </h2>
             ) : (
-              <p key={i} className="whitespace-pre-line font-sans leading-relaxed text-ink/80">
+              <p key={i} className="whitespace-pre-line text-[16px] leading-[1.7] text-ink/80">
                 {texte}
               </p>
             );
           })}
         </div>
-
-        <p className="mt-16 border-t border-ink/10 pt-6 font-sans text-xs text-ink/65">
-          {brand}
-        </p>
       </div>
     </main>
   );

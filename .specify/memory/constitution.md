@@ -1,9 +1,14 @@
 <!--
 Sync Impact Report
 ==================
-Version change: (aucune) → 1.0.0 → 1.0.1
+Version change: (aucune) → 1.0.0 → 1.0.1 → 1.0.2
 Type de bump: 1.0.0 adoption initiale (le gabarit ne contenait que des
-placeholders) ; 1.0.1 PATCH — correction factuelle, sans changement de portée.
+placeholders) ; 1.0.1 PATCH — correction factuelle, sans changement de portée ;
+1.0.2 PATCH — liste de la stack mise à jour, sans changement de portée.
+
+1.0.2 — GSAP et Framer Motion ont quitté le projet avec la refonte « Tableau
+tactique » (octobre 2026) : les animations passent par CSS, la 3D par
+Three.js. Le principe III et les exemples du principe V les citaient encore.
 
 1.0.1 — la section « Contraintes techniques » affirmait que importMap.js devait
 être régénéré par `npm run generate:importmap`. C'est faux : la régénération casse
@@ -74,7 +79,7 @@ des démarrages à froid et des coupures possibles. Le visiteur ne DOIT jamais l
 
 Ajouter une dépendance à `package.json` exige de justifier explicitement, dans le
 plan de la feature, pourquoi le besoin n'est pas couvert par la stack existante :
-Next.js, React, Payload, Tailwind, GSAP, Framer Motion, Lenis, Three.js, sharp.
+Next.js, React, Payload, Tailwind, Lenis, Three.js, sharp.
 
 Les versions de `payload`, `@payloadcms/*` et `next` DOIVENT rester alignées entre
 elles ; monter l'une sans les autres est interdit. Une montée de version majeure de
@@ -100,7 +105,7 @@ visiblement, pas silencieusement.
 
 ### V. Immersion sans sacrifice — performance et accessibilité
 
-Les effets visuels (GSAP, Lenis, WebGL, curseur personnalisé, préchargeur) NE
+Les effets visuels (Lenis, WebGL, animations au défilement) NE
 DOIVENT jamais empêcher l'accès au contenu. Toute feature touchant à l'animation
 DOIT respecter :
 
@@ -194,4 +199,4 @@ du plan, avec sa justification. Une violation non justifiée bloque
 déploiement, structure des dossiers). Il DOIT être mis à jour quand une feature
 change l'une de ces trois choses.
 
-**Version**: 1.0.1 | **Ratified**: 2026-08-31 | **Last Amended**: 2026-08-31
+**Version**: 1.0.2 | **Ratified**: 2026-08-31 | **Last Amended**: 2026-10-02

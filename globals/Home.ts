@@ -83,12 +83,46 @@ export const Home: GlobalConfig = {
               fields: [
                 { name: "eyebrow", type: "text", label: "Petit texte du haut" },
                 { name: "title1", type: "text", label: "Titre — 1ʳᵉ ligne" },
-                { name: "title2", type: "text", label: "Titre — 2ᵉ ligne (en couleur)" },
+                { name: "title2", type: "text", label: "Titre — 2ᵉ ligne (suivie du point balle)" },
                 { name: "subtitle", type: "textarea", label: "Sous-titre" },
                 { name: "ctaPrimary", type: "text", label: "Bouton principal" },
                 { name: "ctaSecondary", type: "text", label: "Bouton secondaire" },
                 { name: "scrollHint", type: "text", label: "Indice de défilement (sous la bannière)" },
-                { name: "videoUrl", type: "text", label: "Vidéo de fond — lien YouTube (vide = fond animé)" },
+                { name: "skipLabel", type: "text", label: "Lien pour passer la séquence 3D" },
+              ],
+            },
+            {
+              name: "sequence",
+              type: "group",
+              label: "Séquence 3D (raquette → court)",
+              admin: {
+                description:
+                  "Légendes affichées pendant que la raquette frappe la balle et que la caméra s'élève jusqu'au plan du court.",
+              },
+              fields: [
+                {
+                  name: "steps",
+                  type: "array",
+                  label: "Légendes successives",
+                  labels: { singular: "Légende", plural: "Légendes" },
+                  // Exactement trois : la séquence et le rail sont calés sur
+                  // trois temps avant le plan final. En retirer décalerait les
+                  // légendes ; en ajouter n'aurait pas de fenêtre d'affichage.
+                  minRows: 3,
+                  maxRows: 3,
+                  fields: [
+                    { name: "label", type: "text", label: "Repère (ex. 01 · La raquette)" },
+                    { name: "title", type: "text", label: "Titre" },
+                    { name: "text", type: "textarea", label: "Texte" },
+                  ],
+                },
+                { name: "figureLabel", type: "text", label: "Plan final — repère (ex. Fig. 1)" },
+                { name: "figureTitle", type: "text", label: "Plan final — titre" },
+                { name: "figureCaption", type: "textarea", label: "Plan final — légende" },
+                { name: "dimLength", type: "text", label: "Cote de longueur (ex. 20 m)" },
+                { name: "dimWidth", type: "text", label: "Cote de largeur (ex. 10 m)" },
+                { name: "dimService", type: "text", label: "Cote filet → ligne de service (ex. 6,95 m)" },
+                { name: "players", type: "text", label: "Repères des joueurs, séparés par des virgules" },
               ],
             },
           ],
@@ -126,6 +160,25 @@ export const Home: GlobalConfig = {
                     },
                     { name: "ctaLabel", type: "text", label: "Libellé du bouton" },
                     { name: "image", type: "upload", relationTo: "media", label: "Photo" },
+                    {
+                      name: "imageFocus",
+                      type: "select",
+                      label: "Cadrage de la photo",
+                      options: [
+                        { label: "Haut", value: "top" },
+                        { label: "Centre", value: "center" },
+                        { label: "Bas", value: "bottom" },
+                      ],
+                      admin: { description: "Partie de la photo gardée quand la fiche la recadre." },
+                    },
+                    {
+                      type: "row",
+                      fields: [
+                        { name: "playersLeft", type: "number", label: "Pictogramme : joueurs à gauche (0-3)", min: 0, max: 3 },
+                        { name: "playersRight", type: "number", label: "Joueurs à droite (0-3)", min: 0, max: 3 },
+                        { name: "coach", type: "checkbox", label: "Avec un coach" },
+                      ],
+                    },
                   ],
                 },
               ],
@@ -143,7 +196,9 @@ export const Home: GlobalConfig = {
               label: "Section Parcours",
               fields: [
                 { name: "eyebrow", type: "text", label: "Sur-titre" },
-                { name: "ctaLabel", type: "text", label: "Bouton des cartes" },
+                { name: "title", type: "text", label: "Titre" },
+                { name: "intro", type: "textarea", label: "Introduction" },
+                { name: "ctaLabel", type: "text", label: "Lien sous les étapes" },
                 {
                   name: "ctaTarget",
                   type: "select",
@@ -234,6 +289,7 @@ export const Home: GlobalConfig = {
                   fields: [
                     { name: "src", type: "upload", relationTo: "media", label: "Photo" },
                     { name: "alt", type: "text", label: "Description (accessibilité / SEO)" },
+                    { name: "caption", type: "text", label: "Légende courte sous la photo" },
                   ],
                 },
               ],
@@ -252,6 +308,16 @@ export const Home: GlobalConfig = {
               fields: [
                 { name: "eyebrow", type: "text", label: "Sur-titre" },
                 { name: "title", type: "text", label: "Titre" },
+                {
+                  name: "examples",
+                  type: "checkbox",
+                  label: "Ces avis sont des exemples",
+                  admin: {
+                    description:
+                      "Cochée, une mention « avis d'exemple » s'affiche sous les avis. Décochez-la dès que les avis sont réels.",
+                  },
+                },
+                { name: "examplesNote", type: "text", label: "Mention affichée sous les avis d'exemple" },
                 {
                   name: "items",
                   type: "array",
@@ -375,6 +441,7 @@ export const Home: GlobalConfig = {
               fields: [
                 { name: "eyebrow", type: "text", label: "Sur-titre" },
                 { name: "title", type: "text", label: "Titre" },
+                { name: "intro", type: "textarea", label: "Introduction" },
                 { name: "ctaLabel", type: "text", label: "Bouton de la dernière étape" },
                 {
                   name: "responseDelay",
@@ -398,6 +465,14 @@ export const Home: GlobalConfig = {
                   labels: { singular: "Étape", plural: "Étapes" },
                   admin: { description: "Quatre étapes, dans l'ordre. Évitez « Confirmation » : rien n'est confirmé à ce stade." },
                   fields: [{ name: "label", type: "text", label: "Libellé" }],
+                },
+                {
+                  name: "slots",
+                  type: "array",
+                  label: "Créneaux proposés",
+                  labels: { singular: "Créneau", plural: "Créneaux" },
+                  admin: { description: "Heures de début proposées au visiteur, format 24 h (ex. 19:00)." },
+                  fields: [{ name: "time", type: "text", label: "Heure" }],
                 },
               ],
             },
@@ -460,8 +535,12 @@ export const Home: GlobalConfig = {
                 {
                   name: "courts",
                   type: "array",
-                  label: "Terrains (carte)",
+                  label: "Terrains (plan du club)",
                   labels: { singular: "Terrain", plural: "Terrains" },
+                  admin: {
+                    description:
+                      "Centre de chaque court sur le plan, en pourcentage de la largeur (X) et de la hauteur (Y).",
+                  },
                   fields: [
                     { name: "name", type: "text", label: "Nom du terrain" },
                     { name: "x", type: "number", label: "Position X (0-100)" },

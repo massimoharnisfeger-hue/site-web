@@ -93,6 +93,28 @@ npm correspondant a été retiré pour qu'on ne le lance pas par accident.
 
 ---
 
+## Direction « Tableau tactique » (octobre 2026)
+
+Le site a été refait : fond clair, bleu du gazon, une seule touche de jaune (la
+balle), annotations en police mono, comme le tableau d'un coach.
+
+- **Séquence 3D du héros** (`components/sections/HeroSequence.tsx`,
+  `components/three/`) : la raquette modélisée en gros plan, le service, puis la
+  caméra suit la balle jusqu'au plan du court vu de dessus, avec ses cotes. Les
+  légendes et les cotes se modifient dans `/admin` → **Bannière** → **Séquence 3D**.
+- **Jamais bloquante.** Mouvement réduit, mode économie de données, appareil
+  très modeste ou rendu sans processeur graphique : la séquence est remplacée
+  par le plan du court en image fixe. Si la 3D rame malgré tout, elle s'allège
+  puis s'efface d'elle-même.
+- **Nouveaux champs** : cadrage de la photo de chaque offre (haut, centre, bas),
+  créneaux horaires du formulaire de réservation, légendes de la galerie.
+- **Polices** : Funnel Display, Host Grotesk et Fragment Mono, servies par le
+  site lui-même (`next/font`) — plus aucun appel à un service externe.
+- **Partage** : sans image choisie dans `/admin` → **SEO**, l'aperçu de partage
+  est l'affiche générée par `/og` (titre et plan du court).
+
+---
+
 ## Où est quoi
 
 ```
@@ -128,14 +150,11 @@ obligatoires avant commit.
 
 ## Ce qui reste ouvert
 
-- **Polices auto-hébergées.** Clash Display et General Sans viennent encore de
-  Fontshare par lien externe. Les passer sur `next/font/local` supprimerait une
-  dépendance réseau au premier affichage.
 - **Mise en cache.** La page est en rendu dynamique intégral : chaque visiteur
   interroge MongoDB. `getHome()` est mémoïsée le temps d'une requête, mais deux
   visiteurs successifs déclenchent toujours deux lectures.
 - **Montées de version majeures non faites**, volontairement : Next 16,
-  Tailwind 4, Framer Motion 13, ESLint 10, TypeScript 7, GraphQL 17. Chacune
+  Tailwind 4, ESLint 10, TypeScript 7, GraphQL 17. Chacune
   demande une migration à part entière. Deux avis de sécurité restants
   (`next`, et `postcss` embarqué dans Next) se ferment avec Next 16.
 - **`next/image` n'est pas utilisé** : les URL d'images viennent du back-office

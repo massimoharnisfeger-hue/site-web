@@ -1,5 +1,10 @@
 import type { Config } from "tailwindcss";
 
+/**
+ * Direction « Tableau tactique » : le site comme le tableau d'un coach.
+ * Plans de court au trait blanc sur le bleu du gazon, annotations en mono,
+ * une seule touche de jaune — la balle.
+ */
 const config: Config = {
   content: [
     "./app/**/*.{ts,tsx}",
@@ -9,38 +14,27 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#0B1B3A", // navy profond — texte & contraste
-        court: "#1B4DE4", // bleu électrique du terrain — primaire
-        teal: "#00C2A8", // turquoise sportif — secondaire
-        lime: "#CDFF3A", // vert citron de la balle — accent énergie
-        cloud: "#EEF3FA", // fond clair
-        haze: "#DCE6F4", // gris-bleu clair
+        paper: "#F4F6F9", // fond de page
+        card: "#FFFFFF", // cartes, panneaux, champs
+        ink: "#0D1B2A", // texte principal
+        muted: "#526073", // texte secondaire (5,7:1 sur paper)
+        rule: "rgba(13, 27, 42, 0.12)", // filets et bordures
+        turf: "#1F55A8", // bleu du gazon : plans, boutons, liens
+        "turf-deep": "#17417F", // survol, pied de page
+        glass: "#CDE8FF", // vitres sur les plans
+        ball: "#DFF24A", // la balle — jamais en texte, jamais en aplat
+        danger: "#B42318", // erreurs de saisie
       },
       fontFamily: {
-        display: ["var(--font-display)", "Clash Display", "sans-serif"],
-        sans: ["var(--font-sans)", "General Sans", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Helvetica Neue", "Arial", "sans-serif"],
+        sans: ["var(--font-sans)", "Helvetica Neue", "Arial", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "Menlo", "Consolas", "monospace"],
       },
-      letterSpacing: {
-        tightest: "-0.05em",
+      maxWidth: {
+        site: "1240px",
       },
-      keyframes: {
-        "gradient-pan": {
-          "0%, 100%": { backgroundPosition: "0% 50%" },
-          "50%": { backgroundPosition: "100% 50%" },
-        },
-        float: {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-12px)" },
-        },
-        "bounce-ball": {
-          "0%, 100%": { transform: "translateY(0) scale(1)" },
-          "50%": { transform: "translateY(-10px) scale(1.05)" },
-        },
-      },
-      animation: {
-        "gradient-pan": "gradient-pan 12s ease infinite",
-        float: "float 6s ease-in-out infinite",
-        "bounce-ball": "bounce-ball 2.4s ease-in-out infinite",
+      transitionTimingFunction: {
+        out: "cubic-bezier(0.22, 1, 0.36, 1)",
       },
     },
   },
