@@ -107,7 +107,9 @@ export async function createPadelScene(opts: PadelSceneOptions): Promise<PadelSc
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, high ? 1.75 : 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.NeutralToneMapping;
-  renderer.toneMappingExposure = 0.94;
+  // Direction « épurée & nette » : plus de lumière, moins de contraste — un
+  // rendu clair, posé, esprit studio/galerie.
+  renderer.toneMappingExposure = 1.03;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   const anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
@@ -120,15 +122,18 @@ export async function createPadelScene(opts: PadelSceneOptions): Promise<PadelSc
   const pmrem = new THREE.PMREMGenerator(renderer);
   const envTexture = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.environment = envTexture;
-  scene.environmentIntensity = 0.6;
+  scene.environmentIntensity = 0.8;
   await pause();
 
-  // Lumière : ciel doux, une clé chaude qui porte les ombres, un contre-jour froid.
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xcdd8e6, 0.55));
-  const key = new THREE.DirectionalLight(0xfff4e6, 1.55);
+  // Lumière : ciel doux et généreux, une clé presque neutre qui porte une
+  // ombre ample et légère, un contre-jour froid discret. L'ensemble reste
+  // clair et peu contrasté (esprit galerie).
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xd4ddea, 0.72));
+  const key = new THREE.DirectionalLight(0xfff8f0, 1.15);
   key.position.set(7, 15, 9);
   key.castShadow = true;
   key.shadow.mapSize.set(high ? 2048 : 1024, high ? 2048 : 1024);
+  key.shadow.radius = high ? 9 : 4;
   key.shadow.camera.left = -13;
   key.shadow.camera.right = 13;
   key.shadow.camera.top = 9;
@@ -138,7 +143,7 @@ export async function createPadelScene(opts: PadelSceneOptions): Promise<PadelSc
   key.shadow.bias = -0.0004;
   key.shadow.normalBias = 0.02;
   scene.add(key);
-  const rim = new THREE.DirectionalLight(0xdce8ff, 0.9);
+  const rim = new THREE.DirectionalLight(0xdce8ff, 0.6);
   rim.position.set(-9, 6, -11);
   scene.add(rim);
 
@@ -453,15 +458,17 @@ export async function createPadelScene(opts: PadelSceneOptions): Promise<PadelSc
       handOffset.x = -0.12 - 0.1 * f;
     }
     if (idle > 0) {
+      // Flottement d'attente volontairement discret : une présence vivante,
+      // pas une agitation. Le pointeur n'incline la raquette que très peu.
       const wobble = new THREE.Quaternion().setFromEuler(
         new THREE.Euler(
-          (Math.sin(time * 0.7) * 0.05 + pointer.y * 0.18) * idle,
-          (Math.sin(time * 0.45) * 0.16 + pointer.x * 0.35) * idle,
-          Math.sin(time * 0.6) * 0.03 * idle
+          (Math.sin(time * 0.6) * 0.028 + pointer.y * 0.1) * idle,
+          (Math.sin(time * 0.4) * 0.085 + pointer.x * 0.2) * idle,
+          Math.sin(time * 0.5) * 0.018 * idle
         )
       );
       q.premultiply(wobble);
-      handOffset.y += Math.sin(time * 0.9) * 0.012 * idle;
+      handOffset.y += Math.sin(time * 0.8) * 0.009 * idle;
     }
     racket.quaternion.copy(q);
     racket.position.copy(HAND).add(handOffset);
@@ -511,7 +518,9 @@ export async function createPadelScene(opts: PadelSceneOptions): Promise<PadelSc
     const dt = Math.min(0.1, (now - lastTime) / 1000);
     lastTime = now;
     const target = clamp01(opts.getProgress());
-    current += (target - current) * (1 - Math.exp(-dt * 9));
+    // Lissage plus long : la caméra glisse et rattrape le défilement en
+    // douceur, sans à-coup — mouvement posé, haut de gamme.
+    current += (target - current) * (1 - Math.exp(-dt * 5.5));
     if (Math.abs(target - current) < 0.0004) current = target;
     update(current, now / 1000);
     renderer.render(scene, camera);

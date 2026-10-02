@@ -166,7 +166,7 @@
   left: 50%;
   bottom: 3svh;
   height: 44svh;
-  transform: translateX(-38%) rotate(-14deg);
+  transform: translateX(-38%) rotate(-9deg);
 }
 @media (min-width: 768px) {
   .seq-poster {
@@ -175,7 +175,7 @@
     top: 50%;
     bottom: auto;
     height: 74vh;
-    transform: translateY(-44%) rotate(-14deg);
+    transform: translateY(-44%) rotate(-9deg);
   }
 }
 .seq-captions {
@@ -220,14 +220,19 @@
     top: 50%;
     display: flex;
     flex-direction: column;
-    gap: 28px;
-    padding: 14px 14px 14px 18px;
-    border: 1px solid rgba(13, 27, 42, 0.12);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    gap: 34px;
+    padding: 2px 2px 2px 18px;
     transform: translateY(-50%);
+  }
+  /* Fin trait vertical que suit la balle de progression. */
+  .seq-rail::before {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 2px;
+    bottom: 2px;
+    width: 1px;
+    background: rgba(13, 27, 42, 0.14);
   }
 }
 .seq-rail-item {
@@ -244,7 +249,7 @@
 .seq-rail-ball {
   position: absolute;
   left: 7px;
-  top: calc(14px + var(--p, 0) * (100% - 28px));
+  top: calc(2px + var(--p, 0) * (100% - 4px));
   width: 9px;
   height: 9px;
   margin-top: -4.5px;
