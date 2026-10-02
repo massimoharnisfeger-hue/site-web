@@ -155,3 +155,57 @@ export type FooterContent = {
   courts: Court[];
   socials: Social[];
 };
+
+// --- Sections ajoutées (composants adaptés de 21st.dev) ---
+
+export type Partner = { name: string; logo: string; url: string };
+export type PartenairesContent = {
+  title: string;
+  examples: boolean;
+  examplesNote: string;
+  items: Partner[];
+};
+
+export type AbonnementPlan = {
+  name: string;
+  tagline: string;
+  priceMonthly: string;
+  priceYearly: string;
+  priceNote: string;
+  featured: boolean;
+  badge: string;
+  ctaLabel: string;
+  features: string[];
+};
+export type AbonnementsContent = {
+  eyebrow: string;
+  title: string;
+  intro: string;
+  examples: boolean;
+  examplesNote: string;
+  monthlyLabel: string;
+  yearlyLabel: string;
+  yearlyNote: string;
+  items: AbonnementPlan[];
+};
+
+export type EquipementIcon = "court" | "ball" | "racket" | "clock" | "shower" | "shop" | "parking" | "bar";
+export type EquipementItem = { title: string; text: string; icon: EquipementIcon; wide: boolean };
+export type EquipementsContent = {
+  eyebrow: string;
+  title: string;
+  intro: string;
+  items: EquipementItem[];
+};
+
+export type Coach = { name: string; role: string; bio: string; photo: string; tag: string };
+export type CoachsContent = {
+  eyebrow: string;
+  title: string;
+  intro: string;
+  examples: boolean;
+  examplesNote: string;
+  items: Coach[];
+};
+
+export type BandeauContent = { enabled: boolean; words: string[] };
