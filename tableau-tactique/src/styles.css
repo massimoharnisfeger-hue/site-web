@@ -1,0 +1,319 @@
+@import "tailwindcss";
+
+/* --- Thème « Tableau tactique » --------------------------------------- */
+@theme {
+  --color-paper: #f4f6f9;
+  --color-card: #ffffff;
+  --color-ink: #0d1b2a;
+  --color-muted: #526073;
+  --color-rule: rgba(13, 27, 42, 0.12);
+  --color-turf: #1f55a8;
+  --color-turf-deep: #17417f;
+  --color-glass: rgba(205, 232, 255, 0.75);
+  --color-ball: #dff24a;
+  --color-error: #b42318;
+
+  --font-display: "Funnel Display", "Host Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Host Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Fragment Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* --- Base ---------------------------------------------------------------- */
+@layer base {
+  html {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-height: 100dvh;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    text-wrap: balance;
+    color: var(--color-ink);
+  }
+
+  h1 {
+    font-size: clamp(2.25rem, 4.4vw, 4rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+  }
+
+  h2 {
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+  }
+
+  h3 {
+    font-size: 22px;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  button {
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-turf);
+    outline-offset: 3px;
+  }
+
+  section[id] {
+    scroll-margin-top: 80px;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-delay: 0ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* --- Utilitaires du système ---------------------------------------------- */
+
+/* Conteneur : 1240 px de contenu + marges 16 / 24 / 40 px */
+@utility container-site {
+  box-sizing: content-box;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: 16px;
+  @media (min-width: 640px) {
+    padding-inline: 24px;
+  }
+  @media (min-width: 1024px) {
+    padding-inline: 40px;
+  }
+}
+
+/* Repère : Fragment Mono, capitales, interlettrage .08em */
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.3;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@utility eyebrow-sm {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.3;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Grand chiffre : Funnel Display 500, 28 px, chiffres tabulaires */
+@utility num {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Chapeau : 17 px, muted, 30 rem max */
+@utility lede {
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--color-muted);
+  max-width: 30rem;
+}
+
+/* Boutons : 44 px, pilule, Host Grotesk 500 14 px */
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding-inline: 20px;
+  border-radius: 9999px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  transition:
+    background-color 0.2s var(--ease-soft),
+    color 0.2s var(--ease-soft),
+    border-color 0.2s var(--ease-soft),
+    opacity 0.2s var(--ease-soft);
+}
+
+@utility btn-primary {
+  background-color: var(--color-turf);
+  color: #fff;
+  &:hover {
+    background-color: var(--color-turf-deep);
+  }
+}
+
+@utility btn-white {
+  background-color: #fff;
+  color: var(--color-turf);
+  &:hover {
+    background-color: var(--color-paper);
+  }
+}
+
+@utility btn-outline {
+  border: 1px solid var(--color-rule);
+  background-color: transparent;
+  color: var(--color-ink);
+  &:hover {
+    border-color: var(--color-turf);
+    color: var(--color-turf);
+  }
+}
+
+/* Lien secondaire : texte ink suivi de « → », turf au survol */
+@utility link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--color-ink);
+  text-decoration: none;
+  transition: color 0.2s var(--ease-soft);
+  &::after {
+    content: "→";
+  }
+  &:hover {
+    color: var(--color-turf);
+  }
+}
+
+/* Champ de formulaire : 48 px, fond paper, bordure rule, turf au focus */
+@utility field {
+  display: block;
+  width: 100%;
+  height: 48px;
+  padding-inline: 14px;
+  border-radius: 8px;
+  border: 1px solid var(--color-rule);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-size: 16px;
+  transition: border-color 0.2s var(--ease-soft);
+  &::placeholder {
+    color: color-mix(in srgb, var(--color-muted) 70%, transparent);
+  }
+  &:focus {
+    outline: none;
+    border-color: var(--color-turf);
+    box-shadow: inset 0 0 0 1px var(--color-turf);
+  }
+}
+
+/* Texte masqué visuellement, lu par les lecteurs d'écran */
+@utility visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Plan de court : tracé puis balle ------------------------------------ */
+@keyframes court-draw {
+  to {
+    stroke-dashoffset: -260;
+  }
+}
+
+@keyframes court-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.court-cover {
+  stroke-dasharray: 260 260;
+  stroke-dashoffset: 0;
+  animation: court-draw 1.6s var(--ease-soft) 0.3s forwards;
+}
+
+.court-impact {
+  opacity: 0;
+  transform: scale(0.2);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: court-pop 0.3s var(--ease-soft) forwards;
+}
+
+.court-impact-1 {
+  animation-delay: 1.15s;
+}
+
+.court-impact-2 {
+  animation-delay: 1.65s;
+}
+
+.court-ball-moving {
+  opacity: 0;
+  animation: court-ball-show 0.01s linear 1.9s forwards;
+}
+
+@keyframes court-ball-show {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 639px) {
+  .court-players {
+    display: none;
+  }
+  .court-cotes {
+    font-size: 7px;
+  }
+}
