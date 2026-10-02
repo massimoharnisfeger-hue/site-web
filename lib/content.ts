@@ -19,6 +19,12 @@ import type {
   LegalContent,
   NavContent,
   FooterContent,
+  PartenairesContent,
+  AbonnementsContent,
+  EquipementsContent,
+  EquipementIcon,
+  CoachsContent,
+  BandeauContent,
 } from "@/lib/types";
 
 export type HomeContent = {
@@ -28,11 +34,16 @@ export type HomeContent = {
   hero: HeroContent;
   sequence: SequenceContent;
   offres: OffresContent;
+  abonnements: AbonnementsContent;
   parcours: ParcoursContent;
+  equipements: EquipementsContent;
+  coachs: CoachsContent;
   chiffres: ChiffresContent;
+  partenaires: PartenairesContent;
   galerie: GalerieContent;
   avis: AvisContent;
   faq: FaqContent;
+  bandeau: BandeauContent;
   announcement: AnnouncementContent;
   legal: LegalContent;
   reservation: ReservationContent;
@@ -60,7 +71,8 @@ export const defaultContent: HomeContent = {
   nav: {
     items: [
       { label: "Offres", target: "#offres" },
-      { label: "Le club", target: "#parcours" },
+      { label: "Abonnements", target: "#abonnements" },
+      { label: "Le club", target: "#club" },
       { label: "Galerie", target: "#galerie" },
       { label: "Avis", target: "#avis" },
     ],
@@ -257,6 +269,112 @@ export const defaultContent: HomeContent = {
       { value: 24, suffix: " h", label: "Pour annuler sans frais", caption: "avant le créneau" },
     ],
   },
+  // Partenaires : par défaut, des catégories génériques clairement marquées
+  // « exemples ». On n'invente aucune marque réelle — le club téléverse ses
+  // vrais logos depuis /admin et décoche « exemples ».
+  partenaires: {
+    title: "Nos partenaires",
+    examples: true,
+    examplesNote: "Partenaires d'exemple — ajoutez les vôtres dans l'espace d'administration.",
+    items: [
+      { name: "Équipementier", logo: "", url: "" },
+      { name: "Cordage", logo: "", url: "" },
+      { name: "Textile", logo: "", url: "" },
+      { name: "Boissons", logo: "", url: "" },
+      { name: "Média local", logo: "", url: "" },
+      { name: "Assurance", logo: "", url: "" },
+    ],
+  },
+  // Abonnements : tarifs d'exemple, à vérifier par le club (comme les avis).
+  abonnements: {
+    eyebrow: "Abonnements",
+    title: "Jouez toute l'année",
+    intro:
+      "Pour celles et ceux qui reviennent chaque semaine : des formules au mois, sans engagement. Réservez en priorité, à tarif réduit.",
+    examples: true,
+    examplesNote: "Tarifs d'exemple, à confirmer par le club.",
+    monthlyLabel: "Au mois",
+    yearlyLabel: "À l'année",
+    yearlyNote: "2 mois offerts",
+    items: [
+      {
+        name: "Découverte",
+        tagline: "Pour jouer de temps en temps",
+        priceMonthly: "19 €",
+        priceYearly: "190 €",
+        priceNote: "/ mois",
+        featured: false,
+        badge: "",
+        ctaLabel: "Choisir Découverte",
+        features: ["−10 % sur la location", "Réservation 5 jours à l'avance", "Prêt de raquette inclus"],
+      },
+      {
+        name: "Passion",
+        tagline: "Le bon rythme, chaque semaine",
+        priceMonthly: "39 €",
+        priceYearly: "390 €",
+        priceNote: "/ mois",
+        featured: true,
+        badge: "La plus choisie",
+        ctaLabel: "Choisir Passion",
+        features: [
+          "−25 % sur la location",
+          "Réservation 8 jours à l'avance",
+          "Prêt de raquette inclus",
+          "1 cours collectif / mois offert",
+        ],
+      },
+      {
+        name: "Compétition",
+        tagline: "Pour les joueurs réguliers",
+        priceMonthly: "69 €",
+        priceYearly: "690 €",
+        priceNote: "/ mois",
+        featured: false,
+        badge: "",
+        ctaLabel: "Choisir Compétition",
+        features: [
+          "−40 % sur la location",
+          "Réservation 14 jours à l'avance",
+          "Accès prioritaire aux tournois",
+          "2 cours collectifs / mois offerts",
+        ],
+      },
+    ],
+  },
+  // Le club en bento : des faits déjà affirmés ailleurs (FAQ, chiffres), donc
+  // cohérents et vérifiables.
+  equipements: {
+    eyebrow: "Le club",
+    title: "Tout est prêt, vous n'apportez rien",
+    intro: "Huit courts, des vestiaires, de quoi boire un verre après le match. On s'occupe du reste.",
+    items: [
+      {
+        title: "8 courts vitrés",
+        text: "Indoor et outdoor, éclairés, ouverts 7j/7 de 7h à 23h.",
+        icon: "court",
+        wide: true,
+      },
+      { title: "Raquettes prêtées", text: "Raquettes et balles fournies avec chaque créneau.", icon: "racket", wide: false },
+      { title: "Vestiaires & douches", text: "Accessibles à tous les joueurs, sans supplément.", icon: "shower", wide: false },
+      { title: "Annulation 24 h", text: "Un imprévu ? Annulez sans frais jusqu'à 24 h avant.", icon: "clock", wide: false },
+      { title: "Club-house", text: "Un coin pour se poser et boire un verre après l'échange.", icon: "bar", wide: false },
+    ],
+  },
+  // Coachs : exemples sans visage ni identité réelle (initiales), à compléter
+  // par le club avec l'accord des personnes.
+  coachs: {
+    eyebrow: "L'équipe",
+    title: "Vos coachs",
+    intro: "Des coachs diplômés qui adaptent chaque séance à votre niveau, du tout premier échange à la compétition.",
+    examples: true,
+    examplesNote: "Coachs d'exemple — remplacez par votre équipe dans l'espace d'administration.",
+    items: [
+      { name: "Coach A.", role: "Initiation & perfectionnement", bio: "Met les débutants à l'aise dès le premier échange.", photo: "", tag: "Diplômé·e d'État" },
+      { name: "Coach B.", role: "Technique & compétition", bio: "Travaille la sortie de vitre, la bandeja et le jeu au filet.", photo: "", tag: "Ex-circuit" },
+      { name: "Coach C.", role: "Cours collectifs", bio: "Des séances par niveau, dans une ambiance qui donne envie de revenir.", photo: "", tag: "Padel & tennis" },
+    ],
+  },
   galerie: {
     eyebrow: "En images",
     title: "L'énergie du terrain",
@@ -329,6 +447,10 @@ export const defaultContent: HomeContent = {
           "Oui, vestiaires et douches sont accessibles à tous les joueurs, sans supplément.",
       },
     ],
+  },
+  bandeau: {
+    enabled: true,
+    words: ["Réserver", "Jouer", "Vibrer", "Lyon 8e", "7j/7 · 7h–23h", "8 courts vitrés"],
   },
   announcement: {
     enabled: false,
@@ -701,6 +823,70 @@ export const getHome = cache(async (): Promise<HomeContent> => {
         caption: strOrEmpty(it.caption, d.chiffres.items[i]?.caption ?? ""),
       })),
     },
+    abonnements: {
+      eyebrow: str(g.abonnements?.eyebrow, d.abonnements.eyebrow),
+      title: str(g.abonnements?.title, d.abonnements.title),
+      intro: str(g.abonnements?.intro, d.abonnements.intro),
+      examples: bool(g.abonnements?.examples, !(Array.isArray(g.abonnements?.items) && g.abonnements.items.length > 0)),
+      examplesNote: str(g.abonnements?.examplesNote, d.abonnements.examplesNote),
+      monthlyLabel: str(g.abonnements?.monthlyLabel, d.abonnements.monthlyLabel),
+      yearlyLabel: str(g.abonnements?.yearlyLabel, d.abonnements.yearlyLabel),
+      yearlyNote: strOrEmpty(g.abonnements?.yearlyNote, d.abonnements.yearlyNote),
+      items: (arr(g.abonnements?.items, d.abonnements.items) as any[]).map((it, i) => ({
+        name: str(it.name, d.abonnements.items[i]?.name ?? ""),
+        tagline: strOrEmpty(it.tagline, d.abonnements.items[i]?.tagline ?? ""),
+        priceMonthly: str(it.priceMonthly, d.abonnements.items[i]?.priceMonthly ?? ""),
+        priceYearly: str(it.priceYearly, d.abonnements.items[i]?.priceYearly ?? ""),
+        priceNote: strOrEmpty(it.priceNote, d.abonnements.items[i]?.priceNote ?? ""),
+        featured: bool(it.featured, d.abonnements.items[i]?.featured ?? false),
+        badge: strOrEmpty(it.badge, d.abonnements.items[i]?.badge ?? ""),
+        ctaLabel: str(it.ctaLabel, d.abonnements.items[i]?.ctaLabel ?? ""),
+        features: (arr(it.features, d.abonnements.items[i]?.features ?? []) as any[])
+          .map((f) => (typeof f === "string" ? f : str(f?.text, "")))
+          .filter(Boolean),
+      })),
+    },
+    equipements: {
+      eyebrow: str(g.equipements?.eyebrow, d.equipements.eyebrow),
+      title: str(g.equipements?.title, d.equipements.title),
+      intro: str(g.equipements?.intro, d.equipements.intro),
+      items: (arr(g.equipements?.items, d.equipements.items) as any[]).map((it, i) => ({
+        title: str(it.title, d.equipements.items[i]?.title ?? ""),
+        text: str(it.text, d.equipements.items[i]?.text ?? ""),
+        icon: ((["court", "ball", "racket", "clock", "shower", "shop", "parking", "bar"] as EquipementIcon[]).includes(
+          it.icon
+        )
+          ? it.icon
+          : d.equipements.items[i]?.icon ?? "court") as EquipementIcon,
+        wide: bool(it.wide, d.equipements.items[i]?.wide ?? false),
+      })),
+    },
+    coachs: {
+      eyebrow: str(g.coachs?.eyebrow, d.coachs.eyebrow),
+      title: str(g.coachs?.title, d.coachs.title),
+      intro: str(g.coachs?.intro, d.coachs.intro),
+      examples: bool(g.coachs?.examples, !(Array.isArray(g.coachs?.items) && g.coachs.items.length > 0)),
+      examplesNote: str(g.coachs?.examplesNote, d.coachs.examplesNote),
+      items: (arr(g.coachs?.items, d.coachs.items) as any[]).map((it, i) => ({
+        name: str(it.name, d.coachs.items[i]?.name ?? ""),
+        role: str(it.role, d.coachs.items[i]?.role ?? ""),
+        bio: strOrEmpty(it.bio, d.coachs.items[i]?.bio ?? ""),
+        photo: imageUrl(it.photo, ""),
+        tag: strOrEmpty(it.tag, d.coachs.items[i]?.tag ?? ""),
+      })),
+    },
+    partenaires: {
+      title: str(g.partenaires?.title, d.partenaires.title),
+      examples: bool(g.partenaires?.examples, !(Array.isArray(g.partenaires?.items) && g.partenaires.items.length > 0)),
+      examplesNote: str(g.partenaires?.examplesNote, d.partenaires.examplesNote),
+      items: (arr(g.partenaires?.items, d.partenaires.items) as any[])
+        .map((it, i) => ({
+          name: str(it.name, d.partenaires.items[i]?.name ?? ""),
+          logo: imageUrl(it.logo, ""),
+          url: strOrEmpty(it.url, ""),
+        }))
+        .filter((p) => p.name || p.logo),
+    },
     galerie: {
       eyebrow: str(g.galerie?.eyebrow, d.galerie.eyebrow),
       title: str(g.galerie?.title, d.galerie.title),
@@ -750,6 +936,17 @@ export const getHome = cache(async (): Promise<HomeContent> => {
       // Lien facultatif : vidé, il ne doit pas réafficher le libellé de démo.
       linkLabel: strOrEmpty(g.announcement?.linkLabel, d.announcement.linkLabel),
       linkTarget: str(g.announcement?.linkTarget, d.announcement.linkTarget),
+    },
+    bandeau: {
+      enabled: bool(g.bandeau?.enabled, d.bandeau.enabled),
+      words: (() => {
+        const raw = strOrEmpty(g.bandeau?.words, d.bandeau.words.join(", "));
+        const parts = raw
+          .split(",")
+          .map((w) => w.trim())
+          .filter(Boolean);
+        return parts.length > 0 ? parts : d.bandeau.words;
+      })(),
     },
     legal: {
       mentions: {

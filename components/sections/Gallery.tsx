@@ -7,31 +7,15 @@ import Reveal from "@/components/fx/Reveal";
 import Photo from "@/components/ui/Photo";
 import { lockScroll } from "@/lib/scroll";
 
-/**
- * Mise en page éditoriale sur douze colonnes, motif de huit photos : une grande
- * et deux petites, une rangée de trois, puis deux moyennes. Au-delà, le motif
- * recommence.
- */
-const WIDE = [
-  "md:col-span-7 md:row-span-2",
-  "md:col-span-5",
-  "md:col-span-5",
-  "md:col-span-4",
-  "md:col-span-4",
-  "md:col-span-4",
-  "md:col-span-5 md:row-span-2",
-  "md:col-span-7 md:row-span-2",
-];
-
-/** Sur téléphone : deux colonnes, une photo sur trois en pleine largeur. */
-function narrowSpan(i: number, n: number) {
-  if (i % 3 === 0) return "col-span-2";
-  if (i === n - 1 && i % 3 === 1) return "col-span-2";
-  return "col-span-1";
-}
-
 const fig = (i: number) => `Fig. ${String(i + 1).padStart(2, "0")}`;
 
+/**
+ * Galerie en accordéon (adapté de « Hover Expand Gallery », 21st.dev,
+ * @kedhareswer). Sur grand écran, une rangée de panneaux à label vertical : le
+ * panneau survolé ou ciblé au clavier s'agrandit pour révéler la photo. Sur
+ * téléphone, les photos s'empilent. Un clic ouvre la visionneuse (<dialog>
+ * natif) reprise de la version précédente : focus piégé, flèches, Échap.
+ */
 export default function Gallery({ content }: { content: GalerieContent }) {
   const items = content.items.filter((it) => it.src);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -39,8 +23,6 @@ export default function Gallery({ content }: { content: GalerieContent }) {
   const [index, setIndex] = useState<number | null>(null);
   const swipe = useRef<number | null>(null);
 
-  // La visionneuse s'ouvre une fois son contenu rendu : le bouton « Fermer »
-  // peut alors recevoir le focus.
   useEffect(() => {
     const d = dialogRef.current;
     if (index === null || !d || d.open) return;
@@ -48,15 +30,11 @@ export default function Gallery({ content }: { content: GalerieContent }) {
     lockScroll(true);
   }, [index]);
 
-  // Filet de sécurité : si le composant est démonté alors que la visionneuse
-  // est ouverte (retour arrière, navigation douce), `onClose` ne se déclenche
-  // pas et le verrou de défilement resterait posé sur la page suivante.
+  // Filet de sécurité : libère le verrou si la galerie est démontée ouverte.
   useEffect(() => () => lockScroll(false), []);
 
   if (items.length === 0) return null;
   const n = items.length;
-
-  const openAt = (i: number) => setIndex(i);
   const step = (d: number) => setIndex((i) => (i === null ? i : (i + d + n) % n));
   const current = index === null ? null : items[index];
 
@@ -65,23 +43,56 @@ export default function Gallery({ content }: { content: GalerieContent }) {
       <div className="container-site">
         <SectionHead id="galerie-titre" eyebrow={content.eyebrow} title={content.title} intro={content.intro} />
 
-        <ul className="grid auto-rows-[150px] grid-cols-2 gap-3 sm:auto-rows-[200px] md:auto-rows-[170px] md:grid-cols-12 md:gap-4 lg:auto-rows-[210px]">
+        {/* Grand écran : accordéon horizontal « hover expand ». */}
+        <Reveal className="hidden lg:block">
+          <ul className="flex h-[460px] gap-2">
+            {items.map((it, i) => (
+              <li key={i} className="group h-full flex-[1] basis-0 transition-[flex-grow] duration-500 ease-out hover:flex-[7] focus-within:flex-[7]">
+                <button
+                  ref={(el) => {
+                    triggers.current[i] = el;
+                  }}
+                  type="button"
+                  onClick={() => setIndex(i)}
+                  aria-label={`Agrandir la photo : ${it.alt || it.caption || fig(i)}`}
+                  className="relative block h-full w-full overflow-hidden rounded-lg bg-glass/40"
+                >
+                  <Photo
+                    src={it.src}
+                    alt=""
+                    sizes="(min-width: 1024px) 60vw, 100vw"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                  {/* Label vertical quand le panneau est replié. */}
+                  <span className="absolute inset-0 bg-gradient-to-t from-ink/55 via-transparent to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-100" />
+                  <span className="label absolute bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap text-white [writing-mode:vertical-rl] rotate-180 transition-opacity duration-300 group-hover:opacity-0 group-focus-within:opacity-0">
+                    {it.caption || fig(i)}
+                  </span>
+                  <span className="label absolute bottom-4 left-4 flex items-center gap-2 text-white opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-within:opacity-100">
+                    {fig(i)}
+                    {it.caption && <span className="normal-case tracking-normal">· {it.caption}</span>}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+
+        {/* Téléphone et tablette : photos empilées. */}
+        <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:hidden">
           {items.map((it, i) => (
-            <Reveal key={i} as="li" delay={(i % 3) * 0.05} className={`relative ${narrowSpan(i, n)} ${WIDE[i % WIDE.length]}`}>
+            <Reveal key={i} as="li" delay={(i % 2) * 0.05} className={i % 3 === 0 ? "col-span-2" : "col-span-1"}>
               <button
-                ref={(el) => {
-                  triggers.current[i] = el;
-                }}
                 type="button"
-                onClick={() => openAt(i)}
+                onClick={() => setIndex(i)}
                 aria-label={`Agrandir la photo : ${it.alt || it.caption || fig(i)}`}
-                className="group absolute inset-0 overflow-hidden rounded-lg bg-glass/40"
+                className="group relative block w-full overflow-hidden rounded-lg bg-glass/40"
               >
                 <Photo
                   src={it.src}
                   alt=""
-                  sizes="(min-width: 1024px) 680px, (min-width: 768px) 420px, 100vw"
-                  className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+                  sizes="(min-width: 640px) 50vw, 100vw"
+                  className={`w-full object-cover ${i % 3 === 0 ? "aspect-[16/9]" : "aspect-[4/5]"}`}
                 />
                 <span className="label absolute bottom-2.5 left-2.5 max-w-[calc(100%_-_20px)] truncate rounded-full bg-card px-2.5 py-1 text-ink">
                   {fig(i)}
@@ -93,8 +104,6 @@ export default function Gallery({ content }: { content: GalerieContent }) {
         </ul>
       </div>
 
-      {/* Visionneuse : <dialog> natif, qui piège le focus, ferme sur Échap
-          et rend le reste de la page inerte. */}
       <dialog
         ref={dialogRef}
         aria-label={current ? `${fig(index ?? 0)} ${current.caption}` : undefined}

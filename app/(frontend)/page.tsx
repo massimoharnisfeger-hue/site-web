@@ -2,9 +2,14 @@ import type { Metadata } from "next";
 import Nav from "@/components/ui/Nav";
 import HeroSequence from "@/components/sections/HeroSequence";
 import Stats from "@/components/sections/Stats";
+import Partners from "@/components/sections/Partners";
 import Activities from "@/components/sections/Activities";
+import Abonnements from "@/components/sections/Abonnements";
 import Story from "@/components/sections/Story";
+import Equipements from "@/components/sections/Equipements";
+import Coachs from "@/components/sections/Coachs";
 import Gallery from "@/components/sections/Gallery";
+import BandeauBalle from "@/components/sections/BandeauBalle";
 import Testimonials from "@/components/sections/Testimonials";
 import Faq from "@/components/sections/Faq";
 import Booking from "@/components/sections/Booking";
@@ -80,9 +85,14 @@ export default async function Home() {
       <main id="contenu">
         <HeroSequence hero={home.hero} sequence={home.sequence} brand={home.brand} />
         <Stats content={home.chiffres} />
+        <Partners content={home.partenaires} />
         <Activities content={home.offres} />
+        <Abonnements content={home.abonnements} />
         <Story content={home.parcours} />
+        <Equipements content={home.equipements} />
+        <Coachs content={home.coachs} />
         <Gallery content={home.galerie} />
+        <BandeauBalle content={home.bandeau} />
         <Testimonials content={home.avis} />
         <Faq content={home.faq} />
         <Booking

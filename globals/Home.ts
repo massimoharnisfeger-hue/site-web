@@ -58,7 +58,10 @@ export const Home: GlobalConfig = {
                       label: "Section visée",
                       options: [
                         { label: "Offres", value: "#offres" },
+                        { label: "Abonnements", value: "#abonnements" },
                         { label: "Parcours", value: "#parcours" },
+                        { label: "Le club", value: "#club" },
+                        { label: "Coachs", value: "#coachs" },
                         { label: "Galerie", value: "#galerie" },
                         { label: "Avis", value: "#avis" },
                         { label: "FAQ", value: "#faq" },
@@ -263,6 +266,193 @@ export const Home: GlobalConfig = {
                       admin: { description: "Ex. « sur 213 avis Google ». Un chiffre sourcé convainc, un chiffre nu inquiète." },
                     },
                   ],
+                },
+              ],
+            },
+          ],
+        },
+
+        // ---------------- PARTENAIRES ----------------
+        {
+          label: "Partenaires",
+          fields: [
+            {
+              name: "partenaires",
+              type: "group",
+              label: "Bande partenaires",
+              fields: [
+                { name: "title", type: "text", label: "Titre (petit, au-dessus de la bande)" },
+                {
+                  name: "examples",
+                  type: "checkbox",
+                  label: "Partenaires d'exemple",
+                  admin: { description: "Décochez une fois vos vrais partenaires ajoutés : la mention disparaît." },
+                },
+                { name: "examplesNote", type: "text", label: "Mention affichée tant que ce sont des exemples" },
+                {
+                  name: "items",
+                  type: "array",
+                  label: "Partenaires",
+                  labels: { singular: "Partenaire", plural: "Partenaires" },
+                  admin: { description: "Téléversez le logo ; sans logo, le nom s'affiche en toutes lettres." },
+                  fields: [
+                    { name: "name", type: "text", label: "Nom" },
+                    { name: "logo", type: "upload", relationTo: "media", label: "Logo (facultatif)" },
+                    { name: "url", type: "text", label: "Lien (facultatif)" },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+
+        // ---------------- ABONNEMENTS ----------------
+        {
+          label: "Abonnements",
+          fields: [
+            {
+              name: "abonnements",
+              type: "group",
+              label: "Section Abonnements",
+              fields: [
+                { name: "eyebrow", type: "text", label: "Sur-titre" },
+                { name: "title", type: "text", label: "Titre" },
+                { name: "intro", type: "textarea", label: "Introduction" },
+                {
+                  name: "examples",
+                  type: "checkbox",
+                  label: "Tarifs d'exemple",
+                  admin: { description: "Décochez une fois vos vrais tarifs d'abonnement renseignés." },
+                },
+                { name: "examplesNote", type: "text", label: "Mention affichée tant que ce sont des exemples" },
+                { name: "monthlyLabel", type: "text", label: "Libellé « mensuel »" },
+                { name: "yearlyLabel", type: "text", label: "Libellé « annuel »" },
+                { name: "yearlyNote", type: "text", label: "Note sous la bascule annuelle (ex. « 2 mois offerts »)" },
+                {
+                  name: "items",
+                  type: "array",
+                  label: "Forfaits",
+                  labels: { singular: "Forfait", plural: "Forfaits" },
+                  maxRows: 4,
+                  fields: [
+                    { name: "name", type: "text", label: "Nom" },
+                    { name: "tagline", type: "text", label: "Accroche" },
+                    { name: "priceMonthly", type: "text", label: "Prix mensuel (ex. 39 €)" },
+                    { name: "priceYearly", type: "text", label: "Prix annuel (ex. 390 €)" },
+                    { name: "priceNote", type: "text", label: "Précision sous le prix (ex. / mois)" },
+                    { name: "featured", type: "checkbox", label: "Mettre en avant" },
+                    { name: "badge", type: "text", label: "Ruban (si mis en avant)" },
+                    { name: "ctaLabel", type: "text", label: "Bouton" },
+                    {
+                      name: "features",
+                      type: "array",
+                      label: "Avantages",
+                      labels: { singular: "Avantage", plural: "Avantages" },
+                      fields: [{ name: "text", type: "text", label: "Avantage" }],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+
+        // ---------------- LE CLUB (ÉQUIPEMENTS) ----------------
+        {
+          label: "Le club (équipements)",
+          fields: [
+            {
+              name: "equipements",
+              type: "group",
+              label: "Section Le club",
+              fields: [
+                { name: "eyebrow", type: "text", label: "Sur-titre" },
+                { name: "title", type: "text", label: "Titre" },
+                { name: "intro", type: "textarea", label: "Introduction" },
+                {
+                  name: "items",
+                  type: "array",
+                  label: "Équipements et services",
+                  labels: { singular: "Élément", plural: "Éléments" },
+                  maxRows: 7,
+                  fields: [
+                    { name: "title", type: "text", label: "Titre" },
+                    { name: "text", type: "textarea", label: "Texte" },
+                    {
+                      name: "icon",
+                      type: "select",
+                      label: "Pictogramme",
+                      options: [
+                        { label: "Court", value: "court" },
+                        { label: "Balle", value: "ball" },
+                        { label: "Raquette", value: "racket" },
+                        { label: "Horaires", value: "clock" },
+                        { label: "Vestiaire / douche", value: "shower" },
+                        { label: "Boutique", value: "shop" },
+                        { label: "Parking", value: "parking" },
+                        { label: "Bar / club-house", value: "bar" },
+                      ],
+                    },
+                    { name: "wide", type: "checkbox", label: "Carte large (occupe deux colonnes)" },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+
+        // ---------------- COACHS ----------------
+        {
+          label: "Coachs",
+          fields: [
+            {
+              name: "coachs",
+              type: "group",
+              label: "Section Nos coachs",
+              fields: [
+                { name: "eyebrow", type: "text", label: "Sur-titre" },
+                { name: "title", type: "text", label: "Titre" },
+                { name: "intro", type: "textarea", label: "Introduction" },
+                {
+                  name: "examples",
+                  type: "checkbox",
+                  label: "Coachs d'exemple",
+                  admin: { description: "Décochez une fois vos vrais coachs ajoutés (avec leur accord pour la photo)." },
+                },
+                { name: "examplesNote", type: "text", label: "Mention affichée tant que ce sont des exemples" },
+                {
+                  name: "items",
+                  type: "array",
+                  label: "Coachs",
+                  labels: { singular: "Coach", plural: "Coachs" },
+                  fields: [
+                    { name: "name", type: "text", label: "Nom" },
+                    { name: "role", type: "text", label: "Spécialité / rôle" },
+                    { name: "bio", type: "textarea", label: "Courte bio" },
+                    { name: "photo", type: "upload", relationTo: "media", label: "Photo (facultatif)" },
+                    { name: "tag", type: "text", label: "Badge (ex. diplôme, niveau)" },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+
+        // ---------------- BANDEAU DÉFILANT ----------------
+        {
+          label: "Bandeau défilant",
+          fields: [
+            {
+              name: "bandeau",
+              type: "group",
+              label: "Bandeau défilant (séparateur)",
+              fields: [
+                { name: "enabled", type: "checkbox", label: "Afficher le bandeau" },
+                {
+                  name: "words",
+                  type: "text",
+                  label: "Mots, séparés par des virgules",
+                  admin: { description: "Ex. « Réserver, Jouer, Vibrer, Lyon 8e, 7j/7 ». Défile en continu, séparés par une balle." },
                 },
               ],
             },

@@ -402,6 +402,81 @@
   animation: step-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Bande partenaires (components/sections/Partners.tsx) : marquee CSS, fondu
+   des bords, pause au survol, neutralisé en mouvement réduit. */
+.partner-mask {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+}
+.partner-track {
+  animation: partner-marquee 38s linear infinite;
+}
+.partner-mask:hover .partner-track {
+  animation-play-state: paused;
+}
+@keyframes partner-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .partner-track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem 0;
+  }
+}
+
+/* Avis en bandeau défilant (components/sections/Testimonials.tsx) : deux
+   rangées en sens inverse, fondu des bords, pause au survol. */
+.avis-mask {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+.avis-track {
+  animation: avis-marquee 60s linear infinite;
+}
+.avis-track-rev {
+  animation-direction: reverse;
+}
+.avis-mask:hover .avis-track {
+  animation-play-state: paused;
+}
+@keyframes avis-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.avis-static figure {
+  width: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .avis-rows {
+    display: none !important;
+  }
+  .avis-static {
+    display: grid !important;
+  }
+}
+
+/* Bandeau défilant « balle » (components/sections/BandeauBalle.tsx). En
+   mouvement réduit, la piste est fixe et centrée, sans la copie en double. */
+@media (prefers-reduced-motion: reduce) {
+  .bandeau-track {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    transform: none !important;
+  }
+}
+
 /* Lenis : défilement fluide */
 html.lenis,
 html.lenis body {
