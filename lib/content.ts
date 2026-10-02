@@ -662,7 +662,9 @@ export const getHome = cache(async (): Promise<HomeContent> => {
         duration: str(it.duration, d.offres.items[i]?.duration ?? ""),
         level: str(it.level, d.offres.items[i]?.level ?? ""),
         price: str(it.price, d.offres.items[i]?.price ?? ""),
-        badge: str(it.badge, d.offres.items[i]?.badge ?? ""),
+        // « Laisser vide pour aucun ruban » : un ruban effacé ne doit pas
+        // réapparaître depuis l'offre de démonstration du même rang.
+        badge: strOrEmpty(it.badge, d.offres.items[i]?.badge ?? ""),
         ctaLabel: str(it.ctaLabel, d.offres.items[i]?.ctaLabel ?? ""),
         image: imageUrl(it.image, d.offres.items[i]?.image ?? ""),
         // Une photo téléversée sans texte alternatif ne doit pas hériter de la
@@ -692,9 +694,11 @@ export const getHome = cache(async (): Promise<HomeContent> => {
       title: str(g.chiffres?.title, d.chiffres.title),
       items: (arr(g.chiffres?.items, d.chiffres.items) as any[]).map((it, i) => ({
         value: num(it.value, d.chiffres.items[i]?.value ?? 0),
-        suffix: str(it.suffix, d.chiffres.items[i]?.suffix ?? ""),
+        // Suffixe et légende peuvent être vidés volontairement (« 8 » sans
+        // unité) : ne pas les repiocher dans le chiffre de démonstration.
+        suffix: strOrEmpty(it.suffix, d.chiffres.items[i]?.suffix ?? ""),
         label: str(it.label, d.chiffres.items[i]?.label ?? ""),
-        caption: str(it.caption, d.chiffres.items[i]?.caption ?? ""),
+        caption: strOrEmpty(it.caption, d.chiffres.items[i]?.caption ?? ""),
       })),
     },
     galerie: {
@@ -709,7 +713,9 @@ export const getHome = cache(async (): Promise<HomeContent> => {
           it.alt,
           imageUrl(it.src, "") ? imageAlt(it.src, "") : d.galerie.items[i]?.alt ?? ""
         ),
-        caption: str(it.caption, d.galerie.items[i]?.caption ?? ""),
+        // Comme le texte alternatif : une photo téléversée sans légende ne doit
+        // pas hériter de la légende de démonstration du même rang.
+        caption: str(it.caption, imageUrl(it.src, "") ? "" : d.galerie.items[i]?.caption ?? ""),
       })),
     },
     avis: {
@@ -741,7 +747,8 @@ export const getHome = cache(async (): Promise<HomeContent> => {
     announcement: {
       enabled: bool(g.announcement?.enabled, d.announcement.enabled),
       text: str(g.announcement?.text, d.announcement.text),
-      linkLabel: str(g.announcement?.linkLabel, d.announcement.linkLabel),
+      // Lien facultatif : vidé, il ne doit pas réafficher le libellé de démo.
+      linkLabel: strOrEmpty(g.announcement?.linkLabel, d.announcement.linkLabel),
       linkTarget: str(g.announcement?.linkTarget, d.announcement.linkTarget),
     },
     legal: {

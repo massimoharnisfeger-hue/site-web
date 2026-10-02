@@ -105,6 +105,10 @@ export const Home: GlobalConfig = {
                   type: "array",
                   label: "Légendes successives",
                   labels: { singular: "Légende", plural: "Légendes" },
+                  // Exactement trois : la séquence et le rail sont calés sur
+                  // trois temps avant le plan final. En retirer décalerait les
+                  // légendes ; en ajouter n'aurait pas de fenêtre d'affichage.
+                  minRows: 3,
                   maxRows: 3,
                   fields: [
                     { name: "label", type: "text", label: "Repère (ex. 01 · La raquette)" },

@@ -43,6 +43,15 @@
     border-radius: 4px;
   }
 
+  /* Sur les surfaces foncées (pied de page, bandeau, visionneuse), le contour
+     bleu n'a pas assez de contraste : on le passe en blanc (WCAG 1.4.11). */
+  footer :focus-visible,
+  .bg-ink :focus-visible,
+  dialog:focus-visible,
+  dialog :focus-visible {
+    outline-color: #ffffff;
+  }
+
   h1,
   h2,
   h3 {
@@ -338,7 +347,11 @@
 .seq[data-mode="static"] .seq-static {
   display: block;
 }
-@media (prefers-reduced-motion: reduce) {
+/* Mouvement réduit, ou JavaScript absent : sans lui, `data-mode` reste
+   « pending », la scène garderait sa hauteur de défilement et les légendes
+   resteraient masquées. On force alors le plan statique, lisible et sans
+   défilement mort. */
+@media (prefers-reduced-motion: reduce), (scripting: none) {
   .seq {
     height: auto !important;
   }

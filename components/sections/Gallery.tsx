@@ -48,6 +48,11 @@ export default function Gallery({ content }: { content: GalerieContent }) {
     lockScroll(true);
   }, [index]);
 
+  // Filet de sécurité : si le composant est démonté alors que la visionneuse
+  // est ouverte (retour arrière, navigation douce), `onClose` ne se déclenche
+  // pas et le verrou de défilement resterait posé sur la page suivante.
+  useEffect(() => () => lockScroll(false), []);
+
   if (items.length === 0) return null;
   const n = items.length;
 

@@ -221,6 +221,10 @@ export default function Nav({
         ref={panelRef}
         id={panelId}
         inert={!open}
+        // `data-lenis-prevent` : le défilement fluide est à l'arrêt quand le
+        // menu est ouvert ; sans cela, un panneau plus haut que l'écran
+        // (téléphone à l'horizontale) ne défilerait pas.
+        data-lenis-prevent
         // La visibilité bascule d'un coup à l'ouverture (le premier lien doit
         // pouvoir recevoir le focus aussitôt) et seulement après le fondu à la
         // fermeture.

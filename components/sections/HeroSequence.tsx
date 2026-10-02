@@ -269,8 +269,11 @@ export default function HeroSequence({
     };
 
     const io = new IntersectionObserver(
-      ([entry]) => {
+      (entries) => {
         if (!scene) return;
+        // Dernière entrée du lot : sur défilement rapide, l'observateur peut
+        // livrer [entrée, sortie] d'un coup, et la plus récente fait foi.
+        const entry = entries[entries.length - 1];
         if (entry.isIntersecting) scene.start();
         else {
           scene.stop();

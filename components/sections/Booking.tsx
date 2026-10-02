@@ -554,9 +554,12 @@ export default function Booking({
                       {copied ? "Copié" : "Copier le texte"}
                     </button>
                   </div>
-                  {/* Zone défilante : atteignable au clavier pour pouvoir la lire. */}
+                  {/* Zone défilante : atteignable au clavier pour pouvoir la lire.
+                      `data-lenis-prevent` rend la molette à ce bloc plutôt qu'au
+                      défilement fluide de la page. */}
                   <pre
                     tabIndex={0}
+                    data-lenis-prevent
                     aria-labelledby={`${uid}-message`}
                     className="mt-2 max-h-56 overflow-auto whitespace-pre-wrap rounded-md border border-rule bg-paper px-4 py-3 font-mono text-[13px] leading-[1.6] text-ink"
                   >
