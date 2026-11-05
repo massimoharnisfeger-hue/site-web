@@ -28,12 +28,12 @@ L'email doit arriver dans la boîte principale (pas Promotions, pas spam), se li
 
 4. MISE EN PAGE PC
 - Le mail ressemble à un mail écrit par une personne : fond blanc, texte aligné à gauche, pas de carte centrée façon newsletter.
-- Le contenu fait 100 % de la largeur jusqu'à 800 px au maximum (max-width:800px). C'est assez large pour ne presque pas laisser de vide dans Gmail sur PC, et assez étroit pour que les lignes restent lisibles et les images nettes.
+- Le contenu fait 100 % de la largeur de la fenêtre de lecture : aucun max-width sur le conteneur principal, aucun vide à droite sur PC.
 - Outlook pour Windows ne gère pas les largeurs fluides : pour lui, utilise une table fantôme fixe de 800 px dans <!--[if mso]> ... <![endif]-->.
 
 5. IMAGES NETTES
-- Une image ne s'affiche jamais plus grande que sa taille réelle en pixels. L'idéal est un fichier deux fois plus large que sa largeur d'affichage (écrans Retina).
-- Si une image est trop petite pour sa place, ne l'agrandis pas : dis-moi à quelle largeur l'exporter.
+- Le texte prend toute la largeur, mais pas les images : chaque image ou groupe d'images est limité à une largeur raisonnable (800 px au total pour une bannière ou une rangée de vignettes), aligné à gauche, comme une photo dans un mail normal. Une image ne s'affiche jamais plus grande que sa taille réelle en pixels.
+- Si une image est trop petite pour sa place, ne l'agrandis pas : dis-moi à quelle largeur l'exporter (idéalement le double de sa largeur d'affichage).
 - Chaque image a deux versions :
   - pour Outlook Windows : <!--[if mso]><img width="X" style="width:Xpx;border:0"><![endif]-->, X calculé pour tenir dans 800 px ;
   - pour les autres : <!--[if !mso]><!--><img width="taille réelle" style="display:block;width:100%;max-width:Ypx;height:auto;border:0"><!--<![endif]-->, Y étant la largeur d'affichage maximale.
