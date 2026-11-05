@@ -27,7 +27,8 @@ L'email doit arriver dans la boîte principale (pas Promotions, pas spam), se li
 - Chaque image a un texte alt court et utile, une largeur et une hauteur fixées (pour éviter les trous ou les sauts de mise en page) et border:0.
 
 4. MISE EN PAGE PC
-- Le mail ressemble à un mail écrit par une personne : fond blanc, texte aligné à gauche, pas de carte centrée façon newsletter.
+- Le mail ressemble à un mail écrit par une personne : fond blanc, sans cadre ni couleur de fond, texte aligné à gauche à l'intérieur de la colonne.
+- La colonne est centrée dans la fenêtre (align="center" + margin:0 auto). Sur une fenêtre plus large que la colonne, les marges sont égales des deux côtés : on ne voit jamais un vide d'un seul côté.
 - Texte et images partagent une seule colonne de 100 % de largeur, limitée à 1000 px (max-width:1000px) : c'est la largeur de la zone de lecture de Gmail sur un écran classique, donc pas de vide à droite, et les images suivent la largeur du texte sans être agrandies au-delà de 1000 px.
 - Outlook pour Windows ne gère pas les largeurs fluides : pour lui, utilise une table fantôme fixe de 800 px dans <!--[if mso]> ... <![endif]-->.
 
